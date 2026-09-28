@@ -1,0 +1,1224 @@
+// MOROCCO LEGAL PLATFORM — Prisma schema
+// -----------------------------------------------------------------------------
+// PostgreSQL is the source of truth (§57). The platform owns the dedicated
+// Postgres schema `legal_platform` so it can live in the same database as other
+// applications without touching their tables.
+//
+// Design rules encoded here:
+//   • Legal rules are versioned and only VERIFIED + active rules may influence
+//     routing (§11, §34).
+//   • Lawyer review, lawyer signature and specialist involvement are three
+//     distinct facts, never one boolean (§18).
+//   • Structured case data lives in typed rows (ContractField), not in a chat
+//     transcript (§57, §58).
+// -----------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["legal_platform"]
+}
+
+// ── Identity ────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  CLIENT
+  LAWYER
+  LEGAL_REVIEWER
+  ADMIN
+  SUPER_ADMIN
+
+  @@schema("legal_platform")
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+  DISABLED
+
+  @@schema("legal_platform")
+}
+
+enum Language {
+  AR
+  FR
+  EN
+
+  @@schema("legal_platform")
+}
+
+// ── Catalogue ───────────────────────────────────────────────────────────────
+
+enum ContractCategory {
+  RENTAL
+  SERVICES
+  EMPLOYMENT
+  CONFIDENTIALITY
+  SALE
+  PARTNERSHIP
+  LOAN
+  AUTHORIZATION
+  OTHER
+
+  @@schema("legal_platform")
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@schema("legal_platform")
+}
+
+enum RecordStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+
+  @@schema("legal_platform")
+}
+
+enum TemplateVersionStatus {
+  DRAFT
+  ACTIVE
+  RETIRED
+
+  @@schema("legal_platform")
+}
+
+enum ClauseRequirement {
+  REQUIRED
+  OPTIONAL
+  CONDITIONAL
+
+  @@schema("legal_platform")
+}
+
+// ── Routing (§10, §18) ──────────────────────────────────────────────────────
+
+enum RoutingRoute {
+  SELF_SERVICE
+  LAWYER_OPTIONAL
+  LAWYER_REQUIRED
+  LAWYER_SIGNATURE_REQUIRED
+  SPECIALIST_REQUIRED
+  UNSUPPORTED
+  /// Returned when no VERIFIED rule covers the case (§39). The platform then
+  /// sends the case to a human (legal reviewer / admin) instead of guessing.
+  ROUTING_UNDETERMINED
+
+  @@schema("legal_platform")
+}
+
+enum RequirementLevel {
+  NOT_REQUIRED
+  OPTIONAL
+  REQUIRED
+
+  @@schema("legal_platform")
+}
+
+enum SignatureRequirement {
+  NOT_REQUIRED
+  REQUIRED
+
+  @@schema("legal_platform")
+}
+
+enum RuleKind {
+  /// A requirement that comes from Moroccan law / regulation (must cite a
+  /// LegalSource and can only be VERIFIED by a legal reviewer).
+  LEGAL_REQUIREMENT
+  /// A requirement decided by the platform itself (service design, risk
+  /// appetite). Never presented to the user as a legal obligation.
+  PLATFORM_POLICY
+
+  @@schema("legal_platform")
+}
+
+enum RuleStatus {
+  DRAFT
+  UNDER_REVIEW
+  VERIFIED
+  SUSPENDED
+  EXPIRED
+
+  @@schema("legal_platform")
+}
+
+enum VerificationStatus {
+  DRAFT
+  UNDER_REVIEW
+  VERIFIED
+  EXPIRED
+
+  @@schema("legal_platform")
+}
+
+enum LegalSourceType {
+  LAW
+  DECREE
+  REGULATION
+  OFFICIAL_GUIDANCE
+  COURT_DECISION
+  OTHER
+
+  @@schema("legal_platform")
+}
+
+enum ConditionOperator {
+  EQUALS
+  NOT_EQUALS
+  GREATER_THAN
+  GREATER_THAN_OR_EQUAL
+  LESS_THAN
+  LESS_THAN_OR_EQUAL
+  IN
+  NOT_IN
+  EXISTS
+  NOT_EXISTS
+
+  @@schema("legal_platform")
+}
+
+enum RoutingDecisionStatus {
+  PROPOSED
+  CONFIRMED
+  SUPERSEDED
+
+  @@schema("legal_platform")
+}
+
+// ── Contract lifecycle (§37) ────────────────────────────────────────────────
+
+enum ContractStatus {
+  DRAFT
+  INFORMATION_REQUIRED
+  READY_FOR_ROUTING
+  ROUTED
+  PAYMENT_REQUIRED
+  PAYMENT_CONFIRMED
+  DOCUMENT_GENERATING
+  DRAFT_READY
+  LAWYER_PENDING
+  LAWYER_REVIEW
+  CHANGES_REQUESTED
+  MANUAL_REVIEW_REQUIRED
+  VALIDATED
+  SIGNATURE_PENDING
+  SIGNED
+  FINAL
+  CANCELLED
+
+  @@schema("legal_platform")
+}
+
+enum PartyRole {
+  LANDLORD
+  TENANT
+  SERVICE_PROVIDER
+  CLIENT
+  CUSTOMER
+  DISCLOSING_PARTY
+  RECEIVING_PARTY
+  SELLER
+  BUYER
+  EMPLOYER
+  EMPLOYEE
+  LENDER
+  BORROWER
+  OTHER
+
+  @@schema("legal_platform")
+}
+
+enum PartyType {
+  INDIVIDUAL
+  COMPANY
+
+  @@schema("legal_platform")
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+  DATE
+  BOOLEAN
+  SELECT
+  LIST
+
+  @@schema("legal_platform")
+}
+
+enum FieldSource {
+  CLIENT_ANSWER
+  AI_EXTRACTED
+  LAWYER_EDITED
+  SYSTEM
+
+  @@schema("legal_platform")
+}
+
+enum DocumentType {
+  CLIENT_DOCUMENT
+  DRAFT_CONTRACT
+  LAWYER_REVISED_DRAFT
+  FINAL_CONTRACT
+  SIGNED_CONTRACT
+  OTHER
+
+  @@schema("legal_platform")
+}
+
+enum EmailStatus {
+  LOGGED
+  SENT
+  FAILED
+
+  @@schema("legal_platform")
+}
+
+enum VersionKind {
+  AI_DRAFT
+  CLIENT_EDIT
+  LAWYER_REVISED
+  VALIDATED
+  FINAL
+  SIGNED
+
+  @@schema("legal_platform")
+}
+
+// ── Lawyer service (§19, §20, §21) ──────────────────────────────────────────
+
+enum LawyerRequestStatus {
+  CREATED
+  ASSIGNMENT_PENDING
+  ASSIGNED
+  UNDER_REVIEW
+  INFORMATION_REQUESTED
+  CHANGES_REQUESTED
+  READY_FOR_VALIDATION
+  VALIDATED
+  SIGNATURE_PENDING
+  SIGNED
+  REJECTED
+  CANCELLED
+  COMPLETED
+
+  @@schema("legal_platform")
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  ACCEPTED
+  DECLINED
+  REASSIGNED
+  COMPLETED
+
+  @@schema("legal_platform")
+}
+
+// ── Payments (§26) ──────────────────────────────────────────────────────────
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
+
+  @@schema("legal_platform")
+}
+
+enum PaymentType {
+  SELF_SERVICE_CONTRACT
+  LAWYER_REVIEW
+  LAWYER_REQUIRED_SERVICE
+  OTHER
+
+  @@schema("legal_platform")
+}
+
+// ── Electronic signature (§22) ──────────────────────────────────────────────
+
+enum SignatureRequestStatus {
+  CREATED
+  SENT
+  VIEWED
+  SIGNED
+  DECLINED
+  EXPIRED
+  CANCELLED
+  FAILED
+
+  @@schema("legal_platform")
+}
+
+enum SignatureMethod {
+  /// Local development sandbox. Explicitly NOT a qualified electronic
+  /// signature and never described as one in the UI.
+  MOCK_SANDBOX
+  /// Real qualified / advanced e-signature provider (integration point).
+  QUALIFIED_PROVIDER
+
+  @@schema("legal_platform")
+}
+
+// ── Observability (§25, §43) ────────────────────────────────────────────────
+
+enum AuditAction {
+  USER_SIGNED_IN
+  USER_SIGNED_OUT
+  CONTRACT_CREATED
+  CONTRACT_UPDATED
+  CONTRACT_STATUS_CHANGED
+  CONTRACT_CANCELLED
+  INTENT_CLASSIFIED
+  QUESTIONNAIRE_UPDATED
+  ROUTING_DECIDED
+  ROUTING_SUPERSEDED
+  ROUTING_UNDETERMINED
+  LAWYER_SERVICE_SELECTED
+  PAYMENT_INITIATED
+  PAYMENT_COMPLETED
+  PAYMENT_FAILED
+  PAYMENT_REFUNDED
+  DRAFT_GENERATED
+  DRAFT_EDITED
+  LAWYER_ASSIGNED
+  LAWYER_ACCEPTED
+  LAWYER_DECLINED
+  ASSIGNMENT_REASSIGNED
+  LAWYER_REQUESTED_INFORMATION
+  INFORMATION_PROVIDED
+  LAWYER_VALIDATED
+  LAWYER_REJECTED
+  SIGNATURE_REQUESTED
+  SIGNATURE_COMPLETED
+  SIGNATURE_DECLINED
+  SIGNATURE_FAILED
+  CONTRACT_FINALIZED
+  DOCUMENT_UPLOADED
+  DOCUMENT_DOWNLOADED
+  LEGAL_SOURCE_CREATED
+  LEGAL_SOURCE_UPDATED
+  LEGAL_SOURCE_VERIFIED
+  LEGAL_RULE_CREATED
+  LEGAL_RULE_UPDATED
+  LEGAL_RULE_STATUS_CHANGED
+  LEGAL_RULE_VERIFIED
+  TEMPLATE_VERSION_ACTIVATED
+  CONTRACT_TYPE_UPDATED
+  LAWYER_PROFILE_UPDATED
+  AI_PROVIDER_FALLBACK
+  EMAIL_LOGGED
+  SEED_RUN
+
+  @@schema("legal_platform")
+}
+
+enum NotificationType {
+  DRAFT_READY
+  PAYMENT_REQUIRED
+  PAYMENT_CONFIRMED
+  LAWYER_ASSIGNED
+  LAWYER_ACCEPTED
+  INFORMATION_REQUESTED
+  CHANGES_REQUESTED
+  CONTRACT_VALIDATED
+  SIGNATURE_REQUIRED
+  DOCUMENT_FINALIZED
+  ASSIGNMENT_FAILED
+  OVERDUE_LAWYER_REQUEST
+  RULE_EXPIRED
+  SIGNATURE_FAILED
+
+  @@schema("legal_platform")
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// IDENTITY (§7, §8)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model User {
+  id                String     @id @default(uuid()) @db.Uuid
+  email             String     @unique
+  passwordHash      String
+  fullName          String
+  phone             String?
+  role              UserRole   @default(CLIENT)
+  status            UserStatus @default(ACTIVE)
+  preferredLanguage Language   @default(FR)
+  lastLoginAt       DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  profile                 Profile?
+  lawyerProfile           LawyerProfile?
+  sessions                Session[]
+  contracts               Contract[]         @relation("ClientContracts")
+  assignedContracts       Contract[]         @relation("ContractAssignedLawyer")
+  lawyerRequests          LawyerRequest[]    @relation("LawyerRequestAssignee")
+  clientLawyerRequests    LawyerRequest[]    @relation("LawyerRequestClient")
+  validatedLawyerRequests LawyerRequest[]    @relation("LawyerRequestValidator")
+  assignments             LawyerAssignment[]
+  payments                Payment[]
+  notifications           Notification[]
+  ownedDocuments          ContractDocument[] @relation("DocumentOwner")
+  uploadedDocuments       ContractDocument[] @relation("DocumentUploader")
+  contractVersions        ContractVersion[]
+  auditLogs               AuditLog[]
+  createdLegalSources     LegalSource[]      @relation("LegalSourceCreatedBy")
+  verifiedLegalSources    LegalSource[]      @relation("LegalSourceVerifiedBy")
+  createdRules            LegalRule[]        @relation("RuleCreatedBy")
+  updatedRules            LegalRule[]        @relation("RuleUpdatedBy")
+  ruleVersions            LegalRuleVersion[]
+  signatureRequests       SignatureRequest[] @relation("SignatureSigner")
+  routingDecisions        RoutingDecision[]  @relation("RoutingRequestedBy")
+
+  @@index([role, status])
+  @@schema("legal_platform")
+}
+
+model Profile {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @unique @db.Uuid
+  partyType    PartyType @default(INDIVIDUAL)
+  nationalId   String?
+  addressLine  String?
+  city         String?
+  postalCode   String?
+  country      String    @default("MA")
+  companyName  String?
+  companyTaxId String?
+  legalForm    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@schema("legal_platform")
+}
+
+model LawyerProfile {
+  id                 String     @id @default(uuid()) @db.Uuid
+  userId             String     @unique @db.Uuid
+  barNumber          String?
+  specializations    String[]
+  languages          Language[]
+  jurisdictions      String[]
+  city               String?
+  maxConcurrentCases Int        @default(10)
+  active             Boolean    @default(true)
+  notes              String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([active])
+  @@schema("legal_platform")
+}
+
+model Session {
+  id        String    @id @default(uuid()) @db.Uuid
+  tokenHash String    @unique
+  userId    String    @db.Uuid
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CATALOGUE, TEMPLATES & CLAUSES (§14, §15)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model RoutingProfile {
+  id           String   @id @default(uuid()) @db.Uuid
+  code         String   @unique
+  name         String
+  description  String?
+  jurisdiction String   @default("MA")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contractTypes ContractType[]
+
+  @@schema("legal_platform")
+}
+
+model ContractType {
+  id                 String           @id @default(uuid()) @db.Uuid
+  code               String           @unique
+  nameAr             String
+  nameFr             String
+  descriptionAr      String?
+  descriptionFr      String?
+  category           ContractCategory
+  riskLevel          RiskLevel        @default(LOW)
+  status             RecordStatus     @default(DRAFT)
+  active             Boolean          @default(false)
+  defaultLanguage    Language         @default(FR)
+  supportedLanguages Language[]
+  /// Structured field keys that must be collected before a draft is generated.
+  requiredFields     String[]
+  /// Extra client documents requested for this contract type (labels).
+  requiredDocuments  String[]
+  /// Intent codes the AI classifier may map to this contract type.
+  intents            String[]
+  routingProfileId   String?          @db.Uuid
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  routingProfile RoutingProfile?    @relation(fields: [routingProfileId], references: [id], onDelete: SetNull)
+  templates      ContractTemplate[]
+  contracts      Contract[]
+  legalRules     LegalRule[]
+
+  @@index([category, active])
+  @@schema("legal_platform")
+}
+
+model ContractTemplate {
+  id              String   @id @default(uuid()) @db.Uuid
+  code            String   @unique
+  contractTypeId  String   @db.Uuid
+  nameAr          String
+  nameFr          String
+  descriptionAr   String?
+  descriptionFr   String?
+  activeVersionId String?  @unique @db.Uuid
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  contractType  ContractType              @relation(fields: [contractTypeId], references: [id], onDelete: Cascade)
+  versions      ContractTemplateVersion[] @relation("TemplateVersions")
+  activeVersion ContractTemplateVersion?  @relation("ActiveTemplateVersion", fields: [activeVersionId], references: [id], onDelete: SetNull)
+
+  @@index([contractTypeId])
+  @@schema("legal_platform")
+}
+
+model ContractTemplateVersion {
+  id            String                @id @default(uuid()) @db.Uuid
+  templateId    String                @db.Uuid
+  versionNumber Int
+  language      Language              @default(FR)
+  status        TemplateVersionStatus @default(DRAFT)
+  /// Variable definitions: [{ key, labelAr, labelFr, type, required }]
+  variables     Json
+  /// Ordered section headings used by the renderer.
+  sections      Json?
+  notes         String?
+  publishedAt   DateTime?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  template        ContractTemplate  @relation("TemplateVersions", fields: [templateId], references: [id], onDelete: Cascade)
+  activeFor       ContractTemplate? @relation("ActiveTemplateVersion")
+  templateClauses TemplateClause[]
+  contracts       Contract[]
+  versions        ContractVersion[]
+
+  @@unique([templateId, versionNumber])
+  @@index([status])
+  @@schema("legal_platform")
+}
+
+model Clause {
+  id        String       @id @default(uuid()) @db.Uuid
+  code      String       @unique
+  nameAr    String
+  nameFr    String
+  bodyAr    String
+  bodyFr    String
+  category  String?
+  variables String[]
+  status    RecordStatus @default(DRAFT)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  templateClauses TemplateClause[]
+
+  @@index([status])
+  @@schema("legal_platform")
+}
+
+model TemplateClause {
+  id                String            @id @default(uuid()) @db.Uuid
+  templateVersionId String            @db.Uuid
+  clauseId          String            @db.Uuid
+  position          Int
+  sectionNumber     String?
+  requirement       ClauseRequirement @default(REQUIRED)
+  /// Conditional inclusion, e.g. { "field": "securityDeposit", "operator": "GREATER_THAN", "value": 0 }
+  condition         Json?
+  createdAt         DateTime          @default(now())
+
+  templateVersion ContractTemplateVersion @relation(fields: [templateVersionId], references: [id], onDelete: Cascade)
+  clause          Clause                  @relation(fields: [clauseId], references: [id], onDelete: Restrict)
+
+  @@unique([templateVersionId, clauseId])
+  @@index([templateVersionId, position])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTRACT CASE — STRUCTURED DATA, VERSIONS & DOCUMENTS (§23, §24, §57, §58)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Contract {
+  id                 String         @id @default(uuid()) @db.Uuid
+  reference          String         @unique
+  clientId           String         @db.Uuid
+  contractTypeId     String         @db.Uuid
+  templateVersionId  String?        @db.Uuid
+  title              String
+  language           Language       @default(FR)
+  jurisdiction       String         @default("MA")
+  status             ContractStatus @default(DRAFT)
+  route              RoutingRoute?
+  intentCode         String?
+  intentConfidence   Float?
+  rawIntentText      String?
+  intentJson         Json?
+  summaryFr          String?
+  summaryAr          String?
+  priceAmount        Decimal?       @db.Decimal(12, 2)
+  priceCurrency      String         @default("MAD")
+  assignedLawyerId   String?        @db.Uuid
+  currentVersionId   String?        @unique @db.Uuid
+  routedAt           DateTime?
+  paymentConfirmedAt DateTime?
+  submittedAt        DateTime?
+  finalizedAt        DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  client            User                     @relation("ClientContracts", fields: [clientId], references: [id], onDelete: Cascade)
+  contractType      ContractType             @relation(fields: [contractTypeId], references: [id], onDelete: Restrict)
+  templateVersion   ContractTemplateVersion? @relation(fields: [templateVersionId], references: [id], onDelete: SetNull)
+  assignedLawyer    User?                    @relation("ContractAssignedLawyer", fields: [assignedLawyerId], references: [id], onDelete: SetNull)
+  currentVersion    ContractVersion?         @relation("CurrentVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
+  versions          ContractVersion[]        @relation("ContractVersions")
+  parties           ContractParty[]
+  fields            ContractField[]
+  documents         ContractDocument[]
+  routingDecisions  RoutingDecision[]
+  signatureRequests SignatureRequest[]
+  notifications     Notification[]
+  lawyerRequest     LawyerRequest?
+  payments          Payment[]
+
+  @@index([clientId, status])
+  @@index([status])
+  @@index([assignedLawyerId])
+  @@schema("legal_platform")
+}
+
+model ContractParty {
+  id             String    @id @default(uuid()) @db.Uuid
+  contractId     String    @db.Uuid
+  role           PartyRole
+  partyType      PartyType @default(INDIVIDUAL)
+  fullName       String
+  isUser         Boolean   @default(false)
+  userId         String?   @db.Uuid
+  companyName    String?
+  companyTaxId   String?
+  nationalId     String?
+  address        String?
+  city           String?
+  email          String?
+  phone          String?
+  representative String?
+  position       Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, role, fullName])
+  @@index([contractId])
+  @@schema("legal_platform")
+}
+
+model ContractField {
+  id           String      @id @default(uuid()) @db.Uuid
+  contractId   String      @db.Uuid
+  key          String
+  labelFr      String?
+  labelAr      String?
+  fieldType    FieldType   @default(TEXT)
+  source       FieldSource @default(CLIENT_ANSWER)
+  required     Boolean     @default(false)
+  valueText    String?
+  valueNumber  Decimal?    @db.Decimal(14, 2)
+  valueDate    DateTime?
+  valueBoolean Boolean?
+  valueList    String[]
+  updatedById  String?     @db.Uuid
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  @@unique([contractId, key])
+  @@index([contractId])
+  @@schema("legal_platform")
+}
+
+model ContractVersion {
+  id                String      @id @default(uuid()) @db.Uuid
+  contractId        String      @db.Uuid
+  versionNumber     Int
+  kind              VersionKind
+  createdById       String?     @db.Uuid
+  createdByRole     UserRole?
+  content           String
+  variablesJson     Json?
+  templateVersionId String?     @db.Uuid
+  changeSummary     String?
+  immutable         Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+
+  contract              Contract                 @relation("ContractVersions", fields: [contractId], references: [id], onDelete: Cascade)
+  currentFor            Contract?                @relation("CurrentVersion")
+  createdBy             User?                    @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  templateVersion       ContractTemplateVersion? @relation(fields: [templateVersionId], references: [id], onDelete: SetNull)
+  documents             ContractDocument[]
+  signatureRequests     SignatureRequest[]
+  sourceOfLawyerRequest LawyerRequest[]          @relation("LawyerRequestDraft")
+
+  @@unique([contractId, versionNumber])
+  @@index([contractId])
+  @@schema("legal_platform")
+}
+
+model ContractDocument {
+  id                String       @id @default(uuid()) @db.Uuid
+  contractId        String       @db.Uuid
+  contractVersionId String?      @db.Uuid
+  ownerId           String       @db.Uuid
+  uploadedById      String?      @db.Uuid
+  documentType      DocumentType
+  storageProvider   String       @default("local")
+  storagePath       String
+  filename          String
+  mimeType          String
+  sizeBytes         Int
+  checksum          String
+  version           Int          @default(1)
+  immutable         Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+
+  contract        Contract         @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  contractVersion ContractVersion? @relation(fields: [contractVersionId], references: [id], onDelete: SetNull)
+  owner           User             @relation("DocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  uploadedBy      User?            @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  @@index([contractId, documentType])
+  @@index([ownerId])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEGAL ROUTING ENGINE OUTPUT (§10, §12)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model RoutingDecision {
+  id                         String                @id @default(uuid()) @db.Uuid
+  contractId                 String                @db.Uuid
+  route                      RoutingRoute
+  lawyerReviewRequirement    RequirementLevel
+  lawyerSignatureRequirement SignatureRequirement
+  specialistRequired         Boolean               @default(false)
+  specialistType             String?
+  writtenContractRequired    Boolean               @default(false)
+  manualReviewRequired       Boolean               @default(false)
+  reason                     String
+  reasonCodes                String[]
+  matchedRuleIds             String[]
+  legalSourceIds             String[]
+  /// Human-readable gaps, e.g. "no VERIFIED rule for contract type X / jurisdiction MA"
+  missingRuleContext         String[]
+  engineVersion              String
+  ruleSnapshot               Json
+  status                     RoutingDecisionStatus @default(PROPOSED)
+  decidedByRuleId            String?               @db.Uuid
+  requestedByUserId          String?               @db.Uuid
+  overrideNote               String?
+  decidedAt                  DateTime              @default(now())
+  confirmedAt                DateTime?
+  supersededById             String?               @unique @db.Uuid
+  supersededBy               RoutingDecision?      @relation("RoutingSupersession", fields: [supersededById], references: [id], onDelete: SetNull)
+  supersedes                 RoutingDecision?      @relation("RoutingSupersession")
+
+  contract    Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  requestedBy User?    @relation("RoutingRequestedBy", fields: [requestedByUserId], references: [id], onDelete: SetNull)
+
+  @@index([contractId, decidedAt])
+  @@index([route])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LAWYER SERVICE — REQUESTS, ASSIGNMENT, REVIEW (§19, §20, §21)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model LawyerRequest {
+  id                    String              @id @default(uuid()) @db.Uuid
+  contractId            String              @unique @db.Uuid
+  clientId              String              @db.Uuid
+  lawyerId              String?             @db.Uuid
+  draftVersionId        String?             @db.Uuid
+  serviceType           PaymentType         @default(LAWYER_REVIEW)
+  status                LawyerRequestStatus @default(CREATED)
+  requiresSignature     Boolean             @default(false)
+  aiSummary             String?
+  summaryJson           Json?
+  reviewAreas           String[]
+  missingInformation    String[]
+  informationRequest    String?
+  informationProvidedAt DateTime?
+  acceptedAt            DateTime?
+  validatedAt           DateTime?
+  validatedById         String?             @db.Uuid
+  signatureRequiredAt   DateTime?
+  signedAt              DateTime?
+  rejectedAt            DateTime?
+  rejectionReason       String?
+  dueAt                 DateTime?
+  completedAt           DateTime?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  contract          Contract           @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  client            User               @relation("LawyerRequestClient", fields: [clientId], references: [id], onDelete: Cascade)
+  lawyer            User?              @relation("LawyerRequestAssignee", fields: [lawyerId], references: [id], onDelete: SetNull)
+  validator         User?              @relation("LawyerRequestValidator", fields: [validatedById], references: [id], onDelete: SetNull)
+  draftVersion      ContractVersion?   @relation("LawyerRequestDraft", fields: [draftVersionId], references: [id], onDelete: SetNull)
+  assignments       LawyerAssignment[]
+  payments          Payment[]
+  signatureRequests SignatureRequest[]
+
+  @@index([lawyerId, status])
+  @@index([status])
+  @@schema("legal_platform")
+}
+
+model LawyerAssignment {
+  id                        String           @id @default(uuid()) @db.Uuid
+  lawyerRequestId           String           @db.Uuid
+  lawyerId                  String           @db.Uuid
+  assignedById              String?          @db.Uuid
+  status                    AssignmentStatus @default(ASSIGNED)
+  assignmentReason          String
+  scoreDetails              Json?
+  workloadAtAssignment      Int
+  maxConcurrentAtAssignment Int
+  respondedAt               DateTime?
+  declineReason             String?
+  createdAt                 DateTime         @default(now())
+  updatedAt                 DateTime         @updatedAt
+
+  lawyerRequest LawyerRequest @relation(fields: [lawyerRequestId], references: [id], onDelete: Cascade)
+  lawyer        User          @relation(fields: [lawyerId], references: [id], onDelete: Cascade)
+
+  @@index([lawyerId, status])
+  @@index([lawyerRequestId])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PAYMENTS (§26, §27)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  userId            String        @db.Uuid
+  contractId        String?       @db.Uuid
+  lawyerRequestId   String?       @db.Uuid
+  amount            Decimal       @db.Decimal(12, 2)
+  currency          String        @default("MAD")
+  provider          String
+  providerPaymentId String?
+  status            PaymentStatus @default(PENDING)
+  type              PaymentType
+  idempotencyKey    String?       @unique
+  metadata          Json?
+  failureReason     String?
+  paidAt            DateTime?
+  refundedAt        DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contract      Contract?      @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  lawyerRequest LawyerRequest? @relation(fields: [lawyerRequestId], references: [id], onDelete: SetNull)
+  events        PaymentEvent[]
+
+  @@index([userId, status])
+  @@index([contractId])
+  @@schema("legal_platform")
+}
+
+model PaymentEvent {
+  id              String    @id @default(uuid()) @db.Uuid
+  paymentId       String?   @db.Uuid
+  provider        String
+  externalEventId String    @unique
+  eventType       String
+  payload         Json
+  processedAt     DateTime?
+  createdAt       DateTime  @default(now())
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([provider, eventType])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ELECTRONIC SIGNATURE (§22) — INTERNAL VALIDATION IS A DIFFERENT THING
+// ═══════════════════════════════════════════════════════════════════════════
+
+model SignatureRequest {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  contractId           String                 @db.Uuid
+  lawyerRequestId      String?                @db.Uuid
+  documentId           String?                @db.Uuid
+  contractVersionId    String?                @db.Uuid
+  signerUserId         String                 @db.Uuid
+  provider             String
+  method               SignatureMethod        @default(MOCK_SANDBOX)
+  providerRequestId    String                 @unique
+  status               SignatureRequestStatus @default(CREATED)
+  signedDocumentId     String?                @db.Uuid
+  signedAt             DateTime?
+  declinedAt           DateTime?
+  declineReason        String?
+  verificationMetadata Json?
+  providerAuditTrail   Json?
+  errorMessage         String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  contract        Contract         @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  lawyerRequest   LawyerRequest?   @relation(fields: [lawyerRequestId], references: [id], onDelete: SetNull)
+  contractVersion ContractVersion? @relation(fields: [contractVersionId], references: [id], onDelete: SetNull)
+  signer          User             @relation("SignatureSigner", fields: [signerUserId], references: [id], onDelete: Restrict)
+
+  @@index([contractId, status])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEGAL KNOWLEDGE BASE — SOURCES, RULES, CONDITIONS, VERSIONS (§11, §12, §34)
+// Only VERIFIED + active rules (within their effective window) may influence
+// routing. Everything else is knowledge, not an instruction (§66).
+// ═══════════════════════════════════════════════════════════════════════════
+
+model LegalSource {
+  id                 String             @id @default(uuid()) @db.Uuid
+  code               String             @unique
+  title              String
+  titleAr            String?
+  sourceType         LegalSourceType
+  lawNumber          String?
+  article            String?
+  officialUrl        String?
+  publisher          String?
+  publicationDate    DateTime?
+  effectiveDate      DateTime?
+  expiryDate         DateTime?
+  jurisdiction       String             @default("MA")
+  language           Language           @default(FR)
+  notes              String?
+  tags               String[]
+  verificationStatus VerificationStatus @default(DRAFT)
+  verifiedById       String?            @db.Uuid
+  verifiedAt         DateTime?
+  createdById        String?            @db.Uuid
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  createdBy  User?       @relation("LegalSourceCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  verifiedBy User?       @relation("LegalSourceVerifiedBy", fields: [verifiedById], references: [id], onDelete: SetNull)
+  rules      LegalRule[]
+
+  @@index([verificationStatus])
+  @@index([jurisdiction, sourceType])
+  @@schema("legal_platform")
+}
+
+model LegalRule {
+  id                      String               @id @default(uuid()) @db.Uuid
+  code                    String               @unique
+  title                   String
+  titleAr                 String?
+  description             String?
+  ruleKind                RuleKind
+  jurisdiction            String               @default("MA")
+  contractTypeId          String?              @db.Uuid
+  scope                   String?
+  status                  RuleStatus           @default(DRAFT)
+  route                   RoutingRoute
+  lawyerReview            RequirementLevel     @default(NOT_REQUIRED)
+  lawyerSignature         SignatureRequirement @default(NOT_REQUIRED)
+  specialistRequired      Boolean              @default(false)
+  specialistType          String?
+  writtenContractRequired Boolean              @default(false)
+  manualReviewRequired    Boolean              @default(false)
+  priority                Int                  @default(100)
+  reasonCode              String
+  effectiveFrom           DateTime             @default(now())
+  effectiveTo             DateTime?
+  legalSourceId           String?              @db.Uuid
+  article                 String?
+  internalPolicyRef       String?
+  notes                   String?
+  active                  Boolean              @default(true)
+  version                 Int                  @default(1)
+  createdById             String?              @db.Uuid
+  updatedById             String?              @db.Uuid
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+
+  contractType ContractType?        @relation(fields: [contractTypeId], references: [id], onDelete: Cascade)
+  legalSource  LegalSource?         @relation(fields: [legalSourceId], references: [id], onDelete: Restrict)
+  createdBy    User?                @relation("RuleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy    User?                @relation("RuleUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  conditions   LegalRuleCondition[]
+  versions     LegalRuleVersion[]
+
+  @@index([status, active, jurisdiction])
+  @@index([contractTypeId, priority])
+  @@schema("legal_platform")
+}
+
+model LegalRuleCondition {
+  id           String            @id @default(uuid()) @db.Uuid
+  legalRuleId  String            @db.Uuid
+  field        String
+  operator     ConditionOperator
+  valueText    String?
+  valueNumber  Decimal?          @db.Decimal(14, 2)
+  valueBoolean Boolean?
+  valueList    String[]
+  /// Conditions are AND-ed inside a group and OR-ed across groups.
+  groupIndex   Int               @default(0)
+  label        String?
+  createdAt    DateTime          @default(now())
+
+  legalRule LegalRule @relation(fields: [legalRuleId], references: [id], onDelete: Cascade)
+
+  @@index([legalRuleId, groupIndex])
+  @@schema("legal_platform")
+}
+
+model LegalRuleVersion {
+  id            String   @id @default(uuid()) @db.Uuid
+  legalRuleId   String   @db.Uuid
+  versionNumber Int
+  snapshotJson  Json
+  changeSummary String?
+  changedById   String?  @db.Uuid
+  createdAt     DateTime @default(now())
+
+  legalRule LegalRule @relation(fields: [legalRuleId], references: [id], onDelete: Cascade)
+  changedBy User?     @relation(fields: [changedById], references: [id], onDelete: SetNull)
+
+  @@unique([legalRuleId, versionNumber])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AUDIT TRAIL, NOTIFICATIONS & EMAIL (§25, §43, §44)
+// ═══════════════════════════════════════════════════════════════════════════
+
+model AuditLog {
+  id         String      @id @default(uuid()) @db.Uuid
+  actorId    String?     @db.Uuid
+  actorRole  UserRole?
+  action     AuditAction
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+  @@index([action, createdAt])
+  @@index([actorId, createdAt])
+  @@schema("legal_platform")
+}
+
+model Notification {
+  id             String              @id @default(uuid()) @db.Uuid
+  userId         String              @db.Uuid
+  type           NotificationType
+  channel        NotificationChannel @default(IN_APP)
+  locale         Language            @default(FR)
+  title          String
+  body           String
+  href           String?
+  contractId     String?             @db.Uuid
+  emailMessageId String?             @db.Uuid
+  readAt         DateTime?
+  createdAt      DateTime            @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contract     Contract?     @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  emailMessage EmailMessage? @relation(fields: [emailMessageId], references: [id], onDelete: SetNull)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@schema("legal_platform")
+}
+
+model EmailMessage {
+  id        String      @id @default(uuid()) @db.Uuid
+  to        String
+  subject   String
+  template  String
+  payload   Json
+  status    EmailStatus @default(LOGGED)
+  provider  String
+  error     String?
+  sentAt    DateTime?
+  createdAt DateTime    @default(now())
+
+  notifications Notification[]
+
+  @@index([to, createdAt])
+  @@index([status])
+  @@schema("legal_platform")
+}

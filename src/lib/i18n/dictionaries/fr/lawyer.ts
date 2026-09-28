@@ -1,0 +1,63 @@
+/** French dictionary — lawyer workspace (§19, §20, §21). */
+export const lawyerFr = {
+  workspaceTitle: "Espace avocat",
+  workspaceSubtitle: "Dossiers attribués, revue et validation.",
+  assignedCases: "Dossiers attribués",
+  assignedCasesEmpty: "Aucun dossier attribué pour le moment.",
+  myWorkload: "Charge de travail",
+  workloadLoad: "Charge actuelle",
+  workloadMax: "Plafond de dossiers simultanés",
+  acceptCase: "Accepter le dossier",
+  declineCase: "Refuser",
+  declineReason: "Motif du refus",
+  declineReasonHint: "Le dossier sera automatiquement réattribué à un autre avocat.",
+  caseAccepted: "Dossier accepté.",
+  caseDeclined: "Dossier refusé — réattribution en cours.",
+
+  reviewPackageTitle: "Dossier de revue",
+  reviewObjective: "Objectif du client",
+  reviewFacts: "Faits structurés",
+  reviewParties: "Parties",
+  reviewDocuments: "Documents",
+  reviewDraft: "Projet préparé par la plateforme",
+  reviewTemplate: "Modèle utilisé",
+  reviewRules: "Règles appliquées au routage",
+  reviewMissing: "Informations manquantes",
+  reviewSummary: "Synthèse générée par l'IA",
+  reviewHistory: "Historique",
+  reviewPayment: "Paiement",
+  reviewAreasTitle: "Points à vérifier",
+  reviewAiNotice:
+    "La synthèse et le projet sont générés automatiquement et clairement identifiés comme tels : la revue juridique reste sous votre responsabilité.",
+
+  actionsTitle: "Actions",
+  actionRequestInfo: "Demander des informations",
+  actionRequestInfoPlaceholder: "Précisez les informations manquantes pour le client…",
+  actionEditDraft: "Modifier le projet",
+  actionEditDraftHint:
+    "Vos modifications créent une nouvelle version du document et sont enregistrées dans l'historique.",
+  actionSaveDraft: "Enregistrer la nouvelle version",
+  actionChangeSummary: "Résumé de la modification",
+  actionRequestChanges: "Demander des modifications",
+  actionReadyForValidation: "Marquer prêt à valider",
+  actionValidate: "Valider le contenu",
+  actionValidateHint:
+    "La validation confirme que vous avez examiné et approuvé le contenu. Elle est distincte d'une signature électronique.",
+  actionReject: "Refuser le dossier",
+  actionRejectReason: "Motif",
+  actionSign: "Signer le document",
+  actionSignaturePending: "Signature en attente",
+  actionInternalValidation: "Validation interne",
+  actionRequestSignature: "Demander la signature",
+  validationKindNotice:
+    "Validation interne (revue approuvée) et signature électronique sont deux opérations différentes : elles sont enregistrées séparément.",
+  sandboxNotice:
+    "Prestataire de signature en environnement de test : la signature produite ici n'a pas la valeur d'une signature électronique qualifiée.",
+
+  statusValidated: "Validé par vos soins",
+  statusSigned: "Signé",
+  informationRequested: "Informations demandées au client",
+  informationProvided: "Informations reçues",
+  noAccess: "Ce dossier ne vous est pas attribué.",
+  contractReadOnly: "Le contrat est dans un état qui ne permet plus de modification.",
+} as const;

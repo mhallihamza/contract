@@ -1,0 +1,130 @@
+/**
+ * French dictionary — shared vocabulary, navigation, auth, errors, disclaimers.
+ * `Dictionary = typeof fr` (see dictionaries/fr/index.ts) so the Arabic
+ * dictionary is type-checked against this shape.
+ */
+export const commonFr = {
+  appName: "Plateforme Juridique Maroc",
+  tagline: "Dites-nous ce que vous voulez faire, nous préparons le bon document.",
+  loading: "Chargement…",
+  save: "Enregistrer",
+  saving: "Enregistrement…",
+  cancel: "Annuler",
+  close: "Fermer",
+  back: "Retour",
+  next: "Suivant",
+  previous: "Précédent",
+  continue: "Continuer",
+  submit: "Valider",
+  edit: "Modifier",
+  view: "Consulter",
+  download: "Télécharger",
+  upload: "Téléverser",
+  remove: "Supprimer",
+  search: "Rechercher",
+  all: "Tous",
+  none: "Aucun",
+  yes: "Oui",
+  no: "Non",
+  optional: "facultatif",
+  required: "obligatoire",
+  notProvided: "Non renseigné",
+  status: "Statut",
+  date: "Date",
+  amount: "Montant",
+  version: "Version",
+  actions: "Actions",
+  details: "Détails",
+  clear: "Effacer",
+  refresh: "Actualiser",
+  retry: "Réessayer",
+  unknown: "Inconnu",
+  empty: "Rien à afficher pour le moment.",
+  confirm: "Confirmer",
+  warning: "Attention",
+  success: "Opération effectuée",
+  unexpectedError: "Une erreur inattendue est survenue. Merci de réessayer.",
+  steps: "Étapes",
+  progress: "Progression",
+  poweredBy: "Assistance IA + validation par un avocat lorsque nécessaire",
+
+  nav: {
+    home: "Accueil",
+    dashboard: "Tableau de bord",
+    contracts: "Mes contrats",
+    newContract: "Nouvelle demande",
+    requests: "Mes demandes",
+    documents: "Documents",
+    payments: "Paiements",
+    profile: "Profil",
+    settings: "Paramètres",
+    notifications: "Notifications",
+    signIn: "Se connecter",
+    signUp: "Créer un compte",
+    signOut: "Se déconnecter",
+    lawyerWorkspace: "Espace avocat",
+    admin: "Administration",
+    language: "Langue",
+  },
+
+  auth: {
+    signInTitle: "Connexion",
+    signInSubtitle: "Accédez à vos contrats et à vos demandes.",
+    signUpTitle: "Créer un compte",
+    signUpSubtitle: "Quelques informations suffisent pour commencer.",
+    email: "Adresse e-mail",
+    password: "Mot de passe",
+    fullName: "Nom complet",
+    phone: "Téléphone",
+    preferredLanguage: "Langue préférée",
+    signInAction: "Se connecter",
+    signUpAction: "Créer mon compte",
+    invalidCredentials: "E-mail ou mot de passe incorrect.",
+    emailTaken: "Un compte existe déjà avec cette adresse e-mail.",
+    passwordTooShort: "Le mot de passe doit contenir au moins 8 caractères.",
+    demoAccounts: "Comptes de démonstration",
+    demoHint: "Environnement de démonstration — données fictives.",
+    signedOut: "Vous êtes déconnecté.",
+    noAccount: "Pas encore de compte ?",
+    hasAccount: "Vous avez déjà un compte ?",
+  },
+
+  errors: {
+    databaseNotConfigured:
+      "La base de données n'est pas configurée. Renseignez DATABASE_URL puis exécutez « npm run db:deploy ».",
+    aiUnavailable:
+      "L'assistant n'a pas pu analyser votre demande. Vous pouvez décrire votre besoin à nouveau ou choisir un modèle proposé.",
+    aiInvalidOutput: "La réponse de l'assistant était incomplète et a été ignorée par sécurité.",
+    missingFields: "Certaines informations obligatoires sont manquantes.",
+    routingUndetermined:
+      "Nous ne pouvons pas déterminer automatiquement le parcours juridique de ce dossier. Un examen manuel est nécessaire.",
+    unsupportedJurisdiction: "Cette juridiction n'est pas encore couverte par la plateforme.",
+    unsupportedContract: "Ce type de document n'est pas proposé par la plateforme pour le moment.",
+    paymentFailed: "Le paiement n'a pas abouti. Aucune prestation n'a été engagée.",
+    assignmentFailed:
+      "Aucun avocat n'est disponible immédiatement. Notre équipe a été alertée et vous serez notifié.",
+    documentFailed: "La génération du document a échoué. Vous pouvez relancer la génération.",
+    signatureFailed: "L'opération de signature a échoué. Aucun document signé n'a été produit.",
+    forbidden: "Vous n'avez pas accès à cette ressource.",
+    notFound: "Ressource introuvable.",
+    unknownContractType: "Type de document non reconnu.",
+    rateLimited: "Trop de tentatives. Merci de patienter un instant.",
+  },
+
+  disclaimers: {
+    aiAssisted:
+      "Contenu préparé avec l'assistance d'une IA, à partir de modèles approuvés et des informations que vous avez fournies.",
+    notLegalAdvice:
+      "La plateforme n'est pas un cabinet d'avocats et ne fournit pas de conseil juridique.",
+    lawyerValidationApplies: "Ce document a été examiné et validé par un avocat selon le parcours choisi.",
+    noBlanketValidity:
+      "Nous n'affirmons pas qu'un document est valable dans toutes les situations ; la validation par un avocat est proposée ou requise selon le dossier.",
+    routingBasedOnRules:
+      "Le parcours proposé est déterminé par les règles configurées pour ce type de dossier.",
+    rulesSources: "Les règles juridiques applicables sont enregistrées avec leur source et leur statut de vérification.",
+    sandboxSignature:
+      "Signature en environnement de test : il ne s'agit pas d'une signature électronique qualifiée.",
+    internalValidation:
+      "Validation interne : l'avocat a examiné et approuvé le contenu du document (différent d'une signature électronique).",
+  },
+} as const;

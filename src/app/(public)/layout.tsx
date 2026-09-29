@@ -20,7 +20,8 @@ export default async function PublicLayout({ children }: { children: ReactNode }
         locale={locale}
         nav={{
           contracts: d.public.nav.contracts,
-          assistant: d.public.nav.assistant,
+          how: d.public.nav.how,
+          help: d.public.nav.help,
           signIn: d.public.nav.signIn,
           mySpace: d.public.nav.mySpace,
         }}

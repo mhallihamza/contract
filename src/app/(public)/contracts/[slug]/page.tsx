@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowRight,
   BadgeCheck,
+  Check,
   ChevronRight,
   Clock,
   FileText,
@@ -13,8 +14,9 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { loadCatalogueItem, loadDocumentOutline, type CatalogueItem } from "@/lib/contracts/catalogue";
+import { getFieldSpecs, partyRoleLabel, partyRolesFor } from "@/lib/contracts/field-catalog";
 import { appConfig } from "@/lib/config";
 import { interpolate } from "@/lib/i18n/dictionaries";
 import { getServerI18n } from "@/lib/i18n/server";
@@ -50,6 +52,20 @@ export default async function ContractProductPage({ params }: { params: Promise<
   const outline = await loadDocumentOutline(item.code);
   const name = locale === "ar" ? item.nameAr : item.nameFr;
   const description = locale === "ar" ? item.descriptionAr : item.descriptionFr;
+
+  /**
+   * "Ce dont vous aurez besoin" — derived from the *actual* questionnaire:
+   * the parties of this contract type and its required field specs, never a
+   * hand-written list that could drift from what the wizard asks.
+   */
+  const neededItems = [
+    ...new Set([
+      ...partyRolesFor(item.code).map((role) => partyRoleLabel(role, locale)),
+      ...getFieldSpecs(item.code)
+        .filter((spec) => spec.required)
+        .map((spec) => (locale === "ar" ? spec.labelAr : spec.labelFr)),
+    ]),
+  ];
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
@@ -97,11 +113,11 @@ export default async function ContractProductPage({ params }: { params: Promise<
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">{t.howTitle}</CardTitle>
+              <CardTitle className="text-base">{t.journeyTitle}</CardTitle>
             </CardHeader>
             <CardContent>
               <ol className="space-y-3 text-sm text-muted-foreground">
-                {t.howSteps.map((step, index) => (
+                {t.journeySteps.map((step, index) => (
                   <li key={step} className="flex gap-3" dir="auto">
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
                       {index + 1}
@@ -110,6 +126,24 @@ export default async function ContractProductPage({ params }: { params: Promise<
                   </li>
                 ))}
               </ol>
+            </CardContent>
+          </Card>
+
+          {/* What the visitor must have ready — derived from the real field specs (§8). */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t.neededTitle}</CardTitle>
+              <CardDescription dir="auto">{t.neededIntro}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-1.5">
+                {neededItems.map((entry) => (
+                  <li key={entry} className="flex items-start gap-2 text-sm text-muted-foreground" dir="auto">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                    {entry}
+                  </li>
+                ))}
+              </ul>
             </CardContent>
           </Card>
 

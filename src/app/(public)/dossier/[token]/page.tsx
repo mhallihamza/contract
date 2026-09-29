@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckoutPanel, type CheckoutLabels } from "@/components/guest/checkout-panel";
 import { GuestUnavailableCard } from "@/components/guest/unavailable-card";
+import { interpolate } from "@/lib/i18n/dictionaries";
 import { requireGuestCase, type GuestCaseView } from "@/lib/guest/service";
 import { getServerI18n } from "@/lib/i18n/server";
 
@@ -143,6 +144,66 @@ export default async function GuestDossierPage({
           </Card>
         ) : null}
 
+        {/* Pre-payment preview (§14) — a real, locked rendering of the case. */}
+        {view.route && view.preview && !paid ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">{co.title}</CardTitle>
+              <CardDescription dir="auto">{co.subtitle}</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <span>{interpolate(co.sections, { count: view.preview.sectionCount })}</span>
+                <span>{interpolate(co.pages, { count: view.preview.estimatedPages })}</span>
+              </div>
+
+              {view.preview.facts.length > 0 ? (
+                <div className="space-y-1.5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {co.personalized}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {view.preview.facts.map((fact) => (
+                      <Badge key={fact.key} variant="outline" className="font-normal">
+                        {locale === "ar" ? fact.labelAr : fact.labelFr}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {view.preview.clauses.length > 0 ? (
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {co.clauses}
+                  </p>
+                  <ul className="space-y-3">
+                    {view.preview.clauses.map((clause) => (
+                      <li key={clause.code} className="space-y-1">
+                        <p className="text-sm font-medium" dir="auto">
+                          {clause.sectionNumber ? `${clause.sectionNumber}. ` : ""}
+                          {locale === "ar" ? clause.titleAr : clause.titleFr}
+                        </p>
+                        <p className="text-xs text-muted-foreground" dir="auto">
+                          {locale === "ar" ? clause.previewAr : clause.previewFr}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              <p
+                className="flex items-start gap-2 rounded-md border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground"
+                dir="auto"
+              >
+                <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                {co.locked}
+              </p>
+            </CardContent>
+          </Card>
+        ) : null}
+
         {payable && view.offers ? (
           <CheckoutPanel
             token={token}
@@ -161,6 +222,21 @@ export default async function GuestDossierPage({
           >
             {t.inProgress}
           </p>
+        ) : null}
+
+        {/* Optional account offer after purchase (§13) — delivery never depends on it. */}
+        {paid ? (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{t.accountTitle}</CardTitle>
+              <CardDescription dir="auto">{t.accountBody}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/sign-in">{t.accountCta}</Link>
+              </Button>
+            </CardContent>
+          </Card>
         ) : null}
 
         <Card>

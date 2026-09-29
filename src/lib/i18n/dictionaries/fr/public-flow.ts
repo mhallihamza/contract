@@ -3,14 +3,53 @@ export const publicFr = {
   nav: {
     home: "Accueil",
     contracts: "Documents",
+    how: "Comment ça marche",
+    help: "Aide",
     assistant: "Assistant",
-    signIn: "Se connecter",
+    signIn: "Connexion",
     mySpace: "Mon espace",
+  },
+
+  home: {
+    heroTitle: "Vos documents juridiques, simplement.",
+    heroSubtitle:
+      "Choisissez un document, répondez à quelques questions et obtenez un document adapté à votre situation.",
+    heroCta: "Voir les documents",
+    heroCtaSecondary: "Je ne sais pas quel document choisir",
+    catalogueTitle: "Choisissez votre document",
+    catalogueSubtitle:
+      "Des modèles éprouvés, un prix annoncé dès le départ, et aucun compte à créer pour commencer.",
+    seeAll: "Voir tous les documents",
+    aiTitle: "Vous ne savez pas quel document choisir ?",
+    aiBody: "Décrivez simplement votre situation et nous vous orienterons vers le document correspondant.",
+    aiCta: "Trouver mon document",
+    processTitle: "Comment ça marche",
+    processSubtitle: "Quelques étapes, de la sélection du document jusqu'à la réception.",
+    processSteps: [
+      {
+        title: "Choisissez",
+        body: "Parcourez le catalogue et choisissez le document adapté à votre situation.",
+      },
+      {
+        title: "Répondez",
+        body: "Répondez à quelques questions : la plateforme applique les règles vérifiées correspondantes.",
+      },
+      {
+        title: "Vérifiez",
+        body: "Prévisualisez votre document, choisissez votre service puis renseignez votre e-mail.",
+      },
+      {
+        title: "Recevez",
+        body: "Payez, puis recevez votre document final et suivez votre dossier en ligne.",
+      },
+    ],
   },
 
   catalogue: {
     eyebrow: "Catalogue",
     title: "Vos documents juridiques, simplement.",
+    pageTitle: "Tous les documents",
+    pageSubtitle: "Trouvez le document adapté à votre situation.",
     subtitle:
       "Choisissez un document pour commencer. Aucun compte n'est nécessaire : vous ne le créez, si vous le souhaitez, qu'après le paiement.",
     start: "Commencer",
@@ -24,6 +63,11 @@ export const publicFr = {
     needHelp: "Vous ne savez pas quel document choisir ?",
     needHelpCta: "Trouver mon document",
     noAccount: "Sans création de compte",
+    searchLabel: "Rechercher un document",
+    searchPlaceholder: "Ex. : location, prestation de services, NDA…",
+    allCategories: "Tous",
+    noResult: "Aucun document ne correspond à votre recherche.",
+    details: "Détails",
     legalNote:
       "Documents générés à partir de modèles approuvés. Aucune exigence légale n'est affirmée sans source vérifiée.",
   },
@@ -31,7 +75,7 @@ export const publicFr = {
   product: {
     home: "Accueil",
     contracts: "Documents",
-    title: "Préparez votre contrat en quelques étapes.",
+    title: "Préparez votre contrat à partir des informations de votre situation.",
     start: "Commencer mon contrat",
     time: "Temps estimé",
     price: "À partir de",
@@ -39,13 +83,17 @@ export const publicFr = {
     whatYouNeedBody: "Vos informations, celles de l'autre partie, et un e-mail pour recevoir le document.",
     documentsTitle: "Pièces utiles",
     documentsEmpty: "Aucune pièce justificative n'est indispensable pour commencer.",
-    howTitle: "Comment ça marche",
-    howSteps: [
-      "Répondez à quelques questions sur votre situation.",
-      "La plateforme vérifie les règles applicables à votre dossier.",
-      "Vous voyez un aperçu réel du document, puis choisissez votre service.",
-      "Après paiement, le document est généré — ou relu par un avocat si nécessaire.",
+    journeyTitle: "Ce que vous allez faire",
+    journeySteps: [
+      "Répondre à quelques questions",
+      "Vérifier vos informations",
+      "Prévisualiser votre document",
+      "Choisir votre service",
+      "Payer",
+      "Recevoir votre document",
     ],
+    neededTitle: "Ce dont vous aurez besoin",
+    neededIntro: "Ces informations alimentent le questionnaire : seules les questions du document choisi vous seront posées.",
     servicesTitle: "Options de service",
     selfServiceTitle: "Document seul",
     selfServiceBody: "Document généré à partir d'un modèle approuvé, utilisable immédiatement.",
@@ -199,5 +247,9 @@ export const publicFr = {
       REFUNDED: "Remboursé",
     },
     resume: "Reprendre le questionnaire",
+    accountTitle: "Votre document vous a été envoyé par e-mail",
+    accountBody:
+      "Conservez ce lien de suivi pour reprendre votre dossier sans compte. Vous avez déjà un espace personnel ? Connectez-vous pour retrouver toutes vos commandes.",
+    accountCta: "Se connecter",
   },
 } as const;

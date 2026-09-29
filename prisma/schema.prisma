@@ -421,6 +421,12 @@ enum AuditAction {
   AI_PROVIDER_FALLBACK
   EMAIL_LOGGED
   SEED_RUN
+  /// Anonymous intake session lifecycle (§8).
+  GUEST_SESSION_CREATED
+  GUEST_SESSION_CONVERTED
+  GUEST_SESSION_EXPIRED
+  /// The client picked one of the offers allowed by the routing decision (§15).
+  SERVICE_OFFER_SELECTED
 
   @@schema("legal_platform")
 }
@@ -490,6 +496,7 @@ model User {
   ruleVersions            LegalRuleVersion[]
   signatureRequests       SignatureRequest[] @relation("SignatureSigner")
   routingDecisions        RoutingDecision[]  @relation("RoutingRequestedBy")
+  convertedGuestSessions  GuestSession[]     @relation("GuestSessionConvertedUser")
 
   @@index([role, status])
   @@schema("legal_platform")
@@ -551,6 +558,36 @@ model Session {
   @@schema("legal_platform")
 }
 
+/// Anonymous intake session (§8). A visitor starts, answers, previews and pays
+/// without creating an account; the session owns the case until (and unless) the
+/// visitor converts. Only the SHA-256 of the token is stored — the raw token
+/// exists in the browser cookie / e-mail link and is never persisted.
+model GuestSession {
+  id              String    @id @default(uuid()) @db.Uuid
+  tokenHash       String    @unique
+  contractTypeId  String?   @db.Uuid
+  locale          Language  @default(FR)
+  email           String?
+  emailVerifiedAt DateTime?
+  expiresAt       DateTime
+  lastSeenAt      DateTime?
+  convertedAt     DateTime?
+  convertedUserId String?   @db.Uuid
+  revokedAt       DateTime?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  contractType  ContractType? @relation(fields: [contractTypeId], references: [id], onDelete: SetNull)
+  contract      Contract?
+  convertedUser User?         @relation("GuestSessionConvertedUser", fields: [convertedUserId], references: [id], onDelete: SetNull)
+
+  @@index([expiresAt])
+  @@index([email])
+  @@schema("legal_platform")
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // CATALOGUE, TEMPLATES & CLAUSES (§14, §15)
 // ═══════════════════════════════════════════════════════════════════════════
@@ -573,6 +610,8 @@ model RoutingProfile {
 model ContractType {
   id                 String           @id @default(uuid()) @db.Uuid
   code               String           @unique
+  /// Public, human-readable URL segment (e.g. contrat-location-habitation).
+  slug               String           @unique
   nameAr             String
   nameFr             String
   descriptionAr      String?
@@ -597,6 +636,7 @@ model ContractType {
   templates      ContractTemplate[]
   contracts      Contract[]
   legalRules     LegalRule[]
+  guestSessions  GuestSession[]
 
   @@index([category, active])
   @@schema("legal_platform")
@@ -693,8 +733,12 @@ model TemplateClause {
 model Contract {
   id                 String         @id @default(uuid()) @db.Uuid
   reference          String         @unique
-  clientId           String         @db.Uuid
+  clientId           String?        @db.Uuid
   contractTypeId     String         @db.Uuid
+  /// Guest intake session that owns this case until the visitor converts (§8).
+  guestSessionId     String?        @unique @db.Uuid
+  /// E-mail captured at checkout — used for guests and signed-in clients alike.
+  customerEmail      String?
   templateVersionId  String?        @db.Uuid
   title              String
   language           Language       @default(FR)
@@ -719,7 +763,8 @@ model Contract {
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt
 
-  client            User                     @relation("ClientContracts", fields: [clientId], references: [id], onDelete: Cascade)
+  client            User?                    @relation("ClientContracts", fields: [clientId], references: [id], onDelete: Cascade)
+  guestSession      GuestSession?            @relation(fields: [guestSessionId], references: [id], onDelete: SetNull)
   contractType      ContractType             @relation(fields: [contractTypeId], references: [id], onDelete: Restrict)
   templateVersion   ContractTemplateVersion? @relation(fields: [templateVersionId], references: [id], onDelete: SetNull)
   assignedLawyer    User?                    @relation("ContractAssignedLawyer", fields: [assignedLawyerId], references: [id], onDelete: SetNull)
@@ -737,6 +782,7 @@ model Contract {
   @@index([clientId, status])
   @@index([status])
   @@index([assignedLawyerId])
+  @@index([customerEmail])
   @@schema("legal_platform")
 }
 
@@ -823,7 +869,7 @@ model ContractDocument {
   id                String       @id @default(uuid()) @db.Uuid
   contractId        String       @db.Uuid
   contractVersionId String?      @db.Uuid
-  ownerId           String       @db.Uuid
+  ownerId           String?      @db.Uuid
   uploadedById      String?      @db.Uuid
   documentType      DocumentType
   storageProvider   String       @default("local")
@@ -838,7 +884,7 @@ model ContractDocument {
 
   contract        Contract         @relation(fields: [contractId], references: [id], onDelete: Cascade)
   contractVersion ContractVersion? @relation(fields: [contractVersionId], references: [id], onDelete: SetNull)
-  owner           User             @relation("DocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  owner           User?            @relation("DocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   uploadedBy      User?            @relation("DocumentUploader", fields: [uploadedById], references: [id], onDelete: SetNull)
 
   @@index([contractId, documentType])
@@ -893,7 +939,7 @@ model RoutingDecision {
 model LawyerRequest {
   id                    String              @id @default(uuid()) @db.Uuid
   contractId            String              @unique @db.Uuid
-  clientId              String              @db.Uuid
+  clientId              String?             @db.Uuid
   lawyerId              String?             @db.Uuid
   draftVersionId        String?             @db.Uuid
   serviceType           PaymentType         @default(LAWYER_REVIEW)
@@ -918,7 +964,7 @@ model LawyerRequest {
   updatedAt             DateTime            @updatedAt
 
   contract          Contract           @relation(fields: [contractId], references: [id], onDelete: Cascade)
-  client            User               @relation("LawyerRequestClient", fields: [clientId], references: [id], onDelete: Cascade)
+  client            User?              @relation("LawyerRequestClient", fields: [clientId], references: [id], onDelete: SetNull)
   lawyer            User?              @relation("LawyerRequestAssignee", fields: [lawyerId], references: [id], onDelete: SetNull)
   validator         User?              @relation("LawyerRequestValidator", fields: [validatedById], references: [id], onDelete: SetNull)
   draftVersion      ContractVersion?   @relation("LawyerRequestDraft", fields: [draftVersionId], references: [id], onDelete: SetNull)
@@ -960,7 +1006,7 @@ model LawyerAssignment {
 
 model Payment {
   id                String        @id @default(uuid()) @db.Uuid
-  userId            String        @db.Uuid
+  userId            String?       @db.Uuid
   contractId        String?       @db.Uuid
   lawyerRequestId   String?       @db.Uuid
   amount            Decimal       @db.Decimal(12, 2)
@@ -977,7 +1023,7 @@ model Payment {
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   contract      Contract?      @relation(fields: [contractId], references: [id], onDelete: SetNull)
   lawyerRequest LawyerRequest? @relation(fields: [lawyerRequestId], references: [id], onDelete: SetNull)
   events        PaymentEvent[]

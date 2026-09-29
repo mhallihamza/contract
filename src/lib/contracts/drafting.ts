@@ -10,11 +10,13 @@ import {
   type RenderedDocument,
 } from "@/lib/contracts/template-render";
 import { buildTemplateVariables, type PartyFacts } from "@/lib/contracts/variable-map";
-import { advanceStatus, contractNeedsLawyer, type ActorContext } from "@/lib/contracts/service";
+import { actorId, actorRole, assertCaseAccess, type CaseActor } from "@/lib/contracts/actor";
+import { advanceStatus, contractNeedsLawyer } from "@/lib/contracts/service";
 import { assertLawyerRequestTransition, assertTransition } from "@/lib/contracts/state-machine";
 import { generateAndStoreDocument } from "@/lib/documents/service";
 import { isFormatSupported } from "@/lib/documents/renderers";
 import { assignLawyer } from "@/lib/lawyers/assignment";
+import { notifyCaseOwner } from "@/lib/notifications/case-owner";
 import { notifyUser } from "@/lib/notifications/service";
 import { LOG_EVENTS, logger } from "@/lib/logging";
 
@@ -111,7 +113,7 @@ function toPartyFacts(row: {
 
 export interface GenerateDraftParams {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
 }
 
 export interface GenerateDraftResult {
@@ -203,8 +205,8 @@ export async function generateDraftForContract(params: GenerateDraftParams): Pro
       contractId: contract.id,
       versionNumber,
       kind: "AI_DRAFT",
-      createdById: params.actor.id,
-      createdByRole: params.actor.role,
+      createdById: actorId(params.actor),
+      createdByRole: actorRole(params.actor),
       content: rendered.body,
       variablesJson: variables as unknown as Prisma.InputJsonValue,
       templateVersionId: templateVersion.id,
@@ -218,8 +220,8 @@ export async function generateDraftForContract(params: GenerateDraftParams): Pro
   const document = await generateAndStoreDocument({
     contractId: contract.id,
     ownerId: contract.clientId,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    actorId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
     documentType: "DRAFT_CONTRACT",
     contractVersionId: version.id,
     format: "docx",
@@ -243,8 +245,8 @@ export async function generateDraftForContract(params: GenerateDraftParams): Pro
     metadata: { versionNumber, documentId: document.id, checksum: document.checksum },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "DRAFT_READY",
     title: locale === "ar" ? "المشروع جاهز" : "Votre projet de contrat est prêt",
     body:
@@ -252,7 +254,6 @@ export async function generateDraftForContract(params: GenerateDraftParams): Pro
         ? `تم إعداد مشروع العقد ${contract.reference} من النموذج المعتمد.`
         : `Le projet de contrat ${contract.reference} a été préparé à partir du modèle approuvé.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
     locale,
   });
 
@@ -289,7 +290,7 @@ export interface LawyerRequestOutcome {
  */
 export async function requestLawyerForContract(params: {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
 }): Promise<LawyerRequestOutcome> {
   const contract = await db.contract.findUniqueOrThrow({
     where: { id: params.contractId },
@@ -326,18 +327,17 @@ export async function requestLawyerForContract(params: {
     specializationHint: contract.contractType.category,
     requiredLanguages: [contract.language],
     jurisdiction: contract.jurisdiction,
-    actorId: params.actor.id,
+    actorId: actorId(params.actor),
   });
 
   if (!outcome.assigned || !outcome.candidate) {
-    await notifyUser({
-      userId: contract.clientId,
+    await notifyCaseOwner({
+      contract,
       type: "ASSIGNMENT_FAILED",
       title: "Attribution en cours",
       body:
         "Aucun avocat n'est disponible immédiatement pour votre dossier. Notre équipe a été alertée et vous serez notifié dès l'attribution.",
       href: `/app/contracts/${contract.id}`,
-      contractId: contract.id,
     });
     return { requested: true, assigned: false, lawyerUserId: null, reason: outcome.failureReason ?? outcome.reason };
   }
@@ -360,8 +360,8 @@ export async function requestLawyerForContract(params: {
       action: "CONTRACT_STATUS_CHANGED",
       entityType: "Contract",
       entityId: contract.id,
-      actorId: params.actor.id,
-      actorRole: params.actor.role,
+      actorId: actorId(params.actor),
+      actorRole: actorRole(params.actor),
       metadata: { from: "DRAFT_READY", to: "LAWYER_PENDING", reason: "lawyer-assignment" },
     });
   }
@@ -375,21 +375,20 @@ export async function requestLawyerForContract(params: {
     contractId: contract.id,
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "LAWYER_ASSIGNED",
     title: "Un avocat a été attribué à votre dossier",
     body: `Le dossier ${contract.reference} a été attribué automatiquement à un avocat de la plateforme.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 
   await recordAudit({
     action: "LAWYER_ASSIGNED",
     entityType: "LawyerRequest",
     entityId: request.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    actorId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
     metadata: { contractId: contract.id, lawyerUserId: outcome.candidate.userId, score: outcome.candidate.score, reason: outcome.reason },
   });
 
@@ -409,7 +408,7 @@ export interface FinalizeResult {
  * rule) or SIGNED. A route that requires a lawyer signature can never reach FINAL
  * before the signature happened — the state machine refuses it.
  */
-export async function finalizeContract(params: { contractId: string; actor: ActorContext }): Promise<FinalizeResult> {
+export async function finalizeContract(params: { contractId: string; actor: CaseActor }): Promise<FinalizeResult> {
   const contract = await db.contract.findUniqueOrThrow({
     where: { id: params.contractId },
     include: { contractType: true, currentVersion: true, lawyerRequest: true },
@@ -439,8 +438,8 @@ export async function finalizeContract(params: { contractId: string; actor: Acto
       contractId: contract.id,
       versionNumber,
       kind: signed ? "SIGNED" : "FINAL",
-      createdById: params.actor.id,
-      createdByRole: params.actor.role,
+      createdById: actorId(params.actor),
+      createdByRole: actorRole(params.actor),
       content,
       templateVersionId: contract.currentVersion?.templateVersionId ?? null,
       changeSummary: signed ? "Version signée du contrat" : "Version finale du contrat",
@@ -451,8 +450,8 @@ export async function finalizeContract(params: { contractId: string; actor: Acto
   const document = await generateAndStoreDocument({
     contractId: contract.id,
     ownerId: contract.clientId,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    actorId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
     documentType: signed ? "SIGNED_CONTRACT" : "FINAL_CONTRACT",
     contractVersionId: version.id,
     format: "docx",
@@ -473,8 +472,8 @@ export async function finalizeContract(params: { contractId: string; actor: Acto
       const pdf = await generateAndStoreDocument({
         contractId: contract.id,
         ownerId: contract.clientId,
-        actorId: params.actor.id,
-        actorRole: params.actor.role,
+        actorId: actorId(params.actor),
+        actorRole: actorRole(params.actor),
         documentType: signed ? "SIGNED_CONTRACT" : "FINAL_CONTRACT",
         contractVersionId: version.id,
         format: "pdf",
@@ -515,18 +514,17 @@ export async function finalizeContract(params: { contractId: string; actor: Acto
     action: "CONTRACT_FINALIZED",
     entityType: "Contract",
     entityId: contract.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    actorId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
     metadata: { versionNumber, documentId: document.id, pdfDocumentId, signed, route: contract.route },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "DOCUMENT_FINALIZED",
     title: signed ? "Votre contrat signé est disponible" : "Votre document final est disponible",
     body: `Le document final du dossier ${contract.reference} peut être téléchargé depuis votre espace.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
     locale,
   });
 
@@ -548,7 +546,7 @@ export async function finalizeContract(params: { contractId: string; actor: Acto
  */
 export async function provideRequestedInformation(params: {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
   text: string;
 }): Promise<void> {
   const contract = await db.contract.findUniqueOrThrow({
@@ -556,7 +554,7 @@ export async function provideRequestedInformation(params: {
     include: { lawyerRequest: true },
   });
 
-  if (contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
 
   const request = contract.lawyerRequest;
   if (!request) throw new Error("NO_LAWYER_REQUEST");
@@ -582,8 +580,8 @@ export async function provideRequestedInformation(params: {
     action: "INFORMATION_PROVIDED",
     entityType: "LawyerRequest",
     entityId: request.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    actorId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
     metadata: { contractId: contract.id, characters: params.text.length },
   });
 }

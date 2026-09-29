@@ -20,5 +20,5 @@ export const EMPTY_ACTION_STATE: ActionState = { ok: false };
 
 /** Session user → domain actor. Identity and role never come from the client. */
 export function actorContext(user: SessionUser): ActorContext {
-  return { id: user.id, role: user.role, fullName: user.fullName, email: user.email };
+  return { kind: "user", id: user.id, role: user.role, fullName: user.fullName, email: user.email };
 }

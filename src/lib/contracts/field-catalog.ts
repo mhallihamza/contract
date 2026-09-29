@@ -1,3 +1,4 @@
+import type { PartyRole } from "@prisma/client";
 import type { FieldSpec } from "./field-types";
 import { RESIDENTIAL_LEASE_FIELDS } from "./field-specs/residential-lease";
 import { FREELANCE_SERVICE_FIELDS } from "./field-specs/freelance-service";
@@ -19,6 +20,50 @@ export const CONTRACT_TYPE_CODES = {
   employmentCdd: "EMPLOYMENT_CDD",
   realEstateSale: "REAL_ESTATE_SALE",
 } as const;
+
+/**
+ * Parties of a contract type (§9, §20).
+ *
+ * The wizard collects the parties because a contract cannot be drafted without
+ * them (`validateParties` requires at least two distinct roles). The mapping is a
+ * single data table — never `if (contractType === ...)` scattered in components.
+ */
+export const CONTRACT_TYPE_PARTY_ROLES: Record<string, PartyRole[]> = {
+  RESIDENTIAL_LEASE: ["LANDLORD", "TENANT"],
+  COMMERCIAL_LEASE: ["LANDLORD", "TENANT"],
+  FREELANCE_SERVICE: ["SERVICE_PROVIDER", "CLIENT"],
+  NDA: ["DISCLOSING_PARTY", "RECEIVING_PARTY"],
+  VEHICLE_SALE: ["SELLER", "BUYER"],
+  EMPLOYMENT_CDD: ["EMPLOYER", "EMPLOYEE"],
+  REAL_ESTATE_SALE: ["SELLER", "BUYER"],
+};
+
+export function partyRolesFor(contractTypeCode: string): PartyRole[] {
+  return CONTRACT_TYPE_PARTY_ROLES[contractTypeCode] ?? ["CLIENT", "OTHER"];
+}
+
+/** Bilingual role labels used by the questionnaire and the preview. */
+export const PARTY_ROLE_LABEL: Record<PartyRole, { fr: string; ar: string }> = {
+  LANDLORD: { fr: "Bailleur (propriétaire)", ar: "المكري (المالك)" },
+  TENANT: { fr: "Locataire", ar: "المكتري" },
+  SERVICE_PROVIDER: { fr: "Prestataire", ar: "مقدّم الخدمة" },
+  CLIENT: { fr: "Client", ar: "العميل" },
+  CUSTOMER: { fr: "Acheteur / Client", ar: "المشتري / العميل" },
+  DISCLOSING_PARTY: { fr: "Partie divulgatrice", ar: "الطرف المُفشي" },
+  RECEIVING_PARTY: { fr: "Partie réceptrice", ar: "الطرف المتلقّي" },
+  SELLER: { fr: "Vendeur", ar: "البائع" },
+  BUYER: { fr: "Acheteur", ar: "المشتري" },
+  EMPLOYER: { fr: "Employeur", ar: "المشغّل" },
+  EMPLOYEE: { fr: "Salarié", ar: "الأجير" },
+  LENDER: { fr: "Prêteur", ar: "المُقرض" },
+  BORROWER: { fr: "Emprunteur", ar: "المقترض" },
+  OTHER: { fr: "Autre partie", ar: "طرف آخر" },
+};
+
+export function partyRoleLabel(role: PartyRole, locale: "fr" | "ar"): string {
+  const label = PARTY_ROLE_LABEL[role];
+  return locale === "ar" ? label.ar : label.fr;
+}
 
 export const FIELD_CATALOG: Record<string, FieldSpec[]> = {
   [CONTRACT_TYPE_CODES.residentialLease]: RESIDENTIAL_LEASE_FIELDS,

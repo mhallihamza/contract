@@ -1,12 +1,27 @@
-import type { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { CONTRACT_TYPE_CODES } from "../../src/lib/contracts/field-catalog";
+
+/**
+ * Public URL segments (§14). Declared here — not derived from the code — so the
+ * catalogue URLs stay stable, readable and localised for the Moroccan market.
+ */
+const SLUGS: Record<string, string> = {
+  [CONTRACT_TYPE_CODES.residentialLease]: "contrat-location-habitation",
+  [CONTRACT_TYPE_CODES.freelanceService]: "contrat-prestation-services",
+  [CONTRACT_TYPE_CODES.nda]: "accord-confidentialite-nda",
+  [CONTRACT_TYPE_CODES.commercialLease]: "bail-commercial",
+  [CONTRACT_TYPE_CODES.vehicleSale]: "contrat-vente-vehicule",
+  [CONTRACT_TYPE_CODES.employmentCdd]: "contrat-travail-cdd",
+  [CONTRACT_TYPE_CODES.realEstateSale]: "compromis-vente-immobiliere",
+};
 
 export async function seedContractTypes(db: PrismaClient) {
   const typeResidentialLease = await db.contractType.upsert({
     where: { code: CONTRACT_TYPE_CODES.residentialLease },
-    update: { active: true, status: "ACTIVE" },
+    update: { active: true, status: "ACTIVE", slug: SLUGS[CONTRACT_TYPE_CODES.residentialLease]! },
     create: {
       code: CONTRACT_TYPE_CODES.residentialLease,
+      slug: SLUGS[CONTRACT_TYPE_CODES.residentialLease]!,
       nameFr: "Bail d'habitation",
       nameAr: "عقد كراء سكني",
       descriptionFr: "Contrat de location résidentielle soumis à la loi 67-12.",
@@ -35,6 +50,7 @@ export async function seedContractTypes(db: PrismaClient) {
     update: { active: true, status: "ACTIVE" },
     create: {
       code: CONTRACT_TYPE_CODES.freelanceService,
+      slug: SLUGS[CONTRACT_TYPE_CODES.freelanceService]!,
       nameFr: "Contrat de prestation de services / Freelance",
       nameAr: "عقد تقديم خدمات / عمل حر",
       descriptionFr: "Convention de prestation intellectuelle ou technique indépendante régie par le DOC.",
@@ -56,6 +72,7 @@ export async function seedContractTypes(db: PrismaClient) {
     update: { active: true, status: "ACTIVE" },
     create: {
       code: CONTRACT_TYPE_CODES.nda,
+      slug: SLUGS[CONTRACT_TYPE_CODES.nda]!,
       nameFr: "Accord de confidentialité (NDA)",
       nameAr: "اتفاقية عدم إفصاح وسرية",
       descriptionFr: "Protection d'informations confidentielles commerciales ou technologiques.",
@@ -77,6 +94,7 @@ export async function seedContractTypes(db: PrismaClient) {
     update: { active: true, status: "ACTIVE" },
     create: {
       code: CONTRACT_TYPE_CODES.commercialLease,
+      slug: SLUGS[CONTRACT_TYPE_CODES.commercialLease]!,
       nameFr: "Bail commercial (Loi 49-16)",
       nameAr: "عقد كراء تجاري (القانون 49.16)",
       descriptionFr: "Bail de local à usage commercial, industriel ou artisanal.",
@@ -98,6 +116,7 @@ export async function seedContractTypes(db: PrismaClient) {
     update: { active: false, status: "DRAFT" },
     create: {
       code: CONTRACT_TYPE_CODES.realEstateSale,
+      slug: SLUGS[CONTRACT_TYPE_CODES.realEstateSale]!,
       nameFr: "Vente immobilière",
       nameAr: "بيع عقار",
       descriptionFr: "Vente d'immeuble ou de terrain soumise obligatoirement à acte notarié (non traité en ligne).",

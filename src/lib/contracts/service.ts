@@ -1,14 +1,24 @@
-import type { Prisma, UserRole } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import { db } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/audit/logger";
+import {
+  actorAudit,
+  actorId,
+  actorLabel,
+  assertCaseAccess,
+  ownerColumnsFor,
+  type CaseActor,
+  type UserActor,
+} from "@/lib/contracts/actor";
 import { classifyIntentSafely, type IntentClassification } from "@/lib/ai";
 import { getFieldSpec } from "@/lib/contracts/field-catalog";
 import { rowsToStructuredCase, toFieldData } from "@/lib/contracts/fields";
 import { buildQuestionSet, collectRuleFieldKeys } from "@/lib/contracts/question-engine";
-import { assertTransition } from "@/lib/contracts/state-machine";
+import { assertLawyerRequestTransition, assertTransition } from "@/lib/contracts/state-machine";
 import { PRIMARY_JURISDICTION, decideRoute } from "@/lib/legal-routing/router";
 import type { RoutingDecisionResult, RoutingRuleDefinition } from "@/lib/legal-routing/types";
 import { quoteService } from "@/lib/payments/pricing";
+import { buildServiceOffers, resolveOfferChoice, type ServiceOfferKey } from "@/lib/contracts/service-offers";
 import { LOG_EVENTS, logger } from "@/lib/logging";
 import type { AppLocale } from "@/lib/i18n/config";
 
@@ -21,12 +31,8 @@ import type { AppLocale } from "@/lib/i18n/config";
  * client-supplied contract type, price or route.
  */
 
-export interface ActorContext {
-  id: string;
-  role: UserRole;
-  fullName: string;
-  email: string;
-}
+/** A signed-in actor. Kept as a named alias because it predates guest sessions. */
+export type ActorContext = UserActor;
 
 export interface ContractTypeSummary {
   id: string;
@@ -169,7 +175,7 @@ export async function transitionStatus(
   contractId: string,
   from: Parameters<typeof assertTransition>[0],
   to: Parameters<typeof assertTransition>[1],
-  context: { actor: ActorContext; reason: string; metadata?: Record<string, unknown> },
+  context: { actor: CaseActor; reason: string; metadata?: Record<string, unknown> },
 ): Promise<void> {
   assertTransition(from, to);
   await db.contract.update({ where: { id: contractId }, data: { status: to } });
@@ -177,8 +183,7 @@ export async function transitionStatus(
     action: "CONTRACT_STATUS_CHANGED",
     entityType: "Contract",
     entityId: contractId,
-    actorId: context.actor.id,
-    actorRole: context.actor.role,
+    ...actorAudit(context.actor),
     metadata: { from, to, reason: context.reason, ...(context.metadata ?? {}) },
   });
 }
@@ -305,7 +310,7 @@ export async function createContractRequest(
 
 export interface SaveAnswersParams {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
   values: Record<string, unknown>;
 }
 
@@ -321,7 +326,7 @@ export async function saveContractAnswers(
     include: { contractType: true, fields: true },
   });
 
-  if (contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
 
   await persistAnswers(params.contractId, contract.contractType.code, params.values, "CLIENT_ANSWER");
 
@@ -340,8 +345,7 @@ export async function saveContractAnswers(
     action: "QUESTIONNAIRE_UPDATED",
     entityType: "Contract",
     entityId: params.contractId,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    ...actorAudit(params.actor),
     metadata: { answeredKeys: Object.keys(params.values), missingKeys: questionSet.missingKeys },
   });
 
@@ -373,7 +377,7 @@ export async function advanceStatus(
   contractId: string,
   from: string,
   target: WalkTarget,
-  context: { actor: ActorContext; reason: string; metadata?: Record<string, unknown> },
+  context: { actor: CaseActor; reason: string; metadata?: Record<string, unknown> },
 ): Promise<void> {
   if (from === target) return;
 
@@ -409,8 +413,7 @@ export async function advanceStatus(
     action: "CONTRACT_STATUS_CHANGED",
     entityType: "Contract",
     entityId: contractId,
-    actorId: context.actor.id,
-    actorRole: context.actor.role,
+    ...actorAudit(context.actor),
     metadata: { from, to: target, reason: context.reason, ...(context.metadata ?? {}) },
   });
 }
@@ -484,7 +487,7 @@ export function contractNeedsLawyer(route: string | null): boolean {
 
 export interface RouteContractParams {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
 }
 
 export interface RouteContractResult {
@@ -507,7 +510,7 @@ export async function routeContract(params: RouteContractParams): Promise<RouteC
     include: { contractType: true, fields: true, lawyerRequest: true },
   });
 
-  if (params.actor.role === "CLIENT" && contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
 
   const rules = await loadRulesForRouting(contract.contractType.id);
   const decision = decideRoute({
@@ -547,7 +550,7 @@ export async function routeContract(params: RouteContractParams): Promise<RouteC
       engineVersion: decision.engineVersion,
       ruleSnapshot: decision.ruleSnapshot as unknown as Prisma.InputJsonValue,
       status: "CONFIRMED",
-      requestedByUserId: params.actor.id,
+      requestedByUserId: actorId(params.actor),
       confirmedAt: new Date(),
     },
   });
@@ -599,8 +602,7 @@ export async function routeContract(params: RouteContractParams): Promise<RouteC
     action: manual ? "ROUTING_UNDETERMINED" : "ROUTING_DECIDED",
     entityType: "RoutingDecision",
     entityId: created.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    ...actorAudit(params.actor),
     metadata: {
       contractId: contract.id,
       route: decision.route,
@@ -632,7 +634,7 @@ export async function routeContract(params: RouteContractParams): Promise<RouteC
 
 export interface ChooseLawyerServiceParams {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
   lawyerServiceSelected: boolean;
 }
 
@@ -651,7 +653,7 @@ export async function chooseLawyerService(
     include: { lawyerRequest: true },
   });
 
-  if (contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
   if (contract.route !== "LAWYER_OPTIONAL") throw new Error("SERVICE_CHOICE_NOT_APPLICABLE");
   if (contract.status !== "ROUTED" && contract.status !== "PAYMENT_REQUIRED") {
     throw new Error(`INVALID_CONTRACT_STATUS_FOR_SERVICE_CHOICE: ${contract.status}`);
@@ -694,8 +696,7 @@ export async function chooseLawyerService(
     action: "LAWYER_SERVICE_SELECTED",
     entityType: "Contract",
     entityId: contract.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    ...actorAudit(params.actor),
     metadata: { lawyerServiceSelected: lawyerRequested, price: quote.amount, currency: quote.currency },
   });
 
@@ -705,7 +706,7 @@ export async function chooseLawyerService(
 /** Cancels a case that has not reached a final state. Never deletes history. */
 export async function cancelContract(params: {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
   reason?: string;
 }): Promise<void> {
   const contract = await db.contract.findUniqueOrThrow({
@@ -713,7 +714,7 @@ export async function cancelContract(params: {
     include: { lawyerRequest: true },
   });
 
-  if (params.actor.role === "CLIENT" && contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
   if (contract.status === "FINAL" || contract.status === "CANCELLED") throw new Error("CONTRACT_NOT_CANCELLABLE");
 
   assertTransition(contract.status, "CANCELLED");
@@ -736,8 +737,212 @@ export async function cancelContract(params: {
     action: "CONTRACT_CANCELLED",
     entityType: "Contract",
     entityId: contract.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    ...actorAudit(params.actor),
     metadata: { reason: params.reason ?? "client-request", previousStatus: contract.status },
   });
+}
+
+export interface CreateCaseParams {
+  actor: CaseActor;
+  /** Contract type chosen in the public catalogue (business code, not a slug). */
+  contractTypeCode: string;
+  locale: AppLocale;
+  title?: string;
+  intentCode?: string | null;
+}
+
+export interface CreateCaseResult {
+  contractId: string;
+  reference: string;
+  contractType: ContractTypeSummary;
+  status: string;
+  missingKeys: string[];
+}
+
+/**
+ * Creates a case from a catalogue choice (§4, §14).
+ *
+ * Unlike `createContractRequest`, no free text is required: the visitor already
+ * picked a document, so the AI plays no part in deciding what to prepare. The
+ * case is created in DRAFT — owned either by the signed-in client or by the
+ * anonymous guest session — and its questionnaire derives from the configured
+ * fields and rule dependencies exactly like the authenticated flow.
+ */
+export async function createContractCase(params: CreateCaseParams): Promise<CreateCaseResult> {
+  const contractType = await db.contractType.findFirst({
+    where: { code: params.contractTypeCode, active: true, status: "ACTIVE" },
+    select: {
+      id: true,
+      code: true,
+      nameFr: true,
+      nameAr: true,
+      category: true,
+      active: true,
+      requiredFields: true,
+    },
+  });
+  if (!contractType) throw new Error("CONTRACT_TYPE_UNRESOLVED");
+
+  const reference = await nextContractReference();
+
+  const contract = await db.contract.create({
+    data: {
+      reference,
+      ...ownerColumnsFor(params.actor),
+      contractTypeId: contractType.id,
+      title: params.title?.trim() || `${contractType.nameFr} — ${reference}`,
+      language: params.locale === "ar" ? "AR" : "FR",
+      jurisdiction: PRIMARY_JURISDICTION,
+      status: "DRAFT",
+      intentCode: params.intentCode ?? null,
+    },
+  });
+
+  await recordAudit({
+    action: "CONTRACT_CREATED",
+    entityType: "Contract",
+    entityId: contract.id,
+    ...actorAudit(params.actor),
+    metadata: {
+      reference,
+      contractTypeCode: contractType.code,
+      locale: params.locale,
+      source: "catalogue",
+      actorLabel: actorLabel(params.actor),
+    },
+  });
+
+  const questionSet = await buildQuestionSetFor(contract.id, contractType);
+
+  return {
+    contractId: contract.id,
+    reference,
+    contractType,
+    status: contract.status,
+    missingKeys: questionSet.missingKeys,
+  };
+}
+
+export interface SelectServiceParams {
+  contractId: string;
+  actor: CaseActor;
+  /** Offer chosen by the client — validated against the routing decision (§15). */
+  offerKey: ServiceOfferKey;
+}
+
+export interface SelectServiceResult {
+  price: number;
+  currency: string;
+  offerKey: ServiceOfferKey;
+  lawyerRequested: boolean;
+  requiresSignature: boolean;
+}
+
+/**
+ * Records the client's service choice (§15, §18).
+ *
+ * The routing decision — not the client — defines the allowed offers: choosing
+ * self-service on a case whose rules require a lawyer is rejected here, and a
+ * request created earlier for an *optional* review can still be withdrawn while it
+ * is unassigned (nothing has been paid yet). The price always comes from
+ * `quoteService`; an amount is never read from the request body.
+ */
+export async function selectContractService(params: SelectServiceParams): Promise<SelectServiceResult> {
+  const contract = await db.contract.findUniqueOrThrow({
+    where: { id: params.contractId },
+    include: { lawyerRequest: true },
+  });
+
+  assertCaseAccess(contract, params.actor);
+  if (!contract.route) throw new Error("CONTRACT_NOT_ROUTED");
+  if (contract.status !== "ROUTED" && contract.status !== "PAYMENT_REQUIRED") {
+    throw new Error(`INVALID_CONTRACT_STATUS_FOR_SERVICE_CHOICE: ${contract.status}`);
+  }
+
+  const offers = buildServiceOffers({
+    route: contract.route,
+    currency: contract.priceCurrency,
+    lawyerServiceSelected: Boolean(contract.lawyerRequest),
+  });
+  if (offers.blocked) throw new Error("ROUTE_NOT_PAYABLE");
+
+  const selectedOffer = offers.offers.find((offer) => offer.key === params.offerKey);
+  if (!selectedOffer) throw new Error("SERVICE_OFFER_NOT_ALLOWED");
+
+  const choice = resolveOfferChoice(offers, selectedOffer.includesLawyer);
+  if (!choice.accepted) throw new Error(choice.reason);
+
+  let lawyerRequested = Boolean(contract.lawyerRequest);
+
+  if (selectedOffer.includesLawyer && !contract.lawyerRequest) {
+    await db.lawyerRequest.create({
+      data: {
+        contractId: contract.id,
+        clientId: contract.clientId,
+        serviceType: contract.route === "LAWYER_OPTIONAL" ? "LAWYER_REVIEW" : "LAWYER_REQUIRED_SERVICE",
+        status: "CREATED",
+        requiresSignature: selectedOffer.includesSignature,
+      },
+    });
+    lawyerRequested = true;
+  }
+
+  if (!selectedOffer.includesLawyer && contract.lawyerRequest) {
+    // Only an unassigned request can be withdrawn; beyond that it is a real
+    // engagement and a human has to handle the change.
+    if (contract.lawyerRequest.status !== "CREATED") throw new Error("LAWYER_REVIEW_ALREADY_REQUESTED");
+    assertLawyerRequestTransition(contract.lawyerRequest.status, "CANCELLED");
+    await db.lawyerRequest.update({
+      where: { id: contract.lawyerRequest.id },
+      data: { status: "CANCELLED" },
+    });
+    lawyerRequested = false;
+  }
+
+  if (contract.lawyerRequest && contract.lawyerRequest.requiresSignature !== selectedOffer.includesSignature) {
+    await db.lawyerRequest.update({
+      where: { id: contract.lawyerRequest.id },
+      data: { requiresSignature: selectedOffer.includesSignature },
+    });
+  }
+
+  const quote = quoteService({
+    route: contract.route,
+    lawyerServiceSelected: lawyerRequested,
+    signatureRequired: selectedOffer.includesSignature,
+    currency: contract.priceCurrency,
+  });
+
+  await db.contract.update({ where: { id: contract.id }, data: { priceAmount: quote.amount } });
+
+  if (contract.status === "ROUTED") {
+    await transitionStatus(contract.id, "ROUTED", "PAYMENT_REQUIRED", {
+      actor: params.actor,
+      reason: "service-selection",
+      metadata: { offerKey: params.offerKey, price: quote.amount },
+    });
+  }
+
+  await recordAudit({
+    action: "SERVICE_OFFER_SELECTED",
+    entityType: "Contract",
+    entityId: contract.id,
+    ...actorAudit(params.actor),
+    metadata: {
+      offerKey: params.offerKey,
+      route: contract.route,
+      price: quote.amount,
+      currency: quote.currency,
+      lawyerRequested,
+      requiresSignature: selectedOffer.includesSignature,
+    },
+  });
+
+  return {
+    price: quote.amount,
+    currency: quote.currency,
+    offerKey: params.offerKey,
+    lawyerRequested,
+    requiresSignature: selectedOffer.includesSignature,
+  };
 }

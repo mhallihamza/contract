@@ -16,7 +16,8 @@ import { renderDocumentFile, type DocumentFormat } from "./renderers";
 
 export interface GenerateDocumentParams {
   contractId: string;
-  ownerId: string;
+  /** Owner of the file: null for an anonymous (guest) case (§8). */
+  ownerId: string | null;
   actorId?: string | null;
   actorRole?: UserRole | null;
   documentType: DocumentType;
@@ -108,7 +109,7 @@ export async function generateAndStoreDocument(params: GenerateDocumentParams): 
 
 export interface UploadDocumentParams {
   contractId: string;
-  ownerId: string;
+  ownerId: string | null;
   actorId: string;
   actorRole: UserRole;
   documentType: DocumentType;

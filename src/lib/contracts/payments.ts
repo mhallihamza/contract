@@ -1,12 +1,18 @@
 import { db } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/audit/logger";
-import type { ActorContext } from "@/lib/contracts/service";
+import {
+  actorAudit,
+  actorId,
+  actorRole,
+  assertCaseAccess,
+  type CaseActor,
+} from "@/lib/contracts/actor";
 import { contractNeedsLawyer } from "@/lib/contracts/service";
 import { generateDraftForContract, requestLawyerForContract } from "@/lib/contracts/drafting";
 import { getPaymentProvider, MockPaymentProvider } from "@/lib/payments/provider";
 import { initiatePayment, processPaymentSettlement } from "@/lib/payments/service";
 import { quoteService } from "@/lib/payments/pricing";
-import { notifyUser } from "@/lib/notifications/service";
+import { notifyCaseOwner } from "@/lib/notifications/case-owner";
 import { logger } from "@/lib/logging";
 
 /**
@@ -30,14 +36,14 @@ export interface StartPaymentResult {
 
 export async function startContractPayment(params: {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
 }): Promise<StartPaymentResult> {
   const contract = await db.contract.findUniqueOrThrow({
     where: { id: params.contractId },
     include: { lawyerRequest: true, payments: { orderBy: { createdAt: "desc" } } },
   });
 
-  if (contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
 
   const provider = getPaymentProvider();
   const quoteInput = {
@@ -78,21 +84,20 @@ export async function startContractPayment(params: {
 
   const { payment, initiation } = await initiatePayment({
     contractId: contract.id,
-    userId: params.actor.id,
-    actorRole: params.actor.role,
-    userEmail: params.actor.email,
+    userId: actorId(params.actor),
+    actorRole: actorRole(params.actor),
+    userEmail: contract.customerEmail ?? params.actor.email ?? "",
     quoteInput,
   });
 
   await db.contract.update({ where: { id: contract.id }, data: { priceAmount: quote.amount } });
 
-  await notifyUser({
-    userId: params.actor.id,
+  await notifyCaseOwner({
+    contract,
     type: "PAYMENT_REQUIRED",
     title: "Paiement requis",
     body: `Le règlement de ${quote.amount} ${quote.currency} est nécessaire pour lancer la préparation du dossier ${contract.reference}.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 
   return {
@@ -123,14 +128,14 @@ export interface SettlePaymentResult {
  */
 export async function settleContractPaymentInSandbox(params: {
   contractId: string;
-  actor: ActorContext;
+  actor: CaseActor;
 }): Promise<SettlePaymentResult> {
   const contract = await db.contract.findUniqueOrThrow({
     where: { id: params.contractId },
     include: { lawyerRequest: true, payments: { orderBy: { createdAt: "desc" } } },
   });
 
-  if (contract.clientId !== params.actor.id) throw new Error("FORBIDDEN");
+  assertCaseAccess(contract, params.actor);
 
   const provider = getPaymentProvider();
   if (!(provider instanceof MockPaymentProvider)) {
@@ -154,13 +159,12 @@ export async function settleContractPaymentInSandbox(params: {
   });
 
   if (!settlement.settled) {
-    await notifyUser({
-      userId: contract.clientId,
+    await notifyCaseOwner({
+      contract,
       type: "PAYMENT_REQUIRED",
       title: "Le paiement n'a pas abouti",
       body: "Aucune prestation n'a été engagée. Vous pouvez relancer le règlement depuis votre dossier.",
       href: `/app/contracts/${contract.id}`,
-      contractId: contract.id,
     });
     return { paid: false, draftGenerated: false, lawyerRequested: false, lawyerAssigned: false, message: "PAYMENT_NOT_SETTLED" };
   }
@@ -179,8 +183,7 @@ export async function settleContractPaymentInSandbox(params: {
     action: "PAYMENT_COMPLETED",
     entityType: "Payment",
     entityId: payment.id,
-    actorId: params.actor.id,
-    actorRole: params.actor.role,
+    ...actorAudit(params.actor),
     metadata: {
       contractId: contract.id,
       amount: Number(payment.amount),

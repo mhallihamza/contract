@@ -9,8 +9,9 @@ import { quoteService, type PriceQuoteInput } from "./pricing";
 
 export interface InitiatePaymentParams {
   contractId: string;
-  userId: string;
-  actorRole: UserRole;
+  /** Null for an anonymous (guest) case — the payment belongs to the contract. */
+  userId: string | null;
+  actorRole: UserRole | null;
   userEmail: string;
   quoteInput: PriceQuoteInput;
   idempotencyKey?: string;

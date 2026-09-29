@@ -1,6 +1,7 @@
 /** French dictionary — lawyer workspace (§19, §20, §21). */
 export const lawyerFr = {
   workspaceTitle: "Espace avocat",
+  guestClient: "Client invité (sans compte)",
   workspaceSubtitle: "Dossiers attribués, revue et validation.",
   assignedCases: "Dossiers attribués",
   assignedCasesEmpty: "Aucun dossier attribué pour le moment.",

@@ -1,5 +1,6 @@
 /** القاموس العربي — فضاء المحامي */
 export const lawyerAr = {
+  guestClient: "عميل زائر (بدون حساب)",
   workspaceTitle: "فضاء المحامي",
   workspaceSubtitle: "الملفات المُسندة، المراجعة والمصادقة.",
   assignedCases: "الملفات المُسندة",

@@ -8,6 +8,7 @@ import { afterAr } from "./after";
 import { lawyerAr } from "./lawyer";
 import { adminAr } from "./admin";
 import { adminKnowledgeAr } from "./admin-knowledge";
+import { publicAr } from "./public-flow";
 
 /**
  * Arabic dictionary. It is typed against the French dictionary, so a missing
@@ -20,4 +21,5 @@ export const ar: Dictionary = {
   client: { ...clientAr, ...flowAr, ...afterAr },
   lawyer: lawyerAr,
   admin: { ...adminAr, ...adminKnowledgeAr },
+  public: publicAr,
 };

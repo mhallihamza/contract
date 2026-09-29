@@ -5,6 +5,7 @@ import { transitionStatus, type ActorContext } from "@/lib/contracts/service";
 import { assertLawyerRequestTransition } from "@/lib/contracts/state-machine";
 import { declineAndReassign } from "@/lib/lawyers/assignment";
 import { generateAndStoreDocument } from "@/lib/documents/service";
+import { notifyCaseOwner } from "@/lib/notifications/case-owner";
 import { notifyUser } from "@/lib/notifications/service";
 
 /**
@@ -62,13 +63,12 @@ export async function acceptCase(params: { contractId: string; actor: ActorConte
     metadata: { contractId: contract.id },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "LAWYER_ACCEPTED",
     title: "Votre dossier est en cours de revue",
     body: `Un avocat a accepté le dossier ${contract.reference} et en commence l'examen.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 }
 
@@ -115,13 +115,12 @@ export async function declineCase(params: {
       contractId: contract.id,
     });
   } else {
-    await notifyUser({
-      userId: contract.clientId,
+    await notifyCaseOwner({
+      contract,
       type: "ASSIGNMENT_FAILED",
       title: "Recherche d'un avocat en cours",
       body: "Un avocat a refusé le dossier et l'attribution est relancée. Vous serez notifié dès qu'un avocat l'accepte.",
       href: `/app/contracts/${contract.id}`,
-      contractId: contract.id,
     });
   }
 
@@ -152,13 +151,12 @@ export async function requestClientInformation(params: {
     metadata: { contractId: contract.id, characters: params.message.length },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "INFORMATION_REQUESTED",
     title: "Informations complémentaires demandées",
     body: `L'avocat en charge du dossier ${contract.reference} demande des précisions. Consultez le dossier pour répondre.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 }
 
@@ -299,15 +297,14 @@ export async function validateCaseAsLawyer(params: { contractId: string; actor: 
     metadata: { contractId: contract.id, requiresSignature: request.requiresSignature },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "CONTRACT_VALIDATED",
     title: "Votre document a été validé",
     body: request.requiresSignature
       ? `Le contenu du dossier ${contract.reference} a été validé par l'avocat. La signature électronique est l'étape suivante.`
       : `Le contenu du dossier ${contract.reference} a été validé par l'avocat.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 }
 
@@ -342,13 +339,12 @@ export async function requestContractChanges(params: {
     metadata: { contractId: contract.id, kind: "CHANGES_REQUESTED" },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "CHANGES_REQUESTED",
     title: "Des modifications sont demandées",
     body: `L'avocat a demandé des modifications sur le dossier ${contract.reference}. Consultez le dossier pour les traiter.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 }
 
@@ -382,12 +378,11 @@ export async function rejectCase(params: {
     metadata: { contractId: contract.id, reason: params.reason },
   });
 
-  await notifyUser({
-    userId: contract.clientId,
+  await notifyCaseOwner({
+    contract,
     type: "ASSIGNMENT_FAILED",
     title: "Le dossier n'a pas pu être traité en ligne",
     body: `Le dossier ${contract.reference} a été refusé par l'avocat. Un administrateur vous contactera pour la suite à donner.`,
     href: `/app/contracts/${contract.id}`,
-    contractId: contract.id,
   });
 }

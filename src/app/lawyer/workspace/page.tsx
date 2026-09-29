@@ -119,7 +119,7 @@ export default async function LawyerWorkspacePage({
                   </span>
                   <span className="flex flex-wrap items-center gap-2">
                     <span className="text-xs text-muted-foreground" dir="auto">
-                      {request.contract.client.fullName}
+                      {request.contract.client?.fullName ?? request.contract.customerEmail ?? d.lawyer.guestClient}
                     </span>
                     {request.requiresSignature ? (
                       <Badge variant="outline" className="text-[10px]">

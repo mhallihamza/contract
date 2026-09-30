@@ -28,6 +28,7 @@ export function CatalogueFilter({
   groups,
   labels,
   strings,
+  initialCategory,
 }: {
   locale: "fr" | "ar";
   groups: FilterableGroup[];
@@ -40,9 +41,17 @@ export function CatalogueFilter({
     start: string;
     details: string;
   };
+  /**
+   * Category opened by the link that brought the visitor here (homepage solution
+   * card, footer column). Only honoured when the catalogue actually groups that
+   * category, so a deep link never lands on an empty page.
+   */
+  initialCategory?: string;
 }) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<string>(ALL);
+  const [category, setCategory] = useState<string>(() =>
+    initialCategory && groups.some((group) => group.category === initialCategory) ? initialCategory : ALL,
+  );
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();

@@ -2,8 +2,8 @@
 
 /* ───────────────────────────────────────────────────────────────────────────
    MOROCCO LEGAL PLATFORM — design tokens (§5)
-   Premium SaaS + legal professional: warm white/ivory canvas, dark navy text,
-   indigo primary accent, subtle borders, restrained shadows.
+   Premium SaaS + legal professional: neutral canvas, dark navy text, a single
+   navy accent (#1E3A6E), subtle borders, restrained shadows.
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
@@ -84,6 +84,55 @@
 
   --font-sans: var(--font-geist-sans), "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Editorial serif of the marketing pages (titles). A webfont can be dropped in
+     here without touching any component: they all use the `font-serif` utility. */
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+
+  /* ── Marketing palette (public pages, §design) ──────────────────────────────
+     One accent for the whole public surface — #1E3A6E — on a neutral canvas:
+     #FAFAF9 for the page, #F5F5F4 for alternating bands, #EEF2FA for light
+     accent zones (icon tiles, banners, image placeholders). Titles #0F1729,
+     secondary text #5B6472, neutral hairlines. No secondary hues and no warm
+     tints anywhere on the public surface. The dashboard and auth screens keep
+     the shadcn tokens (`--primary`). */
+  --color-navy: #0f1729; /* titles and dark text */
+  --color-navy-deep: #0f1729; /* dark bands — final CTA, footer */
+  --color-navy-soft: #eef2fa; /* light accent zone — panels, placeholders */
+  --color-canvas: #fafaf9; /* page canvas */
+  --color-canvas-tint: #f5f5f4; /* alternating neutral band (hero, security) */
+  --color-ink-muted: #5b6472; /* secondary text */
+  --color-hairline: #e5e7eb; /* neutral hairline / card border */
+  --color-accent: #1e3a6e; /* THE accent — buttons, links, active icons */
+  --color-accent-soft: #eef2fa; /* light accent zones — #EEF2FA only */
+}
+
+/* Anchored sections of the marketing pages: keep the sticky header clear. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+/* Every animation of the landing page is decorative: when the visitor asks for
+   reduced motion, transitions and hover movement are switched off entirely. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .motion-safe\:hover\:-translate-y-1:hover,
+  .motion-safe\:hover\:-translate-y-1\.5:hover,
+  .group:hover .motion-safe\:group-hover\:scale-105 {
+    transform: none !important;
+  }
 }
 
 @layer base {

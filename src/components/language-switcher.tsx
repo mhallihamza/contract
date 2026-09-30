@@ -27,7 +27,7 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: "fr" | "ar"
       size="sm"
       onClick={toggle}
       disabled={isPending}
-      className="text-xs font-semibold gap-1.5"
+      className="text-xs font-semibold gap-1.5 text-navy hover:bg-accent-soft hover:text-accent"
     >
       <Globe className="h-3.5 w-3.5" />
       {currentLocale === "fr" ? "العربية" : "Français"}

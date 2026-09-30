@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" role="img" aria-label="Document juridique">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef2fa"/>
+      <stop offset="100%" stop-color="#dbe4f6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="300" cy="130" r="120" fill="#ffffff" opacity="0.5"/>
+  <!-- stacked sheets -->
+  <g transform="translate(430 90)">
+    <rect x="70" y="40" width="420" height="520" rx="22" fill="#152c56" opacity="0.25"/>
+    <rect x="34" y="18" width="420" height="520" rx="22" fill="#152c56" opacity="0.45"/>
+    <rect width="420" height="520" rx="22" fill="#1e3a6e"/>
+    <g fill="#eef2fa">
+      <rect x="54" y="70" width="200" height="22" rx="11"/>
+      <rect x="54" y="126" width="312" height="14" rx="7" opacity="0.7"/>
+      <rect x="54" y="162" width="286" height="14" rx="7" opacity="0.6"/>
+      <rect x="54" y="198" width="304" height="14" rx="7" opacity="0.6"/>
+      <rect x="54" y="234" width="220" height="14" rx="7" opacity="0.5"/>
+      <rect x="54" y="300" width="312" height="14" rx="7" opacity="0.7"/>
+      <rect x="54" y="336" width="268" height="14" rx="7" opacity="0.6"/>
+      <rect x="54" y="372" width="296" height="14" rx="7" opacity="0.6"/>
+    </g>
+    <circle cx="330" cy="430" r="56" fill="#eef2fa" opacity="0.9"/>
+    <path d="M306 430 l18 20 l34 -42" stroke="#1e3a6e" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

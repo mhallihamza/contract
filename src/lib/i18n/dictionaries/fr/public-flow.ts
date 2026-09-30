@@ -8,39 +8,239 @@ export const publicFr = {
     assistant: "Assistant",
     signIn: "Connexion",
     mySpace: "Mon espace",
+    solutions: "Solutions",
+    businesses: "Pour les entreprises",
+    professionals: "Pour les professionnels",
+    resources: "Ressources",
+    start: "Commencer",
+    skipToContent: "Aller au contenu",
   },
 
   home: {
-    heroTitle: "Vos documents juridiques, simplement.",
+    eyebrow: "PLATEFORME JURIDIQUE EN LIGNE",
+    heroTitle: "Vos contrats. Votre tranquillité.",
     heroSubtitle:
-      "Choisissez un document, répondez à quelques questions et obtenez un document adapté à votre situation.",
-    heroCta: "Voir les documents",
-    heroCtaSecondary: "Je ne sais pas quel document choisir",
-    catalogueTitle: "Choisissez votre document",
-    catalogueSubtitle:
-      "Des modèles éprouvés, un prix annoncé dès le départ, et aucun compte à créer pour commencer.",
-    seeAll: "Voir tous les documents",
-    aiTitle: "Vous ne savez pas quel document choisir ?",
-    aiBody: "Décrivez simplement votre situation et nous vous orienterons vers le document correspondant.",
-    aiCta: "Trouver mon document",
-    processTitle: "Comment ça marche",
-    processSubtitle: "Quelques étapes, de la sélection du document jusqu'à la réception.",
-    processSteps: [
+      "Répondez à quelques questions. Nous préparons votre document, et un avocat le valide lorsque c'est nécessaire.",
+    heroCta: "Commencer mon document",
+    heroCtaSecondary: "Décrire mon besoin",
+    reassurance: "Basé sur des modèles vérifiés · Validé par un avocat lorsque nécessaire",
+    trust: [
       {
-        title: "Choisissez",
-        body: "Parcourez le catalogue et choisissez le document adapté à votre situation.",
+        title: "Modèles vérifiés",
+        body: "Chaque règle appliquée est enregistrée avec sa source.",
       },
       {
-        title: "Répondez",
-        body: "Répondez à quelques questions : la plateforme applique les règles vérifiées correspondantes.",
+        title: "Prêt en quelques minutes",
+        body: "Un questionnaire court, puis le document est préparé.",
       },
       {
-        title: "Vérifiez",
-        body: "Prévisualisez votre document, choisissez votre service puis renseignez votre e-mail.",
+        title: "Validation humaine",
+        body: "Les dossiers qui l'exigent sont relus par un avocat.",
+      },
+    ],
+    solutionsTitle: "Ce que vous venez régler",
+    solutionsSubtitle:
+      "Six familles de besoins. Chaque parcours se termine par un document structuré, daté et téléchargeable.",
+    solutionsNote:
+      "Votre besoin n'est pas encore au catalogue ? Décrivez-le : nous vous indiquons s'il peut être traité.",
+    solutionsCta: "Voir les documents",
+    useCases: {
+      immobilier: {
+        title: "Immobilier",
+        body: "Bail d'habitation ou bail commercial : durée, loyer, dépôt de garantie et obligations rédigés noir sur blanc.",
+      },
+      commercial: {
+        title: "Contrats commerciaux",
+        body: "Prestation de services et missions freelance : périmètre, délais et paiement clairement fixés.",
+      },
+      entreprise: {
+        title: "Entreprise",
+        body: "Accord de confidentialité et documents de société pour protéger vos informations et vos accords.",
+      },
+      automobile: {
+        title: "Automobile",
+        body: "Vente de véhicule, mandat ou procuration : le document correspondant à la situation que vous décrivez.",
+      },
+      identite: {
+        title: "Documents & identité",
+        body: "Procurations et pièces administratives : la plateforme vous indique ce qu'il est possible de préparer.",
+      },
+      confidentialite: {
+        title: "Confidentialité",
+        body: "Accords de non-divulgation pour protéger vos informations.",
+      },
+    },
+    stepsTitle: "Comment ça marche",
+    stepsSubtitle: "Quatre étapes, du besoin exprimé au document final.",
+    steps: [
+      {
+        title: "Vous décrivez",
+        body: "Une phrase suffit : votre besoin, en français, en arabe ou en darija.",
       },
       {
-        title: "Recevez",
-        body: "Payez, puis recevez votre document final et suivez votre dossier en ligne.",
+        title: "La plateforme prépare",
+        body: "Elle identifie le document, pose les questions utiles et remplit le projet.",
+      },
+      {
+        title: "Un professionnel valide",
+        body: "Lorsque les règles du dossier le prévoient, la revue est réalisée par un avocat.",
+      },
+      {
+        title: "Vous recevez",
+        body: "Vous approuvez, puis vous téléchargez le document final et suivez chaque étape.",
+      },
+    ],
+    assistantTitle: "Vous écrivez, la plateforme structure",
+    assistantSubtitle:
+      "Aucun jargon à connaître : décrivez la situation, la plateforme transforme votre message en demande juridique organisée.",
+    assistantCta: "Ouvrir l'assistant",
+    assistant: {
+      messageLabel: "Votre message",
+      userMessage: "Je veux louer mon appartement à Casablanca pour un an, 3 500 MAD par mois.",
+      panelTitle: "Demande structurée",
+      typeLabel: "Type de besoin",
+      typeValue: "Location d'un logement",
+      documentLabel: "Document identifié",
+      documentValue: "Bail d'habitation",
+      missingLabel: "Informations manquantes",
+      missingItems: ["Identité du locataire", "Montant du dépôt de garantie"],
+      nextLabel: "Prochaine étape",
+      nextValue: "Questionnaire court, puis préparation du projet",
+      note: "Exemple de traitement — aucune donnée réelle n'est affichée.",
+    },
+    validationTitle: "Un professionnel intervient quand c'est nécessaire",
+    validationSubtitle:
+      "La plateforme ne remplace pas un avocat : elle prépare le document, explique chaque étape et déclenche la revue humaine lorsque le dossier l'exige.",
+    validationStages: [
+      { title: "Client", body: "Vous décrivez votre besoin et complétez le questionnaire." },
+      { title: "Préparation", body: "Le projet de document est rédigé à partir des modèles approuvés." },
+      { title: "Revue professionnelle", body: "Un avocat examine le projet et peut demander des informations." },
+      { title: "Approbation", body: "Vous lisez la version finale et approuvez le document préparé." },
+      { title: "Document final", body: "Le document est disponible au téléchargement, avec son historique." },
+    ],
+    securityTitle: "Vos documents restent privés",
+    securitySubtitle:
+      "Aucun lien public, aucun partage sans votre action : chaque accès est vérifié côté serveur.",
+    securityItems: [
+      { title: "Lien privé", body: "Un dossier ne s'ouvre qu'avec le lien qui vous a été remis." },
+      { title: "Accès par rôle", body: "Chaque intervenant ne voit que les dossiers liés à sa mission." },
+      { title: "Historique daté", body: "Chaque étape est horodatée : vous voyez ce qui a été fait et quand." },
+      { title: "Suppression sur demande", body: "Vous pouvez demander la suppression des données de votre dossier." },
+    ],
+    businessTitle: "Pour les entreprises",
+    businessSubtitle:
+      "Contrats en préparation, validations en attente, documents prêts : un espace de suivi au lieu de dossiers éparpillés.",
+    businessCta: "Voir les documents",
+    business: {
+      previewNote: "Aperçu de démonstration — données fictives.",
+      dashboardTitle: "Tableau de bord",
+      stats: [
+        { label: "En préparation", value: "12" },
+        { label: "En revue", value: "4" },
+        { label: "Prêts à approuver", value: "3" },
+        { label: "Terminés ce mois", value: "27" },
+      ],
+      tableTitle: "Documents récents",
+      columns: { document: "Document", client: "Client", status: "Statut", date: "Date" },
+      rows: [
+        { document: "Bail commercial — Lot 12", client: "Atlas Négoce SARL", status: "En revue", date: "12/03", tone: "review" },
+        { document: "Accord de confidentialité", client: "Studio Digital SARL", status: "Prêt à approuver", date: "11/03", tone: "ready" },
+        { document: "Prestation de services — refonte", client: "Menara Conseil", status: "Terminé", date: "08/03", tone: "done" },
+        { document: "Bail d'habitation — Bourgogne", client: "Amine B.", status: "En préparation", date: "07/03", tone: "draft" },
+      ],
+    },
+    finalCtaTitle: "Un besoin juridique ? Commencez simplement.",
+    finalCtaSubtitle:
+      "Décrivez votre situation. Si la plateforme ne peut pas la traiter, elle vous le dit au lieu de produire un document inadapté.",
+    finalCtaPrimary: "Commencer mon document",
+    finalCtaSecondary: "Parler à l'assistant",
+    footer: {
+      tagline:
+        "Plateforme d'ingénierie juridique : elle structure votre demande, prépare le document et sollicite un avocat lorsque c'est nécessaire.",
+      product: "Produit",
+      solutions: "Solutions",
+      resources: "Ressources",
+      company: "Entreprise",
+      legal: "Légal",
+      links: {
+        catalogue: "Catalogue des documents",
+        assistant: "Assistant",
+        howItWorks: "Comment ça marche",
+        security: "Sécurité des dossiers",
+        immobilier: "Immobilier",
+        commercial: "Contrats commerciaux",
+        entreprise: "Entreprise & confidentialité",
+        describe: "Décrire mon besoin",
+        faq: "Questions fréquentes",
+        validation: "Validation professionnelle",
+        dashboard: "Espace entreprise",
+        signIn: "Connexion",
+        contact: "Nous contacter",
+        demo: "Environnement de démonstration",
+        terms: "Conditions d'utilisation",
+        privacy: "Confidentialité",
+        cookies: "Cookies",
+        notice: "Mentions légales",
+      },
+      socialTitle: "Nous suivre",
+    },
+  },
+
+  legalDoc: {
+    eyebrow: "Informations légales",
+    title: "Ce que cette plateforme fait — et ce qu'elle ne fait pas.",
+    intro:
+      "Cette page décrit l'environnement tel qu'il fonctionne réellement. Les informations d'identification de l'exploitant ne sont pas encore publiées : elles doivent être complétées avant toute mise en production.",
+    sections: [
+      {
+        id: "mentions",
+        title: "Éditeur et objet",
+        body: "Cet environnement est un déploiement de démonstration de la plateforme. Aucune donnée d'identification d'entreprise n'est affichée tant qu'elle n'a pas été fournie par l'exploitant.",
+        bullets: [
+          "Objet : préparer des documents juridiques structurés à partir de modèles approuvés et des informations que vous fournissez.",
+          "Marché visé : Maroc — les règles appliquées sont enregistrées avec leur source.",
+          "La plateforme n'exerce pas elle-même la profession d'avocat : la revue est réalisée par un professionnel habilité.",
+        ],
+      },
+      {
+        id: "demonstration",
+        title: "Environnement de démonstration",
+        body: "Le prestataire de paiement est simulé : la confirmation est reproduite côté serveur et aucun montant réel n'est prélevé.",
+        bullets: [
+          "Les aperçus chiffrés (tableau de bord, exemples de dossiers) sont fictifs et signalés comme tels.",
+          "Les documents produits ici ne doivent pas être utilisés comme actes authentiques.",
+          "Les écrans concernés portent une mention « démonstration » visible.",
+        ],
+      },
+      {
+        id: "terms",
+        title: "Conditions d'utilisation",
+        body: "Le service prépare un document à partir de vos réponses, puis sollicite un professionnel lorsque les règles configurées l'exigent.",
+        bullets: [
+          "L'exactitude des informations fournies conditionne la validité du document préparé.",
+          "La revue ou la signature par un avocat n'intervient que si le dossier le prévoit.",
+          "Aucun conseil juridique personnalisé n'est délivré en dehors de cette revue.",
+        ],
+      },
+      {
+        id: "privacy",
+        title: "Données et confidentialité",
+        body: "Vos documents ne sont jamais exposés par un lien public : chaque dossier s'ouvre par un lien privé remis au client, chaque accès est vérifié côté serveur et chaque étape est horodatée.",
+        bullets: [
+          "Accès par rôle : chaque intervenant ne voit que les dossiers liés à sa mission.",
+          "Suppression sur demande : écrivez au support pour demander la suppression des données d'un dossier.",
+          "Les versions validées et signées sont conservées pour la traçabilité du dossier.",
+        ],
+      },
+      {
+        id: "cookies",
+        title: "Cookies",
+        body: "Deux cookies strictement nécessaires sont posés : la session et la préférence de langue. Aucun cookie publicitaire ni de mesure d'audience n'est utilisé.",
+        bullets: [
+          "mlp.session : maintient votre session ouverte (cookie httpOnly, inaccessible au script).",
+          "mlp.locale : mémorise la langue choisie, français ou arabe.",
+          "Vous pouvez les supprimer depuis votre navigateur à tout moment.",
+        ],
       },
     ],
   },

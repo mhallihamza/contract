@@ -29,6 +29,15 @@ const CATEGORY_LABEL: Record<ContractCategory, { fr: string; ar: string }> = {
   OTHER: { fr: "Autres", ar: "أخرى" },
 };
 
+/**
+ * Guard for the `?category=` deep links the marketing pages publish (homepage
+ * solution cards, footer columns). Anything else is ignored rather than fed to
+ * the filter, so an unknown value can never empty the catalogue.
+ */
+export function isContractCategory(value: string | undefined): value is ContractCategory {
+  return value !== undefined && Object.prototype.hasOwnProperty.call(CATEGORY_LABEL, value);
+}
+
 export interface CatalogueItem {
   code: string;
   slug: string;

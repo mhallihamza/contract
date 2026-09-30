@@ -3,7 +3,7 @@ import { ArrowRight, HelpCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CatalogueFilter } from "@/components/marketing/catalogue-filter";
-import { loadCatalogue } from "@/lib/contracts/catalogue";
+import { loadCatalogue, isContractCategory } from "@/lib/contracts/catalogue";
 import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 import { logger } from "@/lib/logging";
@@ -26,10 +26,13 @@ export const metadata = {
 export default async function CataloguePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; category?: string }>;
 }) {
   const [{ locale, d }, params] = await Promise.all([getServerI18n(), searchParams]);
   const t = d.public.catalogue;
+  // Deep link from a marketing entry point (§11 solutions, §18 footer): the chip
+  // starts on that family. Unknown values are ignored, never applied.
+  const initialCategory = isContractCategory(params.category) ? params.category : undefined;
 
   let groups: Awaited<ReturnType<typeof loadCatalogue>> = [];
   try {
@@ -86,6 +89,7 @@ export default async function CataloguePage({
           locale={locale}
           groups={groups}
           labels={cardLabels}
+          initialCategory={initialCategory}
           strings={{
             searchLabel: t.searchLabel,
             searchPlaceholder: t.searchPlaceholder,

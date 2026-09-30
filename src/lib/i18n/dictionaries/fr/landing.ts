@@ -7,7 +7,7 @@ export const landingFr = {
   heroInputPlaceholder: "Ex. : بغيت نكري الشقة ديالي لعام  /  Je veux louer mon appartement pour un an",
   heroCta: "Commencer ma demande",
   heroSecondaryCta: "Voir comment ça marche",
-  heroTrust: "Assistance IA pour préparer · Avocat lorsque la revue ou la signature est requise",
+  heroTrust: "Préparation à partir de modèles vérifiés · Avocat lorsque la revue ou la signature est requise",
   examplesTitle: "Exemples de demandes",
   examples: [
     "Je veux louer mon appartement pour un an.",
@@ -43,8 +43,8 @@ export const landingFr = {
   faqTitle: "Questions fréquentes",
   faq: [
     {
-      q: "Est-ce que l'IA remplace un avocat ?",
-      a: "Non. L'IA comprend votre demande, pose les questions utiles et prépare un projet à partir de modèles approuvés. La revue et la signature par un avocat interviennent quand les règles configurées le prévoient.",
+      q: "Comment le document est-il préparé ?",
+      a: "Votre document est préparé à partir de modèles juridiques vérifiés. Selon la complexité de votre situation, un avocat partenaire relit et valide le document avant qu'il vous soit remis.",
     },
     {
       q: "Tous les contrats passent-ils par un avocat ?",

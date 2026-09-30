@@ -30,6 +30,13 @@ export const appConfig = {
   /** Working identifier — replace with the marketing brand when decided. */
   name: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MOROCCO_LEGAL_PLATFORM",
   shortName: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MLP",
+  /**
+   * Public marketing brand shown by the landing pages (navy identity).
+   * Internal surfaces keep using `name`; this one is what visitors read.
+   */
+  brand: {
+    name: process.env.NEXT_PUBLIC_BRAND_NAME?.trim() || "DocuMorocco",
+  },
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@example.ma",
   supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim() || "",
   appUrl: process.env.APP_URL?.trim() || "http://localhost:3010",

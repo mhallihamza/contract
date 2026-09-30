@@ -22,13 +22,22 @@ export function MobileNav({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Menu">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Menu"
+          className="text-navy hover:bg-accent-soft hover:text-accent"
+        >
           <Menu className="h-5 w-5" aria-hidden />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-52">
         {links.map((link) => (
-          <DropdownMenuItem key={link.href} asChild>
+          <DropdownMenuItem
+            key={link.href}
+            asChild
+            className="focus:bg-accent-soft focus:text-accent"
+          >
             <Link href={link.href}>{link.label}</Link>
           </DropdownMenuItem>
         ))}

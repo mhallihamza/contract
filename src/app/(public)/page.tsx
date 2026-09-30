@@ -1,140 +1,128 @@
-import Link from "next/link";
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+import { AssistantPreview } from "@/components/landing/assistant-preview";
+import { BusinessSection } from "@/components/landing/business-section";
 import { Faq } from "@/components/landing/faq";
-import { ProcessSteps } from "@/components/landing/process-steps";
-import { CatalogueTabs } from "@/components/marketing/catalogue-tabs";
+import { FinalCta } from "@/components/landing/final-cta";
+import { HomeHero } from "@/components/landing/home-hero";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { ProfessionalValidation } from "@/components/landing/professional-validation";
+import { SecuritySection } from "@/components/landing/security-section";
+import { UseCases } from "@/components/landing/use-cases";
 import { appConfig } from "@/lib/config";
-import { loadCatalogue } from "@/lib/contracts/catalogue";
 import { getServerI18n } from "@/lib/i18n/server";
-import { logger } from "@/lib/logging";
+import { HERO_PHOTO } from "@/lib/marketing/mock-data";
 
-export const metadata = {
-  title: "Vos documents juridiques, simplement — Maroc",
-  description:
-    "Choisissez un document juridique, répondez à quelques questions et obtenez un document adapté à votre situation. Sans création de compte.",
-};
+const BRAND = appConfig.brand.name;
 
 /**
- * Public homepage (§2–§7).
- *
- * Catalogue-first by design: the visitor immediately sees real `ContractType`
- * records grouped by category — no search box, no chatbot and no login wall.
- * The AI assistant stays a secondary router, one click below the catalogue.
+ * Public metadata of the landing page (§27). Locale-aware: the Arabic page must
+ * not advertise itself with the French headline in a search result or a share
+ * card, so title, description and Open Graph locale all come from the dictionary
+ * that is actually rendered. Absolute title: the marketing brand is what a
+ * search result has to show, not the internal product name.
  */
-async function loadHomeGroups() {
-  try {
-    return await loadCatalogue(appConfig.currency);
-  } catch (error) {
-    logger.warn("home.catalogue_unavailable", {
-      error: error instanceof Error ? error.message : String(error),
-    });
-    return [];
-  }
+export async function generateMetadata(): Promise<Metadata> {
+  const { locale, d } = await getServerI18n();
+  const { home } = d.public;
+  const title = `${BRAND} — ${home.heroTitle}`;
+
+  return {
+    title: { absolute: title },
+    description: home.heroSubtitle,
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      siteName: BRAND,
+      title,
+      description: home.heroSubtitle,
+      locale: locale === "ar" ? "ar_MA" : "fr_MA",
+      url: "/",
+      images: [{ url: HERO_PHOTO, alt: "" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: home.heroSubtitle,
+      images: [HERO_PHOTO],
+    },
+    robots: { index: true, follow: true },
+  };
 }
 
+/**
+ * Homepage (§7–§18).
+ *
+ * Eight content blocks in the order a visitor needs them: the promise and its
+ * two doors (hero), the situations we actually cover (solutions), the sequence
+ * of a case (how it works), the one sentence → structured request transformation
+ * (assistant preview), where a human takes over (validation), what we do with
+ * the documents (security), the company view (dashboard preview), the objections
+ * (FAQ) and a closing call to action.
+ *
+ * Every block is a server component fed from the dictionary: no marketing claim
+ * is hard-coded in JSX, so the Arabic page states exactly the same thing as the
+ * French one.
+ */
 export default async function HomePage() {
-  const [{ locale, d }, groups] = await Promise.all([getServerI18n(), loadHomeGroups()]);
-  const home = d.public.home;
-  const t = d.public.catalogue;
-
-  const cardLabels = {
-    from: t.from,
-    estimatedTime: t.estimatedTime,
-    lawyerBadge: t.lawyerBadge,
-  } as const;
+  const { d } = await getServerI18n();
+  const { home } = d.public;
 
   return (
-    <div className="flex flex-col">
-      {/* Hero — restrained, no search input, catalogue as the dominant experience. */}
-      <section className="border-b border-border/60 bg-gradient-to-b from-primary/[0.05] to-background">
-        <div className="mx-auto w-full max-w-6xl px-4 py-20 text-center sm:px-6 lg:py-28">
-          <h1 className="mx-auto max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
-            {home.heroTitle}
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg" dir="auto">
-            {home.heroSubtitle}
-          </p>
+    <>
+      <HomeHero
+        eyebrow={home.eyebrow}
+        title={home.heroTitle}
+        subtitle={home.heroSubtitle}
+        primaryCta={home.heroCta}
+        secondaryCta={home.heroCtaSecondary}
+        reassurance={home.reassurance}
+        trustItems={home.trust}
+      />
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="#documents">
-                {home.heroCta}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/assistant">{home.heroCtaSecondary}</Link>
-            </Button>
-          </div>
+      <UseCases
+        title={home.solutionsTitle}
+        subtitle={home.solutionsSubtitle}
+        note={home.solutionsNote}
+        cta={home.solutionsCta}
+        labels={home.useCases}
+      />
 
-          <p className="mt-6 text-xs text-muted-foreground">{t.noAccount}</p>
-        </div>
-      </section>
+      <HowItWorks title={home.stepsTitle} subtitle={home.stepsSubtitle} steps={home.steps} />
 
-      {/* Catalogue — real database records, grouped by category. */}
-      <section id="documents" className="py-16 lg:py-20">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <header className="max-w-2xl space-y-2">
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{home.catalogueTitle}</h2>
-            <p className="text-sm text-muted-foreground" dir="auto">
-              {home.catalogueSubtitle}
-            </p>
-          </header>
+      <AssistantPreview
+        title={home.assistantTitle}
+        subtitle={home.assistantSubtitle}
+        cta={home.assistantCta}
+        assistant={home.assistant}
+      />
 
-          <div className="mt-8">
-            {groups.length === 0 ? (
-              <p className="text-sm text-muted-foreground" dir="auto">
-                {t.empty}
-              </p>
-            ) : (
-              <CatalogueTabs
-                locale={locale}
-                groups={groups.map((group) => ({
-                  category: group.category,
-                  labelFr: group.labelFr,
-                  labelAr: group.labelAr,
-                  items: group.items,
-                }))}
-                labels={cardLabels}
-                startLabel={t.start}
-              />
-            )}
-          </div>
+      <ProfessionalValidation
+        title={home.validationTitle}
+        subtitle={home.validationSubtitle}
+        stages={home.validationStages}
+      />
 
-          <div className="mt-8 flex justify-center">
-            <Button asChild variant="link" size="lg">
-              <Link href="/contracts">
-                {home.seeAll}
-                <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <SecuritySection
+        title={home.securityTitle}
+        subtitle={home.securitySubtitle}
+        items={home.securityItems}
+      />
 
-      {/* AI assistant — secondary router, never the main experience. */}
-      <section className="border-y border-border/60 bg-muted/20 py-16">
-        <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 text-center sm:px-6">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Sparkles className="h-5 w-5" aria-hidden />
-          </span>
-          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{home.aiTitle}</h2>
-          <p className="max-w-xl text-sm text-muted-foreground" dir="auto">
-            {home.aiBody}
-          </p>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/assistant">
-              {home.aiCta}
-              <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
-            </Link>
-          </Button>
-        </div>
-      </section>
-
-      <ProcessSteps title={home.processTitle} subtitle={home.processSubtitle} steps={home.processSteps} />
+      <BusinessSection
+        title={home.businessTitle}
+        subtitle={home.businessSubtitle}
+        cta={home.businessCta}
+        business={home.business}
+      />
 
       <Faq title={d.landing.faqTitle} items={d.landing.faq} />
-    </div>
+
+      <FinalCta
+        title={home.finalCtaTitle}
+        subtitle={home.finalCtaSubtitle}
+        primaryCta={home.finalCtaPrimary}
+        secondaryCta={home.finalCtaSecondary}
+      />
+    </>
   );
 }

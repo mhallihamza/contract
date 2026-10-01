@@ -18,6 +18,8 @@ export function NeedSection({
   subtitle: string;
   need: {
     inputLabel: string;
+    platformLabel: string;
+    platformMessage: string;
     userMessage: string;
     fields: readonly { label: string; value: string }[];
     cta: string;
@@ -52,9 +54,20 @@ export function NeedSection({
             <ArrowDown className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
           </div>
 
-          {/* What the request becomes. */}
+          {/* What the request becomes — platform header + derived fields. */}
           <div className="rounded-[14px] border border-hairline bg-white p-6 shadow-[0_10px_30px_rgba(16,33,63,0.06)]">
-            <dl className="divide-y divide-hairline">
+            <header className="border-b border-hairline pb-4">
+              <p
+                className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-muted"
+                dir="auto"
+              >
+                {need.platformLabel}
+              </p>
+              <p className="mt-1 text-[15px] font-semibold text-navy" dir="auto">
+                {need.platformMessage}
+              </p>
+            </header>
+            <dl className="mt-4 divide-y divide-hairline">
               {need.fields.map((field) => (
                 <div
                   key={field.label}

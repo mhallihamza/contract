@@ -3,11 +3,11 @@ import { BusinessSection } from "@/components/landing/business-section";
 import { ConfidentialitySection } from "@/components/landing/confidentiality-section";
 import { ContractLifecycle } from "@/components/landing/contract-lifecycle";
 import { ContractReviewSection } from "@/components/landing/contract-review-section";
+import { DocumentManagementSection } from "@/components/landing/document-management-section";
 import { EntrepreneurSection } from "@/components/landing/entrepreneur-section";
 import { Faq } from "@/components/landing/faq";
 import { FinalCta } from "@/components/landing/final-cta";
 import { Hero } from "@/components/landing/hero";
-import { HowItWorks } from "@/components/landing/how-it-works";
 import { NeedSection } from "@/components/landing/need-section";
 import { ProfessionalValidation } from "@/components/landing/professional-validation";
 import { ServicesSection } from "@/components/landing/services-section";
@@ -15,7 +15,6 @@ import { TrustBar } from "@/components/landing/trust-bar";
 import { WhySection } from "@/components/landing/why-section";
 import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
-import { HERO_PHOTO } from "@/lib/marketing/mock-data";
 
 const BRAND = appConfig.brand.name;
 
@@ -42,13 +41,11 @@ export async function generateMetadata(): Promise<Metadata> {
       description: home.metaDescription,
       locale: locale === "ar" ? "ar_MA" : "fr_MA",
       url: "/",
-      images: [{ url: HERO_PHOTO, alt: "" }],
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary",
       title,
       description: home.metaDescription,
-      images: [HERO_PHOTO],
     },
     robots: { index: true, follow: true },
   };
@@ -58,11 +55,11 @@ export async function generateMetadata(): Promise<Metadata> {
  * Homepage (§7–§23).
  *
  * Fourteen blocks in the order a first-time visitor needs them: the promise
- * with its product surface (hero), the trust strip, the need-to-request
- * transformation, the services index, the contract review, the lifecycle,
- * how it works, the professional validation band, the entrepreneur situations,
- * the company dashboard, the principles, confidentiality, the FAQ and the
- * closing call to action.
+ * with its contract-workspace composition (hero), the trust strip, the
+ * need-to-request transformation, the services index, the contract review,
+ * the lifecycle, the professional validation, the document management
+ * surface, the entrepreneur situations, the company dashboard, the
+ * principles, confidentiality, the FAQ and the closing call to action.
  *
  * Every block is a server component fed from the dictionary: no marketing
  * claim is hard-coded in JSX, so the Arabic page states exactly the same thing
@@ -81,8 +78,7 @@ export default async function HomePage() {
         primaryCta={home.heroCta}
         secondaryCta={home.heroCtaSecondary}
         reassurance={home.heroReassurance}
-        photoAlt={home.heroPhotoAlt}
-        panel={home.heroPanel}
+        workspace={home.workspace}
       />
 
       <TrustBar items={home.trustStrip} />
@@ -109,13 +105,17 @@ export default async function HomePage() {
         steps={home.lifecycle}
       />
 
-      <HowItWorks title={home.howTitle} steps={home.steps} />
-
       <ProfessionalValidation
         title={home.validationTitle}
         text={home.validationText}
         points={home.validationPoints}
         dossier={home.dossier}
+      />
+
+      <DocumentManagementSection
+        title={home.documentsTitle}
+        text={home.documentsText}
+        documents={home.documents}
       />
 
       <EntrepreneurSection

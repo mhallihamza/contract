@@ -54,7 +54,7 @@ export function SiteFooter({
     {
       title: labels.platform,
       links: [
-        { href: "/#how-it-works", label: labels.links.howItWorks },
+        { href: "/#lifecycle", label: labels.links.howItWorks },
         { href: "/#business", label: labels.links.businesses },
         { href: "/#validation", label: labels.links.professionals },
         { href: "/#faq", label: labels.links.resources },

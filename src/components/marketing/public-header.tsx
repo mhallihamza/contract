@@ -50,7 +50,7 @@ export function PublicHeader({
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-canvas/95 backdrop-blur">
       <div className="mx-auto flex h-[76px] w-full max-w-[77.5rem] items-center gap-4 px-5 sm:px-6 lg:px-10">
         <Link href="/" className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
           <span className="text-[17px] font-bold tracking-[-0.01em] text-navy">

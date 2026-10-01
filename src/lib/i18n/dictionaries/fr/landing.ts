@@ -47,28 +47,24 @@ export const landingFr = {
       a: "Contrats de prestation, commerciaux et de travail, documents immobiliers et documents d'entreprise. Le catalogue indique les documents disponibles pour votre situation.",
     },
     {
-      q: "Puis-je faire relire un contrat que j'ai déjà ?",
+      q: "Puis-je faire relire un contrat existant ?",
       a: "Oui. Vous déposez votre document : la relecture organise les points qui méritent votre attention avant de vous engager.",
     },
     {
-      q: "Est-ce qu'un professionnel intervient dans mon dossier ?",
+      q: "Quand intervient un professionnel ?",
       a: "Lorsque nécessaire, selon le type de dossier : votre situation peut être orientée vers une validation professionnelle. Vous êtes informé avant que cette étape n'intervienne.",
     },
     {
-      q: "Combien de temps faut-il pour préparer un document ?",
-      a: "Quelques minutes pour répondre et préparer le projet. Le délai dépend ensuite des informations fournies et du parcours choisi, notamment si une validation professionnelle intervient.",
+      q: "Puis-je modifier mon document avant finalisation ?",
+      a: "Oui. Vous consultez le document, demandez des modifications et n'approuvez que la version finale.",
     },
     {
       q: "Puis-je utiliser la plateforme pour mon entreprise ?",
       a: "Oui. Un espace dédié permet de centraliser vos demandes, contrats, documents et validations.",
     },
     {
-      q: "Puis-je modifier un document avant de l'approuver ?",
-      a: "Oui. Vous consultez le document, demandez des modifications et n'approuvez que la version finale.",
-    },
-    {
-      q: "Où sont conservés mes documents ?",
-      a: "Dans votre espace, derrière un accès contrôlé : aucun lien public. La page Politique de confidentialité détaille le traitement des données.",
+      q: "Comment retrouver mes documents ?",
+      a: "Dans votre espace, derrière un accès contrôlé : aucun lien public. Chaque étape est datée et la page Politique de confidentialité détaille le traitement des données.",
     },
   ],
   ctaTitle: "Prêt à décrire votre besoin ?",

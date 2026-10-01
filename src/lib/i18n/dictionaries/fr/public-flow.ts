@@ -30,19 +30,29 @@ export const publicFr = {
     heroCta: "Commencer une demande",
     heroCtaSecondary: "Découvrir nos services",
     heroReassurance: "Pour particuliers, entrepreneurs et entreprises.",
-    heroPhotoAlt:
-      "Espace de travail professionnel : ordinateur portable et dossier sur un bureau.",
-    heroPanel: {
-      label: "VOTRE DEMANDE",
-      subject: "Contrat de prestation",
-      stage: "Préparation du dossier",
-      steps: [
-        { label: "Informations recueillies", done: true },
-        { label: "Document préparé", done: true },
-        { label: "Vérification", done: false },
-        { label: "Finalisation", done: false },
+    // §9 — contract-workspace mockup on the right of the hero (pure UI, no photo).
+    workspace: {
+      ref: "Dossier #CM-0248",
+      status: "En cours",
+      sidebarLabel: "DOSSIER",
+      sidebar: ["Informations", "Contrat", "Vérification", "Validation", "Signature", "Documents"],
+      docTitle: "Contrat de prestation de services",
+      docMeta: ["Version 02", "Mis à jour aujourd'hui"],
+      sections: ["Objet", "Parties", "Prestations", "Durée", "Conditions de paiement", "Résiliation"],
+      statesLabel: "ÉTAT DU DOSSIER",
+      states: [
+        { label: "Informations recueillies", state: "done" },
+        { label: "Document préparé", state: "done" },
+        { label: "Vérification en cours", state: "current" },
+        { label: "Validation professionnelle", state: "pending" },
+        { label: "Signature", state: "pending" },
       ],
-      note: "Exemple de parcours.",
+      card: {
+        label: "VALIDATION",
+        subject: "Contrat de prestation",
+        status: "Prêt pour vérification",
+        cta: "Voir le dossier",
+      },
     },
 
     // §10 — trust strip.
@@ -50,7 +60,7 @@ export const publicFr = {
       "Documents confidentiels",
       "Processus transparent",
       "Validation professionnelle",
-      "Suivi de votre dossier",
+      "Suivi du dossier",
     ],
 
     // §11 — from the need to the structured request.
@@ -59,6 +69,8 @@ export const publicFr = {
       "Pas besoin de connaître le jargon juridique. Expliquez simplement votre situation et nous vous guidons vers la bonne démarche.",
     need: {
       inputLabel: "Votre besoin",
+      platformLabel: "PLATEFORME",
+      platformMessage: "Nous avons identifié votre demande",
       userMessage: "Je dois faire un contrat avec un client pour une prestation.",
       fields: [
         { label: "TYPE", value: "Contrat de prestation" },
@@ -71,7 +83,7 @@ export const publicFr = {
     },
     // §12 — services catalogue.
     servicesEyebrow: "NOS SERVICES",
-    servicesTitle: "Les documents juridiques dont votre activité a besoin.",
+    servicesTitle: "Des contrats adaptés à chaque situation.",
     servicesSubtitle:
       "Des contrats et documents adaptés à votre situation, avec un parcours clair du besoin jusqu'à la finalisation.",
     services: [
@@ -102,14 +114,14 @@ export const publicFr = {
       },
       {
         n: "06",
-        title: "Faire relire un contrat",
+        title: "Relecture de contrats",
         body: "Identifiez les points qui méritent votre attention avant de vous engager.",
       },
     ],
 
     // §13 — contract review.
     reviewTitle: "Vous avez déjà un contrat ?",
-    reviewStatement: "Ne signez pas dans le doute.",
+    reviewStatement: "Comprenez ce que vous vous apprêtez à signer.",
     reviewText:
       "Déposez votre document pour identifier les points qui méritent votre attention avant de vous engager.",
     review: {
@@ -118,14 +130,15 @@ export const publicFr = {
       pages: "12 pages",
       statusLabel: "Statut",
       status: "À vérifier",
+      pointsLabel: "POINTS À VÉRIFIER",
       note: "Aperçu de démonstration — aucune analyse juridique n'est affichée.",
       rows: [
         { label: "Objet du contrat", state: "ok" },
         { label: "Durée", state: "ok" },
         { label: "Conditions de paiement", state: "alert" },
         { label: "Résiliation", state: "alert" },
-        { label: "Responsabilités", state: "alert" },
         { label: "Confidentialité", state: "ok" },
+        { label: "Responsabilités", state: "alert" },
       ],
     },
 
@@ -141,34 +154,10 @@ export const publicFr = {
       { n: "05", title: "SUIVRE", body: "Votre dossier reste consultable, étape par étape." },
     ],
 
-    // §15 — how it works.
-    howTitle: "Simple pour vous. Structuré derrière.",
-    steps: [
-      {
-        n: "01",
-        title: "Vous nous expliquez votre besoin",
-        body: "Quelques informations suffisent pour commencer.",
-      },
-      {
-        n: "02",
-        title: "Nous préparons votre dossier",
-        body: "Les informations nécessaires sont structurées avant la préparation du document.",
-      },
-      {
-        n: "03",
-        title: "Votre dossier est vérifié",
-        body: "Lorsque la situation le nécessite, une validation professionnelle peut intervenir.",
-      },
-      {
-        n: "04",
-        title: "Vous gardez le contrôle",
-        body: "Vous consultez, demandez des modifications et approuvez avant la finalisation.",
-      },
-    ],
-    // §16 — professional validation (dark band).
-    validationTitle: "Certains contrats méritent plus qu'un modèle.",
+    // §16 — professional validation (white section).
+    validationTitle: "Certains dossiers nécessitent une attention particulière.",
     validationText:
-      "Lorsque votre situation nécessite une attention particulière, votre dossier peut être orienté vers une validation professionnelle.",
+      "Lorsque votre situation le nécessite, votre dossier peut être orienté vers une validation professionnelle.",
     validationPoints: [
       {
         title: "Expertise",
@@ -187,9 +176,15 @@ export const publicFr = {
       label: "DOSSIER",
       type: "Contrat commercial",
       statusLabel: "Statut",
-      status: "En cours de vérification",
-      infoLabel: "Informations",
-      items: ["Type de contrat", "Parties", "Objet", "Conditions", "Documents associés"],
+      status: "Validation en cours",
+      infoLabel: "ÉTAPES",
+      items: [
+        { label: "Parties identifiées", done: true },
+        { label: "Objet du contrat", done: true },
+        { label: "Conditions principales", done: true },
+        { label: "Validation professionnelle", done: false },
+        { label: "Finalisation", done: false },
+      ],
     },
 
     // §17 — entrepreneurs.
@@ -208,19 +203,35 @@ export const publicFr = {
       "Centralisez vos demandes, documents, validations et contrats dans un même espace.",
     business: {
       previewNote: "Aperçu de démonstration — données fictives.",
-      sidebar: ["Accueil", "Demandes", "Contrats", "Documents", "Validations", "Historique"],
-      mainTitle: "Vue d'ensemble",
       stats: [
         { label: "Demandes en cours", value: "8" },
         { label: "Contrats actifs", value: "12" },
         { label: "À valider", value: "3" },
         { label: "Documents", value: "24" },
       ],
-      columns: ["Contrat", "Type", "Statut", "Dernière modification"],
+      activityLabel: "Activité récente",
+      activity: [
+        "Contrat de prestation créé",
+        "Document envoyé pour validation",
+        "Version 02 approuvée",
+        "Contrat finalisé",
+      ],
+    },
+
+    // §19 — document management (product preview).
+    documentsTitle: "Tous vos documents. Au même endroit.",
+    documentsText:
+      "Contrats, versions et validations restent réunis dans un seul espace : chaque document garde son statut et son historique.",
+    documents: {
+      previewNote: "Aperçu de démonstration — données fictives.",
+      sidebar: ["Accueil", "Demandes", "Contrats", "Documents", "Validations", "Historique"],
+      title: "Mes contrats",
+      filters: ["Tous", "Actifs", "En validation", "À signer"],
+      columns: ["DOCUMENT", "TYPE", "STATUT", "DATE"],
       rows: [
-        { name: "Contrat de prestation", type: "Commercial", status: "En validation", date: "12/03", tone: "review" },
-        { name: "Contrat fournisseur", type: "Commercial", status: "Actif", date: "10/03", tone: "active" },
-        { name: "Contrat de travail", type: "RH", status: "À approuver", date: "08/03", tone: "pending" },
+        { name: "Contrat de prestation", type: "Commercial", status: "Actif", date: "12/03", tone: "active" },
+        { name: "Contrat fournisseur", type: "Commercial", status: "À valider", date: "10/03", tone: "review" },
+        { name: "Contrat de travail", type: "RH", status: "Brouillon", date: "08/03", tone: "pending" },
       ],
     },
 
@@ -245,7 +256,7 @@ export const publicFr = {
     ],
 
     // §20 — confidentiality.
-    confidentialityTitle: "Vos documents restent vos documents.",
+    confidentialityTitle: "Vos documents méritent de la discrétion.",
     confidentialityText:
       "Les contrats et informations juridiques nécessitent un niveau de confidentialité élevé. L'expérience doit donc inspirer discrétion et contrôle.",
     confidentialityPoints: [
@@ -291,7 +302,7 @@ export const publicFr = {
         contact: "Contact",
         faq: "FAQ",
         notice: "Mentions légales",
-        privacy: "Politique de confidentialité",
+        privacy: "Confidentialité",
         terms: "Conditions d'utilisation",
       },
     },

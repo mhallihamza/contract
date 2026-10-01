@@ -1,11 +1,15 @@
-import { ArrowRight } from "lucide-react";
+import { CheckCircle2, FileText, History, PenLine, Search } from "lucide-react";
+
+/** Icons of the five stages, in dictionary order (§17). */
+const STAGE_ICONS = [FileText, Search, CheckCircle2, PenLine, History];
 
 /**
- * Contract lifecycle (§14) — the big differentiator.
+ * Contract lifecycle (§17) — the journey diagram.
  *
- * Five stages, horizontally on desktop with thin arrows between them,
- * vertically on mobile: the page states that the product follows a contract
- * beyond its redaction — prepare, verify, approve, sign, follow.
+ * Five stages, each with a number, an icon, a title and one sentence, joined
+ * by a thin line that travels across the section: horizontally on large
+ * screens, a vertical timeline on smaller ones — the page never forces a
+ * horizontal overflow.
  */
 export function ContractLifecycle({
   title,
@@ -28,29 +32,33 @@ export function ContractLifecycle({
           </p>
         </header>
 
-        <ol className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
-          {steps.map((step, index) => (
-            <li key={step.n} className="relative border-t border-hairline pt-5">
-              <p className="text-[13px] font-semibold tabular-nums tracking-[0.12em] text-accent">
-                {step.n}
-              </p>
-              <h3
-                className="mt-2 text-[15px] font-semibold uppercase tracking-[0.12em] text-navy"
-                dir="auto"
-              >
-                {step.title}
-              </h3>
-              <p className="mt-2 text-[14px] leading-relaxed text-ink-muted" dir="auto">
-                {step.body}
-              </p>
-              {index < steps.length - 1 ? (
-                <ArrowRight
-                  className="absolute -end-[22px] top-1/2 hidden h-4 w-4 -translate-y-1/2 text-ink-muted lg:block rtl:rotate-180"
-                  aria-hidden
-                />
-              ) : null}
-            </li>
-          ))}
+        <ol className="relative grid gap-8 before:absolute before:inset-y-2 before:start-[18px] before:w-px before:bg-hairline before:content-[''] after:absolute after:inset-x-0 after:top-[18px] after:hidden after:h-px after:bg-hairline after:content-[''] lg:grid-cols-5 lg:gap-6 lg:before:hidden lg:after:block">
+          {steps.map((step) => {
+            const Icon = STAGE_ICONS[0];
+            const index = Number(step.n) - 1;
+            const StageIcon = STAGE_ICONS[index] ?? Icon;
+            return (
+              <li key={step.n} className="relative flex gap-4 lg:block">
+                <span className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-hairline bg-white text-accent lg:mb-4">
+                  <StageIcon className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold tabular-nums tracking-[0.12em] text-accent">
+                    {step.n}
+                  </p>
+                  <h3
+                    className="mt-1.5 text-[15px] font-semibold uppercase tracking-[0.12em] text-navy"
+                    dir="auto"
+                  >
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-[14px] leading-relaxed text-ink-muted" dir="auto">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>

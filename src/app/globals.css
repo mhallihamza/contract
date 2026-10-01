@@ -84,9 +84,9 @@
 
   --font-sans: var(--font-geist-sans), "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  /* Editorial serif of the marketing pages (titles). A webfont can be dropped in
-     here without touching any component: they all use the `font-serif` utility. */
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  /* One typographic family for the whole experience: the landing page never
+     mixes a second voice, so no component may reach for the `font-serif`
+     utility — the acceptance check fails if it ever appears in the output. */
 
   /* ── Marketing palette (public pages, §design) ──────────────────────────────
      Premium legal-services identity. Mostly warm off-white + white + navy +
@@ -102,7 +102,7 @@
        gold           #B89555  — whisper of premium accent, used sparingly.
      No stray decorative hues, no text-colour greens or ambers. */
   --color-navy: #172033; /* titles and primary text */
-  --color-navy-deep: #10213f; /* dark bands — validation, final CTA, footer */
+  --color-navy-deep: #10213f; /* dark bands — contract review, confidentiality panel, footer */
   --color-navy-mid: #183052; /* secondary navy — hovers, dark details */
   --color-navy-soft: #eef1f5; /* derived light navy zone (6% #10213F on white) */
   --color-canvas: #f8f7f3; /* ivory page canvas */

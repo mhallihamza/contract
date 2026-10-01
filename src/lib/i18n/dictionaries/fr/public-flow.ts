@@ -2,187 +2,298 @@
 export const publicFr = {
   nav: {
     home: "Accueil",
-    contracts: "Documents",
+    contracts: "Contrats",
     how: "Comment ça marche",
     help: "Aide",
     assistant: "Assistant",
-    signIn: "Connexion",
+    signIn: "Se connecter",
     mySpace: "Mon espace",
-    solutions: "Solutions",
-    businesses: "Pour les entreprises",
-    professionals: "Pour les professionnels",
+    solutions: "Nos services",
+    businesses: "Entreprises",
+    professionals: "Professionnels",
     resources: "Ressources",
     start: "Commencer",
     skipToContent: "Aller au contenu",
   },
 
   home: {
-    eyebrow: "PLATEFORME JURIDIQUE EN LIGNE",
-    heroTitle: "Vos contrats. Votre tranquillité.",
+    // §33 — SEO metadata (no technology wording).
+    metaTitle: "Contrats et documents juridiques au Maroc",
+    metaDescription:
+      "Préparez, faites vérifier et gérez vos contrats et documents juridiques au Maroc : du besoin au document final, avec validation professionnelle lorsque votre situation l'exige.",
+
+    // §8 — hero.
+    eyebrow: "CONTRATS & DOCUMENTS JURIDIQUES — MAROC",
+    heroTitle: "Vos contrats, en toute sérénité.",
     heroSubtitle:
-      "Répondez à quelques questions. Nous préparons votre document, et un avocat le valide lorsque c'est nécessaire.",
-    heroCta: "Commencer mon document",
-    heroCtaSecondary: "Décrire mon besoin",
-    reassurance: "Basé sur des modèles vérifiés · Validé par un avocat lorsque nécessaire",
-    trust: [
+      "Préparez, faites vérifier et gérez vos contrats et documents juridiques depuis un seul espace.",
+    heroCta: "Commencer une demande",
+    heroCtaSecondary: "Découvrir nos services",
+    heroReassurance: "Pour particuliers, entrepreneurs et entreprises.",
+    heroPhotoAlt:
+      "Espace de travail professionnel : ordinateur portable et dossier sur un bureau.",
+    heroPanel: {
+      label: "VOTRE DEMANDE",
+      subject: "Contrat de prestation",
+      stage: "Préparation du dossier",
+      steps: [
+        { label: "Informations recueillies", done: true },
+        { label: "Document préparé", done: true },
+        { label: "Vérification", done: false },
+        { label: "Finalisation", done: false },
+      ],
+      note: "Exemple de parcours.",
+    },
+
+    // §10 — trust strip.
+    trustStrip: [
+      "Documents confidentiels",
+      "Processus transparent",
+      "Validation professionnelle",
+      "Suivi de votre dossier",
+    ],
+
+    // §11 — from the need to the structured request.
+    needTitle: "Le juridique commence par votre besoin.",
+    needSubtitle:
+      "Pas besoin de connaître le jargon juridique. Expliquez simplement votre situation et nous vous guidons vers la bonne démarche.",
+    need: {
+      inputLabel: "Votre besoin",
+      userMessage: "Je dois faire un contrat avec un client pour une prestation.",
+      fields: [
+        { label: "TYPE", value: "Contrat de prestation" },
+        { label: "PARTIES", value: "Prestataire / Client" },
+        { label: "OBJET", value: "Prestation de services" },
+        { label: "ÉTAPE SUIVANTE", value: "Informations complémentaires" },
+      ],
+      cta: "Continuer",
+      note: "Exemple de traitement — aucune donnée réelle.",
+    },
+    // §12 — services catalogue.
+    servicesEyebrow: "NOS SERVICES",
+    servicesTitle: "Les documents juridiques dont votre activité a besoin.",
+    servicesSubtitle:
+      "Des contrats et documents adaptés à votre situation, avec un parcours clair du besoin jusqu'à la finalisation.",
+    services: [
       {
-        title: "Modèles vérifiés",
-        body: "Chaque règle appliquée est enregistrée avec sa source.",
+        n: "01",
+        title: "Contrats de prestation",
+        body: "Encadrez clairement vos missions, obligations, délais et conditions de paiement.",
       },
       {
-        title: "Prêt en quelques minutes",
-        body: "Un questionnaire court, puis le document est préparé.",
+        n: "02",
+        title: "Contrats commerciaux",
+        body: "Structurez vos relations avec vos clients et partenaires : périmètre, engagements et durées.",
       },
       {
-        title: "Validation humaine",
-        body: "Les dossiers qui l'exigent sont relus par un avocat.",
+        n: "03",
+        title: "Contrats de travail",
+        body: "Encadrez vos recrutements et collaborations avec des clauses claires et complètes.",
+      },
+      {
+        n: "04",
+        title: "Immobilier",
+        body: "Bail d'habitation ou bail commercial : loyer, durée, dépôt de garantie et obligations.",
+      },
+      {
+        n: "05",
+        title: "Documents d'entreprise",
+        body: "Accords de confidentialité et documents de société pour sécuriser vos échanges.",
+      },
+      {
+        n: "06",
+        title: "Faire relire un contrat",
+        body: "Identifiez les points qui méritent votre attention avant de vous engager.",
       },
     ],
-    solutionsTitle: "Ce que vous venez régler",
-    solutionsSubtitle:
-      "Six familles de besoins. Chaque parcours se termine par un document structuré, daté et téléchargeable.",
-    solutionsNote:
-      "Votre besoin n'est pas encore au catalogue ? Décrivez-le : nous vous indiquons s'il peut être traité.",
-    solutionsCta: "Voir les documents",
-    useCases: {
-      immobilier: {
-        title: "Immobilier",
-        body: "Bail d'habitation ou bail commercial : durée, loyer, dépôt de garantie et obligations rédigés noir sur blanc.",
-      },
-      commercial: {
-        title: "Contrats commerciaux",
-        body: "Prestation de services et missions freelance : périmètre, délais et paiement clairement fixés.",
-      },
-      entreprise: {
-        title: "Entreprise",
-        body: "Accord de confidentialité et documents de société pour protéger vos informations et vos accords.",
-      },
-      automobile: {
-        title: "Automobile",
-        body: "Vente de véhicule, mandat ou procuration : le document correspondant à la situation que vous décrivez.",
-      },
-      identite: {
-        title: "Documents & identité",
-        body: "Procurations et pièces administratives : la plateforme vous indique ce qu'il est possible de préparer.",
-      },
-      confidentialite: {
-        title: "Confidentialité",
-        body: "Accords de non-divulgation pour protéger vos informations.",
-      },
+
+    // §13 — contract review.
+    reviewTitle: "Vous avez déjà un contrat ?",
+    reviewStatement: "Ne signez pas dans le doute.",
+    reviewText:
+      "Déposez votre document pour identifier les points qui méritent votre attention avant de vous engager.",
+    review: {
+      docLabel: "DOCUMENT",
+      fileName: "Contrat_de_prestation.pdf",
+      pages: "12 pages",
+      statusLabel: "Statut",
+      status: "À vérifier",
+      note: "Aperçu de démonstration — aucune analyse juridique n'est affichée.",
+      rows: [
+        { label: "Objet du contrat", state: "ok" },
+        { label: "Durée", state: "ok" },
+        { label: "Conditions de paiement", state: "alert" },
+        { label: "Résiliation", state: "alert" },
+        { label: "Responsabilités", state: "alert" },
+        { label: "Confidentialité", state: "ok" },
+      ],
     },
-    stepsTitle: "Comment ça marche",
-    stepsSubtitle: "Quatre étapes, du besoin exprimé au document final.",
+
+    // §14 — contract lifecycle.
+    lifecycleTitle: "Un contrat ne s'arrête pas à sa rédaction.",
+    lifecycleSubtitle:
+      "De la préparation au suivi, chaque étape reste claire et sous votre contrôle.",
+    lifecycle: [
+      { n: "01", title: "PRÉPARER", body: "Votre besoin est structuré et le document est préparé." },
+      { n: "02", title: "VÉRIFIER", body: "Les points qui méritent votre attention sont repérés." },
+      { n: "03", title: "APPROUVER", body: "Vous relisez et approuvez chaque version." },
+      { n: "04", title: "SIGNER", body: "La signature intervient lorsque votre parcours le prévoit." },
+      { n: "05", title: "SUIVRE", body: "Votre dossier reste consultable, étape par étape." },
+    ],
+
+    // §15 — how it works.
+    howTitle: "Simple pour vous. Structuré derrière.",
     steps: [
       {
-        title: "Vous décrivez",
-        body: "Une phrase suffit : votre besoin, en français, en arabe ou en darija.",
+        n: "01",
+        title: "Vous nous expliquez votre besoin",
+        body: "Quelques informations suffisent pour commencer.",
       },
       {
-        title: "La plateforme prépare",
-        body: "Elle identifie le document, pose les questions utiles et remplit le projet.",
+        n: "02",
+        title: "Nous préparons votre dossier",
+        body: "Les informations nécessaires sont structurées avant la préparation du document.",
       },
       {
-        title: "Un professionnel valide",
-        body: "Lorsque les règles du dossier le prévoient, la revue est réalisée par un avocat.",
+        n: "03",
+        title: "Votre dossier est vérifié",
+        body: "Lorsque la situation le nécessite, une validation professionnelle peut intervenir.",
       },
       {
-        title: "Vous recevez",
-        body: "Vous approuvez, puis vous téléchargez le document final et suivez chaque étape.",
+        n: "04",
+        title: "Vous gardez le contrôle",
+        body: "Vous consultez, demandez des modifications et approuvez avant la finalisation.",
       },
     ],
-    assistantTitle: "Vous écrivez, la plateforme structure",
-    assistantSubtitle:
-      "Aucun jargon à connaître : décrivez la situation, la plateforme transforme votre message en demande juridique organisée.",
-    assistantCta: "Ouvrir l'assistant",
-    assistant: {
-      messageLabel: "Votre message",
-      userMessage: "Je veux louer mon appartement à Casablanca pour un an, 3 500 MAD par mois.",
-      panelTitle: "Demande structurée",
-      typeLabel: "Type de besoin",
-      typeValue: "Location d'un logement",
-      documentLabel: "Document identifié",
-      documentValue: "Bail d'habitation",
-      missingLabel: "Informations manquantes",
-      missingItems: ["Identité du locataire", "Montant du dépôt de garantie"],
-      nextLabel: "Prochaine étape",
-      nextValue: "Questionnaire court, puis préparation du projet",
-      note: "Exemple de traitement — aucune donnée réelle n'est affichée.",
+    // §16 — professional validation (dark band).
+    validationTitle: "Certains contrats méritent plus qu'un modèle.",
+    validationText:
+      "Lorsque votre situation nécessite une attention particulière, votre dossier peut être orienté vers une validation professionnelle.",
+    validationPoints: [
+      {
+        title: "Expertise",
+        body: "Votre dossier est préparé à partir de modèles éprouvés et de règles tracées.",
+      },
+      {
+        title: "Contexte",
+        body: "Votre situation est lue dans son contexte avant d'être structurée.",
+      },
+      {
+        title: "Contrôle",
+        body: "Rien n'est final sans votre relecture et votre approbation.",
+      },
+    ],
+    dossier: {
+      label: "DOSSIER",
+      type: "Contrat commercial",
+      statusLabel: "Statut",
+      status: "En cours de vérification",
+      infoLabel: "Informations",
+      items: ["Type de contrat", "Parties", "Objet", "Conditions", "Documents associés"],
     },
-    validationTitle: "Un professionnel intervient quand c'est nécessaire",
-    validationSubtitle:
-      "La plateforme ne remplace pas un avocat : elle prépare le document, explique chaque étape et déclenche la revue humaine lorsque le dossier l'exige.",
-    validationStages: [
-      { title: "Client", body: "Vous décrivez votre besoin et complétez le questionnaire." },
-      { title: "Préparation", body: "Le projet de document est rédigé à partir des modèles approuvés." },
-      { title: "Revue professionnelle", body: "Un avocat examine le projet et peut demander des informations." },
-      { title: "Approbation", body: "Vous lisez la version finale et approuvez le document préparé." },
-      { title: "Document final", body: "Le document est disponible au téléchargement, avec son historique." },
+
+    // §17 — entrepreneurs.
+    entrepreneurTitle: "Votre activité évolue. Vos contrats aussi.",
+    entrepreneurText:
+      "Premier client, nouveau partenaire, recrutement, location, prestation : les besoins juridiques changent avec votre activité.",
+    entrepreneurCases: [
+      { tag: "PREMIER CLIENT", doc: "Contrat de prestation" },
+      { tag: "NOUVEAU PARTENAIRE", doc: "Accord commercial" },
+      { tag: "NOUVELLE ÉQUIPE", doc: "Contrat de travail" },
     ],
-    securityTitle: "Vos documents restent privés",
-    securitySubtitle:
-      "Aucun lien public, aucun partage sans votre action : chaque accès est vérifié côté serveur.",
-    securityItems: [
-      { title: "Lien privé", body: "Un dossier ne s'ouvre qu'avec le lien qui vous a été remis." },
-      { title: "Accès par rôle", body: "Chaque intervenant ne voit que les dossiers liés à sa mission." },
-      { title: "Historique daté", body: "Chaque étape est horodatée : vous voyez ce qui a été fait et quand." },
-      { title: "Suppression sur demande", body: "Vous pouvez demander la suppression des données de votre dossier." },
-    ],
-    businessTitle: "Pour les entreprises",
+
+    // §18 — companies (dashboard preview).
+    businessTitle: "Pour les entreprises qui veulent garder leurs contrats sous contrôle.",
     businessSubtitle:
-      "Contrats en préparation, validations en attente, documents prêts : un espace de suivi au lieu de dossiers éparpillés.",
-    businessCta: "Voir les documents",
+      "Centralisez vos demandes, documents, validations et contrats dans un même espace.",
     business: {
       previewNote: "Aperçu de démonstration — données fictives.",
-      dashboardTitle: "Tableau de bord",
+      sidebar: ["Accueil", "Demandes", "Contrats", "Documents", "Validations", "Historique"],
+      mainTitle: "Vue d'ensemble",
       stats: [
-        { label: "En préparation", value: "12" },
-        { label: "En revue", value: "4" },
-        { label: "Prêts à approuver", value: "3" },
-        { label: "Terminés ce mois", value: "27" },
+        { label: "Demandes en cours", value: "8" },
+        { label: "Contrats actifs", value: "12" },
+        { label: "À valider", value: "3" },
+        { label: "Documents", value: "24" },
       ],
-      tableTitle: "Documents récents",
-      columns: { document: "Document", client: "Client", status: "Statut", date: "Date" },
+      columns: ["Contrat", "Type", "Statut", "Dernière modification"],
       rows: [
-        { document: "Bail commercial — Lot 12", client: "Atlas Négoce SARL", status: "En revue", date: "12/03", tone: "review" },
-        { document: "Accord de confidentialité", client: "Studio Digital SARL", status: "Prêt à approuver", date: "11/03", tone: "ready" },
-        { document: "Prestation de services — refonte", client: "Menara Conseil", status: "Terminé", date: "08/03", tone: "done" },
-        { document: "Bail d'habitation — Bourgogne", client: "Amine B.", status: "En préparation", date: "07/03", tone: "draft" },
+        { name: "Contrat de prestation", type: "Commercial", status: "En validation", date: "12/03", tone: "review" },
+        { name: "Contrat fournisseur", type: "Commercial", status: "Actif", date: "10/03", tone: "active" },
+        { name: "Contrat de travail", type: "RH", status: "À approuver", date: "08/03", tone: "pending" },
       ],
     },
-    finalCtaTitle: "Un besoin juridique ? Commencez simplement.",
-    finalCtaSubtitle:
-      "Décrivez votre situation. Si la plateforme ne peut pas la traiter, elle vous le dit au lieu de produire un document inadapté.",
-    finalCtaPrimary: "Commencer mon document",
-    finalCtaSecondary: "Parler à l'assistant",
+
+    // §19 — principles.
+    whyTitle: "Le juridique, pensé autour de votre besoin.",
+    why: [
+      {
+        n: "01",
+        title: "Comprendre",
+        body: "Nous partons de votre situation, pas d'un formulaire juridique complexe.",
+      },
+      {
+        n: "02",
+        title: "Structurer",
+        body: "Chaque demande est organisée pour rendre les prochaines étapes claires.",
+      },
+      {
+        n: "03",
+        title: "Garder le contrôle",
+        body: "Vous restez décisionnaire à chaque étape importante.",
+      },
+    ],
+
+    // §20 — confidentiality.
+    confidentialityTitle: "Vos documents restent vos documents.",
+    confidentialityText:
+      "Les contrats et informations juridiques nécessitent un niveau de confidentialité élevé. L'expérience doit donc inspirer discrétion et contrôle.",
+    confidentialityPoints: [
+      {
+        title: "Accès contrôlé",
+        body: "Un dossier ne s'ouvre qu'avec son accès : aucun lien public.",
+      },
+      {
+        title: "Documents centralisés",
+        body: "Vos contrats sont réunis au même endroit, plutôt que dispersés.",
+      },
+      {
+        title: "Historique des actions",
+        body: "Chaque étape est datée : vous voyez ce qui a été fait et quand.",
+      },
+    ],
+
+    // §22 — final call to action.
+    finalCtaTitle: "Un contrat à préparer ?",
+    finalCtaSubtitle: "Commencez simplement par nous expliquer votre besoin.",
+    finalCtaPrimary: "Commencer une demande",
+    finalCtaSecondary: "Particuliers · Entrepreneurs · Entreprises",
+
+    // §23 — footer.
     footer: {
       tagline:
-        "Plateforme d'ingénierie juridique : elle structure votre demande, prépare le document et sollicite un avocat lorsque c'est nécessaire.",
-      product: "Produit",
-      solutions: "Solutions",
-      resources: "Ressources",
-      company: "Entreprise",
-      legal: "Légal",
+        "Plateforme de services juridiques : du besoin au document final, avec une validation professionnelle lorsque votre situation l'exige.",
+      services: "SERVICES",
+      platform: "PLATEFORME",
+      company: "ENTREPRISE",
+      legal: "LÉGAL",
       links: {
-        catalogue: "Catalogue des documents",
-        assistant: "Assistant",
+        servicePrestation: "Contrats de prestation",
+        serviceCommercial: "Contrats commerciaux",
+        serviceTravail: "Contrats de travail",
+        serviceRelecture: "Relecture de contrats",
+        serviceEntreprise: "Documents d'entreprise",
         howItWorks: "Comment ça marche",
-        security: "Sécurité des dossiers",
-        immobilier: "Immobilier",
-        commercial: "Contrats commerciaux",
-        entreprise: "Entreprise & confidentialité",
-        describe: "Décrire mon besoin",
-        faq: "Questions fréquentes",
-        validation: "Validation professionnelle",
-        dashboard: "Espace entreprise",
-        signIn: "Connexion",
-        contact: "Nous contacter",
-        demo: "Environnement de démonstration",
-        terms: "Conditions d'utilisation",
-        privacy: "Confidentialité",
-        cookies: "Cookies",
+        businesses: "Entreprises",
+        professionals: "Professionnels",
+        resources: "Ressources",
+        about: "À propos",
+        contact: "Contact",
+        faq: "FAQ",
         notice: "Mentions légales",
+        privacy: "Politique de confidentialité",
+        terms: "Conditions d'utilisation",
       },
-      socialTitle: "Nous suivre",
     },
   },
 
@@ -320,7 +431,7 @@ export const publicFr = {
     notFoundBody: "Ce document n'existe pas ou n'est plus publié. Parcourez le catalogue pour trouver l'équivalent.",
     backToCatalogue: "Retour au catalogue",
     disclaimer:
-      "La plateforme ne délivre pas de conseil juridique automatisé : les exigences applicables proviennent des règles vérifiées, et un professionnel intervient lorsque le parcours l'exige.",
+      "La plateforme ne délivre pas de conseil juridique : les exigences applicables proviennent des règles vérifiées, et un professionnel intervient lorsque le parcours l'exige.",
   },
 
   assistant: {

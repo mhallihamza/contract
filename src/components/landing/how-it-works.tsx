@@ -1,46 +1,36 @@
 /**
- * "Comment ça marche" (§12).
+ * How it works (§15).
  *
- * Four steps written as an editorial list rather than a feature grid: an
- * oversized thin figure (01–04), a navy title and one sentence each, threaded by
- * a single hairline on desktop. No icons here on purpose — the numbers carry the
- * sequence, the line carries the continuity.
+ * Four steps, one headline: "Simple pour vous. Structuré derrière." The third
+ * step keeps the careful promise — a professional validation *may* intervene
+ * when the situation requires it, never that every document is reviewed.
  */
 export function HowItWorks({
   title,
-  subtitle,
   steps,
 }: {
   title: string;
-  subtitle: string;
-  steps: readonly { title: string; body: string }[];
+  steps: readonly { n: string; title: string; body: string }[];
 }) {
   return (
-    <section id="how-it-works" className="px-4 py-16 sm:px-6 lg:py-20" data-landing-section="how">
-      <div className="mx-auto w-full max-w-6xl space-y-12">
-        <header className="max-w-2xl space-y-2">
-          <h2 className="font-serif text-2xl font-semibold tracking-tight text-navy sm:text-[2rem]">
+    <section id="how-it-works" data-landing-section="how-it-works" className="bg-white py-24 lg:py-32">
+      <div className="container-page space-y-12">
+        <header className="max-w-2xl space-y-4">
+          <h2 className="text-[2rem] font-semibold leading-[1.1] tracking-[-0.015em] text-navy sm:text-[2.5rem] lg:text-[3rem]">
             {title}
           </h2>
-          <p className="text-sm leading-relaxed text-ink-muted" dir="auto">
-            {subtitle}
-          </p>
         </header>
 
-        <ol className="relative grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-          {/* Connecting line — decorative, hidden while the steps stack. */}
-          <span aria-hidden className="absolute inset-x-0 top-[2.6rem] hidden h-px bg-hairline lg:block" />
-
-          {steps.map((step, index) => (
-            <li key={step.title} className="relative space-y-3">
-              <span
-                aria-hidden
-                className="block bg-canvas pe-4 font-serif text-[3.25rem] font-extralight leading-none tracking-tight text-navy/25 tabular-nums lg:inline-block"
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className="text-base font-semibold text-navy">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-ink-muted" dir="auto">
+        <ol className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step) => (
+            <li key={step.n} className="border-t border-hairline pt-6">
+              <p className="text-[2.75rem] font-light leading-none tabular-nums text-navy/20">
+                {step.n}
+              </p>
+              <h3 className="mt-4 text-lg font-semibold text-navy lg:text-xl" dir="auto">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-muted" dir="auto">
                 {step.body}
               </p>
             </li>

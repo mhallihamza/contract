@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { AssistantPreview } from "@/components/landing/assistant-preview";
 import { BusinessSection } from "@/components/landing/business-section";
+import { ConfidentialitySection } from "@/components/landing/confidentiality-section";
+import { ContractLifecycle } from "@/components/landing/contract-lifecycle";
+import { ContractReviewSection } from "@/components/landing/contract-review-section";
+import { EntrepreneurSection } from "@/components/landing/entrepreneur-section";
 import { Faq } from "@/components/landing/faq";
 import { FinalCta } from "@/components/landing/final-cta";
-import { HomeHero } from "@/components/landing/home-hero";
+import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { NeedSection } from "@/components/landing/need-section";
 import { ProfessionalValidation } from "@/components/landing/professional-validation";
-import { SecuritySection } from "@/components/landing/security-section";
-import { UseCases } from "@/components/landing/use-cases";
+import { ServicesSection } from "@/components/landing/services-section";
+import { TrustBar } from "@/components/landing/trust-bar";
+import { WhySection } from "@/components/landing/why-section";
 import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 import { HERO_PHOTO } from "@/lib/marketing/mock-data";
@@ -15,26 +20,26 @@ import { HERO_PHOTO } from "@/lib/marketing/mock-data";
 const BRAND = appConfig.brand.name;
 
 /**
- * Public metadata of the landing page (§27). Locale-aware: the Arabic page must
- * not advertise itself with the French headline in a search result or a share
- * card, so title, description and Open Graph locale all come from the dictionary
- * that is actually rendered. Absolute title: the marketing brand is what a
- * search result has to show, not the internal product name.
+ * Public metadata of the landing page (§33). Locale-aware: the Arabic page must
+ * not advertise itself with the French title, so title, description and Open
+ * Graph locale all come from the dictionary that is actually rendered. The
+ * title communicates the category (contracts and legal documents in Morocco),
+ * and neither title nor description mentions any technology.
  */
 export async function generateMetadata(): Promise<Metadata> {
   const { locale, d } = await getServerI18n();
   const { home } = d.public;
-  const title = `${BRAND} — ${home.heroTitle}`;
+  const title = `${BRAND} — ${home.metaTitle}`;
 
   return {
     title: { absolute: title },
-    description: home.heroSubtitle,
+    description: home.metaDescription,
     alternates: { canonical: "/" },
     openGraph: {
       type: "website",
       siteName: BRAND,
       title,
-      description: home.heroSubtitle,
+      description: home.metaDescription,
       locale: locale === "ar" ? "ar_MA" : "fr_MA",
       url: "/",
       images: [{ url: HERO_PHOTO, alt: "" }],
@@ -42,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title,
-      description: home.heroSubtitle,
+      description: home.metaDescription,
       images: [HERO_PHOTO],
     },
     robots: { index: true, follow: true },
@@ -50,18 +55,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Homepage (§7–§18).
+ * Homepage (§7–§23).
  *
- * Eight content blocks in the order a visitor needs them: the promise and its
- * two doors (hero), the situations we actually cover (solutions), the sequence
- * of a case (how it works), the one sentence → structured request transformation
- * (assistant preview), where a human takes over (validation), what we do with
- * the documents (security), the company view (dashboard preview), the objections
- * (FAQ) and a closing call to action.
+ * Fourteen blocks in the order a first-time visitor needs them: the promise
+ * with its product surface (hero), the trust strip, the need-to-request
+ * transformation, the services index, the contract review, the lifecycle,
+ * how it works, the professional validation band, the entrepreneur situations,
+ * the company dashboard, the principles, confidentiality, the FAQ and the
+ * closing call to action.
  *
- * Every block is a server component fed from the dictionary: no marketing claim
- * is hard-coded in JSX, so the Arabic page states exactly the same thing as the
- * French one.
+ * Every block is a server component fed from the dictionary: no marketing
+ * claim is hard-coded in JSX, so the Arabic page states exactly the same thing
+ * as the French one.
  */
 export default async function HomePage() {
   const { d } = await getServerI18n();
@@ -69,50 +74,64 @@ export default async function HomePage() {
 
   return (
     <>
-      <HomeHero
+      <Hero
         eyebrow={home.eyebrow}
         title={home.heroTitle}
         subtitle={home.heroSubtitle}
         primaryCta={home.heroCta}
         secondaryCta={home.heroCtaSecondary}
-        reassurance={home.reassurance}
-        trustItems={home.trust}
+        reassurance={home.heroReassurance}
+        photoAlt={home.heroPhotoAlt}
+        panel={home.heroPanel}
       />
 
-      <UseCases
-        title={home.solutionsTitle}
-        subtitle={home.solutionsSubtitle}
-        note={home.solutionsNote}
-        cta={home.solutionsCta}
-        labels={home.useCases}
+      <TrustBar items={home.trustStrip} />
+
+      <NeedSection title={home.needTitle} subtitle={home.needSubtitle} need={home.need} />
+
+      <ServicesSection
+        eyebrow={home.servicesEyebrow}
+        title={home.servicesTitle}
+        subtitle={home.servicesSubtitle}
+        services={home.services}
       />
 
-      <HowItWorks title={home.stepsTitle} subtitle={home.stepsSubtitle} steps={home.steps} />
-
-      <AssistantPreview
-        title={home.assistantTitle}
-        subtitle={home.assistantSubtitle}
-        cta={home.assistantCta}
-        assistant={home.assistant}
+      <ContractReviewSection
+        title={home.reviewTitle}
+        statement={home.reviewStatement}
+        text={home.reviewText}
+        review={home.review}
       />
+
+      <ContractLifecycle
+        title={home.lifecycleTitle}
+        subtitle={home.lifecycleSubtitle}
+        steps={home.lifecycle}
+      />
+
+      <HowItWorks title={home.howTitle} steps={home.steps} />
 
       <ProfessionalValidation
         title={home.validationTitle}
-        subtitle={home.validationSubtitle}
-        stages={home.validationStages}
+        text={home.validationText}
+        points={home.validationPoints}
+        dossier={home.dossier}
       />
 
-      <SecuritySection
-        title={home.securityTitle}
-        subtitle={home.securitySubtitle}
-        items={home.securityItems}
+      <EntrepreneurSection
+        title={home.entrepreneurTitle}
+        text={home.entrepreneurText}
+        cases={home.entrepreneurCases}
       />
 
-      <BusinessSection
-        title={home.businessTitle}
-        subtitle={home.businessSubtitle}
-        cta={home.businessCta}
-        business={home.business}
+      <BusinessSection title={home.businessTitle} subtitle={home.businessSubtitle} business={home.business} />
+
+      <WhySection title={home.whyTitle} principles={home.why} />
+
+      <ConfidentialitySection
+        title={home.confidentialityTitle}
+        text={home.confidentialityText}
+        points={home.confidentialityPoints}
       />
 
       <Faq title={d.landing.faqTitle} items={d.landing.faq} />

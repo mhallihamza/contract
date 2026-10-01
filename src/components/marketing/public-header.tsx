@@ -8,14 +8,14 @@ import type { AppLocale } from "@/lib/i18n/config";
 import { roleHome } from "@/lib/nav/role-home";
 
 /**
- * Header of the public experience (§6).
+ * Header of the public experience (§7).
  *
- * Typographic mark on the left, five centred entries (Solutions, Comment ça
- * marche, Pour les entreprises, Pour les professionnels, Ressources), then the
- * language switch, a discreet "Connexion" link and the accent "Commencer"
- * button — both in #1E3A6E. Section entries are absolute anchors (`/#…`) so the
- * same bar works on the catalogue, the product pages and the assistant.
- * Starting a document never requires an account.
+ * Typographic wordmark on the left, five understated entries centred
+ * (Nos services, Contrats, Entreprises, Professionnels, Ressources), then the
+ * language switch, a discreet "Se connecter" link and the dark navy
+ * "Commencer" button. Section entries are absolute anchors (`/#…`) so the same
+ * bar works on the catalogue, the product pages and the assistant. Starting a
+ * request never requires an account.
  */
 export function PublicHeader({
   locale,
@@ -25,7 +25,7 @@ export function PublicHeader({
   locale: AppLocale;
   nav: {
     solutions: string;
-    how: string;
+    contracts: string;
     businesses: string;
     professionals: string;
     resources: string;
@@ -36,8 +36,8 @@ export function PublicHeader({
   user: { fullName: string; role: UserRole; status: string } | null;
 }) {
   const links: { href: string; label: string }[] = [
-    { href: "/#solutions", label: nav.solutions },
-    { href: "/#how-it-works", label: nav.how },
+    { href: "/#services", label: nav.solutions },
+    { href: "/contracts", label: nav.contracts },
     { href: "/#business", label: nav.businesses },
     { href: "/#validation", label: nav.professionals },
     { href: "/#faq", label: nav.resources },
@@ -45,25 +45,26 @@ export function PublicHeader({
 
   const mobileLinks: { href: string; label: string }[] = [
     ...links,
-    { href: "/contracts", label: nav.start },
+    { href: "/assistant", label: nav.start },
     user ? { href: roleHome(user.role), label: nav.mySpace } : { href: "/sign-in", label: nav.signIn },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-canvas/95 backdrop-blur">
-      <div className="mx-auto flex h-[72px] w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
-        <Link href="/" className="shrink-0">
-          <span className="font-serif text-xl font-semibold tracking-tight text-navy">
+    <header className="sticky top-0 z-40 w-full border-b border-hairline bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-[76px] w-full max-w-[77.5rem] items-center gap-4 px-5 sm:px-6 lg:px-10">
+        <Link href="/" className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+          <span className="text-[17px] font-bold tracking-[-0.01em] text-navy">
             {appConfig.brand.name}
           </span>
         </Link>
 
-        <nav
-          className="mx-auto hidden items-center gap-7 text-sm text-ink-muted lg:flex"
-          aria-label="Navigation"
-        >
+        <nav className="mx-auto hidden items-center gap-7 text-[13.5px] text-ink-muted lg:flex" aria-label="Navigation">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} className="transition-colors hover:text-navy">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="transition-colors hover:text-navy focus-visible:outline-none focus-visible:text-navy"
+            >
               {link.label}
             </Link>
           ))}
@@ -75,7 +76,7 @@ export function PublicHeader({
           {user ? null : (
             <Link
               href="/sign-in"
-              className="hidden text-sm font-medium text-accent transition-colors hover:text-navy sm:block"
+              className="hidden text-[13.5px] font-medium text-navy transition-colors hover:text-accent sm:block"
             >
               {nav.signIn}
             </Link>
@@ -83,9 +84,9 @@ export function PublicHeader({
 
           <Button
             asChild
-            className="h-11 rounded-[11px] bg-accent px-5 text-white shadow-sm hover:bg-navy focus-visible:ring-accent"
+            className="h-10 rounded-[10px] bg-accent px-5 text-[13.5px] font-semibold text-white transition hover:bg-navy-mid focus-visible:ring-accent"
           >
-            <Link href={user ? roleHome(user.role) : "/contracts"}>
+            <Link href={user ? roleHome(user.role) : "/assistant"}>
               {user ? nav.mySpace : nav.start}
             </Link>
           </Button>

@@ -43,24 +43,32 @@ export const landingFr = {
   faqTitle: "Questions fréquentes",
   faq: [
     {
-      q: "Comment le document est-il préparé ?",
-      a: "Votre document est préparé à partir de modèles juridiques vérifiés. Selon la complexité de votre situation, un avocat partenaire relit et valide le document avant qu'il vous soit remis.",
+      q: "Quels types de contrats puis-je préparer ?",
+      a: "Contrats de prestation, commerciaux et de travail, documents immobiliers et documents d'entreprise. Le catalogue indique les documents disponibles pour votre situation.",
     },
     {
-      q: "Tous les contrats passent-ils par un avocat ?",
-      a: "Non. Certains dossiers sont préparés en autonomie, d'autres proposent une revue facultative, d'autres encore l'exigent. Le parcours dépend des règles enregistrées avec leur source.",
+      q: "Puis-je faire relire un contrat que j'ai déjà ?",
+      a: "Oui. Vous déposez votre document : la relecture organise les points qui méritent votre attention avant de vous engager.",
     },
     {
-      q: "Est-ce que le document est juridiquement valable partout ?",
-      a: "Nous ne l'affirmons pas. La plateforme prépare des documents structurés et indique clairement si une validation par un avocat a eu lieu.",
+      q: "Est-ce qu'un professionnel intervient dans mon dossier ?",
+      a: "Lorsque nécessaire, selon le type de dossier : votre situation peut être orientée vers une validation professionnelle. Vous êtes informé avant que cette étape n'intervienne.",
     },
     {
-      q: "Puis-je écrire en darija ?",
-      a: "Oui. L'arabe, le français et la darija sont compris : vous n'avez pas besoin de connaître le nom juridique du document.",
+      q: "Combien de temps faut-il pour préparer un document ?",
+      a: "Quelques minutes pour répondre et préparer le projet. Le délai dépend ensuite des informations fournies et du parcours choisi, notamment si une validation professionnelle intervient.",
     },
     {
-      q: "Comment payer ?",
-      a: "Le paiement est demandé avant la préparation de la prestation. En environnement de démonstration, un prestataire simulé est utilisé et clairement identifié comme tel.",
+      q: "Puis-je utiliser la plateforme pour mon entreprise ?",
+      a: "Oui. Un espace dédié permet de centraliser vos demandes, contrats, documents et validations.",
+    },
+    {
+      q: "Puis-je modifier un document avant de l'approuver ?",
+      a: "Oui. Vous consultez le document, demandez des modifications et n'approuvez que la version finale.",
+    },
+    {
+      q: "Où sont conservés mes documents ?",
+      a: "Dans votre espace, derrière un accès contrôlé : aucun lien public. La page Politique de confidentialité détaille le traitement des données.",
     },
   ],
   ctaTitle: "Prêt à décrire votre besoin ?",

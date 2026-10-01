@@ -32,7 +32,7 @@ export default async function LegalPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-14 sm:px-6 lg:py-20">
       <header className="space-y-4">
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-accent">{t.eyebrow}</p>
-        <h1 className="font-serif text-3xl font-semibold leading-tight tracking-tight text-navy sm:text-[2.5rem]">
+        <h1 className="text-3xl font-semibold leading-tight tracking-tight text-navy sm:text-[2.5rem]">
           {t.title}
         </h1>
         <p className="text-sm leading-relaxed text-ink-muted" dir="auto">
@@ -43,7 +43,7 @@ export default async function LegalPage() {
       <div className="mt-12 space-y-10">
         {t.sections.map((section) => (
           <section key={section.id} id={section.id} className="space-y-3">
-            <h2 className="font-serif text-xl font-semibold tracking-tight text-navy" dir="auto">
+            <h2 className="text-xl font-semibold tracking-tight text-navy" dir="auto">
               {section.title}
             </h2>
             <p className="text-sm leading-relaxed text-ink-muted" dir="auto">

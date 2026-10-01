@@ -132,7 +132,7 @@ export function DocumentCard({
               {categoryLabel}
             </p>
           ) : null}
-          <CardTitle className="line-clamp-2 font-serif text-lg font-bold leading-snug text-navy">
+          <CardTitle className="line-clamp-2 text-lg font-bold leading-snug text-navy">
             <Link href={`/contracts/${item.slug}`} className="transition-colors hover:text-navy-deep">
               {name}
             </Link>

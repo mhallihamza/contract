@@ -2,8 +2,8 @@
 
 /* ───────────────────────────────────────────────────────────────────────────
    MOROCCO LEGAL PLATFORM — design tokens (§5)
-   Premium SaaS + legal professional: neutral canvas, dark navy text, a single
-   navy accent (#1E3A6E), subtle borders, restrained shadows.
+   Premium legal services: warm neutral canvas, dark navy text, a single navy
+   accent (#10213F), subtle borders, restrained shadows.
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
@@ -33,10 +33,10 @@
   --destructive: oklch(0.567 0.2 26);
   --destructive-foreground: oklch(0.99 0.005 26);
 
-  --success: oklch(0.55 0.13 155);
-  --success-foreground: oklch(0.99 0.005 155);
-  --warning: oklch(0.72 0.15 78);
-  --warning-foreground: oklch(0.28 0.05 78);
+  --success: #176b4d;
+  --success-foreground: #ffffff;
+  --warning: #a66a18;
+  --warning-foreground: #ffffff;
   --info: oklch(0.55 0.12 245);
   --info-foreground: oklch(0.99 0.005 245);
 
@@ -89,21 +89,31 @@
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
 
   /* ── Marketing palette (public pages, §design) ──────────────────────────────
-     One accent for the whole public surface — #1E3A6E — on a neutral canvas:
-     #FAFAF9 for the page, #F5F5F4 for alternating bands, #EEF2FA for light
-     accent zones (icon tiles, banners, image placeholders). Titles #0F1729,
-     secondary text #5B6472, neutral hairlines. No secondary hues and no warm
-     tints anywhere on the public surface. The dashboard and auth screens keep
-     the shadcn tokens (`--primary`). */
-  --color-navy: #0f1729; /* titles and dark text */
-  --color-navy-deep: #0f1729; /* dark bands — final CTA, footer */
-  --color-navy-soft: #eef2fa; /* light accent zone — panels, placeholders */
-  --color-canvas: #fafaf9; /* page canvas */
-  --color-canvas-tint: #f5f5f4; /* alternating neutral band (hero, security) */
-  --color-ink-muted: #5b6472; /* secondary text */
-  --color-hairline: #e5e7eb; /* neutral hairline / card border */
-  --color-accent: #1e3a6e; /* THE accent — buttons, links, active icons */
-  --color-accent-soft: #eef2fa; /* light accent zones — #EEF2FA only */
+     Premium legal-services identity. Mostly warm off-white + white + navy +
+     dark text, per the design spec §4:
+       primary        #10213F  — buttons, links, dark bands, THE accent
+       secondary navy #183052  — hover shifts, dark UI details
+       canvas         #F8F7F3  — ivory page background
+       surface        #FFFFFF  — cards, alternating bands
+       titles         #172033  · secondary text #667085
+       borders        #E4E1DA  — hairlines
+       success        #176B4D on #EAF3EE — positive states ONLY
+       warning        #A66A18  — attention states
+       gold           #B89555  — whisper of premium accent, used sparingly.
+     No stray decorative hues, no text-colour greens or ambers. */
+  --color-navy: #172033; /* titles and primary text */
+  --color-navy-deep: #10213f; /* dark bands — validation, final CTA, footer */
+  --color-navy-mid: #183052; /* secondary navy — hovers, dark details */
+  --color-navy-soft: #eef1f5; /* derived light navy zone (6% #10213F on white) */
+  --color-canvas: #f8f7f3; /* ivory page canvas */
+  --color-canvas-tint: #f1f0e9; /* deeper ivory band */
+  --color-ink-muted: #667085; /* secondary text */
+  --color-hairline: #e4e1da; /* neutral hairline / card border */
+  --color-accent: #10213f; /* THE accent — buttons, links, active icons */
+  --color-accent-soft: #eef1f5; /* light accent zones */
+  --color-success-soft: #eaf3ee; /* positive-state backgrounds */
+  --color-gold: #b89555; /* subtle premium accent (rules, micro-labels) */
+
 }
 
 /* Anchored sections of the marketing pages: keep the sticky header clear. */

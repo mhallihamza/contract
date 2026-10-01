@@ -3,7 +3,6 @@ import { PublicHeader } from "@/components/marketing/public-header";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getServerI18n } from "@/lib/i18n/server";
-import { SOCIAL_LINKS } from "@/lib/marketing/mock-data";
 
 /**
  * Shell of the public experience (§6, §18, §27).
@@ -34,7 +33,6 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
       <SiteFooter
         labels={d.public.home.footer}
-        social={SOCIAL_LINKS}
         rights={d.landing.footerRights}
       />
     </div>

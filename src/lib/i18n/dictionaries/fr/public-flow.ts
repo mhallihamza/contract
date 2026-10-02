@@ -8,9 +8,8 @@ export const publicFr = {
     assistant: "Assistant",
     signIn: "Se connecter",
     mySpace: "Mon espace",
-    solutions: "Nos services",
+    services: "Services",
     businesses: "Entreprises",
-    professionals: "Professionnels",
     resources: "Ressources",
     start: "Commencer",
     skipToContent: "Aller au contenu",
@@ -22,265 +21,133 @@ export const publicFr = {
     metaDescription:
       "Préparez, faites vérifier et gérez vos contrats et documents juridiques au Maroc : du besoin au document final, avec validation professionnelle lorsque votre situation l'exige.",
 
-    // §8 — hero.
-    eyebrow: "CONTRATS & DOCUMENTS JURIDIQUES — MAROC",
+    // §6 — hero: the promise on the left, one contract document on the right.
+    eyebrow: "CONTRATS & DOCUMENTS JURIDIQUES",
     heroTitle: "Vos contrats, en toute sérénité.",
     heroSubtitle:
-      "Préparez, faites vérifier et gérez vos contrats et documents juridiques depuis un seul espace.",
+      "Préparez, faites relire et gérez vos contrats et documents juridiques simplement.",
     heroCta: "Commencer une demande",
     heroCtaSecondary: "Découvrir nos services",
-    heroReassurance: "Pour particuliers, entrepreneurs et entreprises.",
-    // §9 — contract-workspace mockup on the right of the hero (pure UI, no photo).
-    workspace: {
-      ref: "Dossier #CM-0248",
-      status: "En cours",
-      sidebarLabel: "DOSSIER",
-      sidebar: ["Informations", "Contrat", "Vérification", "Validation", "Signature", "Documents"],
-      docTitle: "Contrat de prestation de services",
-      docMeta: ["Version 02", "Mis à jour aujourd'hui"],
-      sections: ["Objet", "Parties", "Prestations", "Durée", "Conditions de paiement", "Résiliation"],
-      statesLabel: "ÉTAT DU DOSSIER",
-      states: [
-        { label: "Informations recueillies", state: "done" },
-        { label: "Document préparé", state: "done" },
-        { label: "Vérification en cours", state: "current" },
-        { label: "Validation professionnelle", state: "pending" },
-        { label: "Signature", state: "pending" },
+    heroReassurance: "Pour particuliers, entrepreneurs et entreprises au Maroc.",
+    // §7 — the hero visual: a realistic contract sheet, built from HTML/CSS only.
+    // No photograph, no dashboard, no fake interface screens.
+    heroDocument: {
+      title: "CONTRAT DE PRESTATION DE SERVICES",
+      preamble: "Entre les soussignés",
+      sections: [
+        { n: "01", title: "Objet du contrat" },
+        { n: "02", title: "Prestations" },
+        { n: "03", title: "Conditions financières" },
+        { n: "04", title: "Durée" },
+        { n: "05", title: "Résiliation" },
       ],
-      card: {
-        label: "VALIDATION",
-        subject: "Contrat de prestation",
-        status: "Prêt pour vérification",
-        cta: "Voir le dossier",
+      status: "Document préparé",
+      ready: "Prêt pour vérification",
+    },
+
+    // §9 — the two situations a visitor actually starts from.
+    needsEyebrow: "COMMENCER",
+    needsTitle: "De quoi avez-vous besoin ?",
+    needsSubtitle: "Choisissez simplement le service qui correspond à votre situation.",
+    needs: [
+      {
+        title: "Préparer un contrat",
+        body: "Créez un contrat adapté à votre situation.",
+        cta: "Commencer",
       },
-    },
-
-    // §10 — trust strip.
-    trustStrip: [
-      "Documents confidentiels",
-      "Processus transparent",
-      "Validation professionnelle",
-      "Suivi du dossier",
+      {
+        title: "Faire relire un contrat",
+        body: "Vous avez déjà un document ? Faites-le examiner avant de le signer.",
+        cta: "Faire relire",
+      },
     ],
-
-    // §11 — from the need to the structured request.
-    needTitle: "Le juridique commence par votre besoin.",
-    needSubtitle:
-      "Pas besoin de connaître le jargon juridique. Expliquez simplement votre situation et nous vous guidons vers la bonne démarche.",
-    need: {
-      inputLabel: "Votre besoin",
-      platformLabel: "PLATEFORME",
-      platformMessage: "Nous avons identifié votre demande",
-      userMessage: "Je dois faire un contrat avec un client pour une prestation.",
-      fields: [
-        { label: "TYPE", value: "Contrat de prestation" },
-        { label: "PARTIES", value: "Prestataire / Client" },
-        { label: "OBJET", value: "Prestation de services" },
-        { label: "ÉTAPE SUIVANTE", value: "Informations complémentaires" },
-      ],
-      cta: "Continuer",
-      note: "Exemple de traitement — aucune donnée réelle.",
-    },
-    // §12 — services catalogue.
+    // §10 — services catalogue: six entries, white background, thin borders.
     servicesEyebrow: "NOS SERVICES",
-    servicesTitle: "Des contrats adaptés à chaque situation.",
-    servicesSubtitle:
-      "Des contrats et documents adaptés à votre situation, avec un parcours clair du besoin jusqu'à la finalisation.",
+    servicesTitle: "Des contrats pour les situations qui comptent.",
     services: [
       {
         n: "01",
         title: "Contrats de prestation",
-        body: "Encadrez clairement vos missions, obligations, délais et conditions de paiement.",
+        body: "Encadrez vos missions, vos délais et vos conditions de paiement.",
       },
       {
         n: "02",
         title: "Contrats commerciaux",
-        body: "Structurez vos relations avec vos clients et partenaires : périmètre, engagements et durées.",
+        body: "Structurez vos relations avec vos clients et vos partenaires.",
       },
       {
         n: "03",
         title: "Contrats de travail",
-        body: "Encadrez vos recrutements et collaborations avec des clauses claires et complètes.",
+        body: "Encadrez vos recrutements et vos collaborations.",
       },
       {
         n: "04",
-        title: "Immobilier",
-        body: "Bail d'habitation ou bail commercial : loyer, durée, dépôt de garantie et obligations.",
+        title: "Contrats immobiliers",
+        body: "Bail d'habitation ou bail commercial : loyer, durée et obligations.",
       },
       {
         n: "05",
         title: "Documents d'entreprise",
-        body: "Accords de confidentialité et documents de société pour sécuriser vos échanges.",
+        body: "Accords de confidentialité et documents de société.",
       },
       {
         n: "06",
         title: "Relecture de contrats",
-        body: "Identifiez les points qui méritent votre attention avant de vous engager.",
+        body: "Identifiez les points qui méritent votre attention avant de signer.",
       },
     ],
 
-    // §13 — contract review.
+    // §11 — contract review: one document, four points to look at.
     reviewTitle: "Vous avez déjà un contrat ?",
-    reviewStatement: "Comprenez ce que vous vous apprêtez à signer.",
     reviewText:
-      "Déposez votre document pour identifier les points qui méritent votre attention avant de vous engager.",
+      "Avant de signer, faites relire votre document et identifiez les points qui méritent votre attention.",
     review: {
-      docLabel: "DOCUMENT",
       fileName: "Contrat_de_prestation.pdf",
       pages: "12 pages",
-      statusLabel: "Statut",
-      status: "À vérifier",
-      pointsLabel: "POINTS À VÉRIFIER",
+      pointsLabel: "POINTS EXAMINÉS",
+      points: ["Durée", "Conditions de paiement", "Résiliation", "Responsabilités"],
       note: "Aperçu de démonstration — aucune analyse juridique n'est affichée.",
-      rows: [
-        { label: "Objet du contrat", state: "ok" },
-        { label: "Durée", state: "ok" },
-        { label: "Conditions de paiement", state: "alert" },
-        { label: "Résiliation", state: "alert" },
-        { label: "Confidentialité", state: "ok" },
-        { label: "Responsabilités", state: "alert" },
-      ],
     },
 
-    // §14 — contract lifecycle.
-    lifecycleTitle: "Un contrat ne s'arrête pas à sa rédaction.",
-    lifecycleSubtitle:
-      "De la préparation au suivi, chaque étape reste claire et sous votre contrôle.",
-    lifecycle: [
-      { n: "01", title: "PRÉPARER", body: "Votre besoin est structuré et le document est préparé." },
-      { n: "02", title: "VÉRIFIER", body: "Les points qui méritent votre attention sont repérés." },
-      { n: "03", title: "APPROUVER", body: "Vous relisez et approuvez chaque version." },
-      { n: "04", title: "SIGNER", body: "La signature intervient lorsque votre parcours le prévoit." },
-      { n: "05", title: "SUIVRE", body: "Votre dossier reste consultable, étape par étape." },
-    ],
-
-    // §16 — professional validation (white section).
-    validationTitle: "Certains dossiers nécessitent une attention particulière.",
+    // §12 — professional validation: the single dark band of the page.
+    validationTitle: "Besoin d'une validation professionnelle ?",
     validationText:
-      "Lorsque votre situation le nécessite, votre dossier peut être orienté vers une validation professionnelle.",
-    validationPoints: [
-      {
-        title: "Expertise",
-        body: "Votre dossier est préparé à partir de modèles éprouvés et de règles tracées.",
-      },
-      {
-        title: "Contexte",
-        body: "Votre situation est lue dans son contexte avant d'être structurée.",
-      },
-      {
-        title: "Contrôle",
-        body: "Rien n'est final sans votre relecture et votre approbation.",
-      },
-    ],
-    dossier: {
+      "Selon votre situation et le type de contrat, votre dossier peut bénéficier d'une validation professionnelle.",
+    validationCard: {
       label: "DOSSIER",
       type: "Contrat commercial",
-      statusLabel: "Statut",
-      status: "Validation en cours",
-      infoLabel: "ÉTAPES",
-      items: [
-        { label: "Parties identifiées", done: true },
-        { label: "Objet du contrat", done: true },
-        { label: "Conditions principales", done: true },
-        { label: "Validation professionnelle", done: false },
-        { label: "Finalisation", done: false },
-      ],
+      service: "Validation professionnelle",
+      status: "En cours",
     },
 
-    // §17 — entrepreneurs.
-    entrepreneurTitle: "Votre activité évolue. Vos contrats aussi.",
-    entrepreneurText:
-      "Premier client, nouveau partenaire, recrutement, location, prestation : les besoins juridiques changent avec votre activité.",
-    entrepreneurCases: [
-      { tag: "PREMIER CLIENT", doc: "Contrat de prestation" },
-      { tag: "NOUVEAU PARTENAIRE", doc: "Accord commercial" },
-      { tag: "NOUVELLE ÉQUIPE", doc: "Contrat de travail" },
-    ],
-
-    // §18 — companies (dashboard preview).
-    businessTitle: "Pour les entreprises qui veulent garder leurs contrats sous contrôle.",
-    businessSubtitle:
-      "Centralisez vos demandes, documents, validations et contrats dans un même espace.",
+    // §13 — for businesses and professionals: one compact preview, no dashboard.
+    businessTitle: "Pour les entreprises et professionnels",
+    businessText:
+      "Gérez vos contrats et documents dans un espace conçu pour accompagner votre activité.",
     business: {
-      previewNote: "Aperçu de démonstration — données fictives.",
-      stats: [
-        { label: "Demandes en cours", value: "8" },
-        { label: "Contrats actifs", value: "12" },
-        { label: "À valider", value: "3" },
-        { label: "Documents", value: "24" },
-      ],
-      activityLabel: "Activité récente",
-      activity: [
-        "Contrat de prestation créé",
-        "Document envoyé pour validation",
-        "Version 02 approuvée",
-        "Contrat finalisé",
-      ],
-    },
-
-    // §19 — document management (product preview).
-    documentsTitle: "Tous vos documents. Au même endroit.",
-    documentsText:
-      "Contrats, versions et validations restent réunis dans un seul espace : chaque document garde son statut et son historique.",
-    documents: {
-      previewNote: "Aperçu de démonstration — données fictives.",
-      sidebar: ["Accueil", "Demandes", "Contrats", "Documents", "Validations", "Historique"],
       title: "Mes contrats",
-      filters: ["Tous", "Actifs", "En validation", "À signer"],
-      columns: ["DOCUMENT", "TYPE", "STATUT", "DATE"],
       rows: [
-        { name: "Contrat de prestation", type: "Commercial", status: "Actif", date: "12/03", tone: "active" },
-        { name: "Contrat fournisseur", type: "Commercial", status: "À valider", date: "10/03", tone: "review" },
-        { name: "Contrat de travail", type: "RH", status: "Brouillon", date: "08/03", tone: "pending" },
+        { name: "Contrat de prestation", status: "Actif" },
+        { name: "Contrat fournisseur", status: "À valider" },
+        { name: "Contrat de travail", status: "Brouillon" },
       ],
+      note: "Aperçu de démonstration — données fictives.",
     },
 
-    // §19 — principles.
-    whyTitle: "Le juridique, pensé autour de votre besoin.",
-    why: [
-      {
-        n: "01",
-        title: "Comprendre",
-        body: "Nous partons de votre situation, pas d'un formulaire juridique complexe.",
-      },
-      {
-        n: "02",
-        title: "Structurer",
-        body: "Chaque demande est organisée pour rendre les prochaines étapes claires.",
-      },
-      {
-        n: "03",
-        title: "Garder le contrôle",
-        body: "Vous restez décisionnaire à chaque étape importante.",
-      },
+    // §14 — how it works: three steps only, no workflow diagram.
+    stepsTitle: "Simple du début à la fin.",
+    steps: [
+      { n: "01", title: "Expliquez votre besoin" },
+      { n: "02", title: "Préparez ou faites relire votre contrat" },
+      { n: "03", title: "Finalisez votre document" },
     ],
 
-    // §20 — confidentiality.
-    confidentialityTitle: "Vos documents méritent de la discrétion.",
-    confidentialityText:
-      "Les contrats et informations juridiques nécessitent un niveau de confidentialité élevé. L'expérience doit donc inspirer discrétion et contrôle.",
-    confidentialityPoints: [
-      {
-        title: "Accès contrôlé",
-        body: "Un dossier ne s'ouvre qu'avec son accès : aucun lien public.",
-      },
-      {
-        title: "Documents centralisés",
-        body: "Vos contrats sont réunis au même endroit, plutôt que dispersés.",
-      },
-      {
-        title: "Historique des actions",
-        body: "Chaque étape est datée : vous voyez ce qui a été fait et quand.",
-      },
-    ],
-
-    // §22 — final call to action.
+    // §16 — final call to action.
     finalCtaTitle: "Un contrat à préparer ?",
     finalCtaSubtitle: "Commencez simplement par nous expliquer votre besoin.",
     finalCtaPrimary: "Commencer une demande",
-    finalCtaSecondary: "Particuliers · Entrepreneurs · Entreprises",
 
-    // §23 — footer.
+    // §17 — footer.
     footer: {
       tagline:
         "Plateforme de services juridiques : du besoin au document final, avec une validation professionnelle lorsque votre situation l'exige.",
@@ -293,10 +160,8 @@ export const publicFr = {
         serviceCommercial: "Contrats commerciaux",
         serviceTravail: "Contrats de travail",
         serviceRelecture: "Relecture de contrats",
-        serviceEntreprise: "Documents d'entreprise",
         howItWorks: "Comment ça marche",
         businesses: "Entreprises",
-        professionals: "Professionnels",
         resources: "Ressources",
         about: "À propos",
         contact: "Contact",

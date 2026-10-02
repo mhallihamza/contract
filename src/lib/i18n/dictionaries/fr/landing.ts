@@ -44,27 +44,23 @@ export const landingFr = {
   faq: [
     {
       q: "Quels types de contrats puis-je préparer ?",
-      a: "Contrats de prestation, commerciaux et de travail, documents immobiliers et documents d'entreprise. Le catalogue indique les documents disponibles pour votre situation.",
+      a: "Contrats de prestation, commerciaux, de travail et immobiliers, ainsi que des documents d'entreprise. Le catalogue indique les documents disponibles pour votre situation.",
     },
     {
       q: "Puis-je faire relire un contrat existant ?",
-      a: "Oui. Vous déposez votre document : la relecture organise les points qui méritent votre attention avant de vous engager.",
+      a: "Oui. Vous déposez votre document et identifiez les points qui méritent votre attention avant de vous engager.",
     },
     {
-      q: "Quand intervient un professionnel ?",
-      a: "Lorsque nécessaire, selon le type de dossier : votre situation peut être orientée vers une validation professionnelle. Vous êtes informé avant que cette étape n'intervienne.",
-    },
-    {
-      q: "Puis-je modifier mon document avant finalisation ?",
-      a: "Oui. Vous consultez le document, demandez des modifications et n'approuvez que la version finale.",
+      q: "Quand une validation professionnelle est-elle nécessaire ?",
+      a: "Cela dépend de votre situation et du type de contrat : votre dossier peut être orienté vers une validation professionnelle. Vous en êtes informé avant cette étape.",
     },
     {
       q: "Puis-je utiliser la plateforme pour mon entreprise ?",
-      a: "Oui. Un espace dédié permet de centraliser vos demandes, contrats, documents et validations.",
+      a: "Oui. Vos contrats, documents et validations sont réunis dans un espace dédié à votre activité.",
     },
     {
-      q: "Comment retrouver mes documents ?",
-      a: "Dans votre espace, derrière un accès contrôlé : aucun lien public. Chaque étape est datée et la page Politique de confidentialité détaille le traitement des données.",
+      q: "Comment récupérer mon document ?",
+      a: "Votre document reste accessible depuis votre espace ou via le lien sécurisé de votre dossier : aucun lien public.",
     },
   ],
   ctaTitle: "Prêt à décrire votre besoin ?",

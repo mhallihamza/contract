@@ -1,5 +1,5 @@
 /**
- * Frequently asked questions (§21).
+ * Frequently asked questions (§15).
  *
  * Native <details> keeps the section a server component — the accordion is
  * keyboard-accessible and works without JavaScript. Layout: title on the left,
@@ -14,7 +14,7 @@ export function Faq({
   items: readonly { q: string; a: string }[];
 }) {
   return (
-    <section id="faq" data-landing-section="faq" className="bg-white py-24 lg:py-32">
+    <section id="faq" data-landing-section="faq" className="bg-canvas py-24 lg:py-32">
       <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.5fr] lg:gap-16">
         <header>
           <h2 className="text-[2rem] font-semibold leading-[1.1] tracking-[-0.015em] text-navy sm:text-[2.5rem] lg:text-[2.75rem]">

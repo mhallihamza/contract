@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /* ───────────────────────────────────────────────────────────────────────────
-   MOROCCO LEGAL PLATFORM — design tokens (§5)
-   Premium legal services: warm neutral canvas, dark navy text, a single navy
-   accent (#10213F), subtle borders, restrained shadows.
+   MOROCCO LEGAL PLATFORM — design tokens
+   Premium legal services: warm white canvas (#F7F6F2), charcoal text
+   (#1C1C1C), one deep muted blue for every action (#172B3A), a warm bronze
+   accent (#8B7653) used very sparingly, 1px hairlines, restrained shadows.
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
@@ -88,32 +89,30 @@
      mixes a second voice, so no component may reach for the `font-serif`
      utility — the acceptance check fails if it ever appears in the output. */
 
-  /* ── Marketing palette (public pages, §design) ──────────────────────────────
-     Premium legal-services identity. Mostly warm off-white + white + navy +
-     dark text, per the design spec §4:
-       primary        #10213F  — buttons, links, dark bands, THE accent
-       secondary navy #183052  — hover shifts, dark UI details
-       canvas         #F8F7F3  — ivory page background
-       surface        #FFFFFF  — cards, alternating bands
-       titles         #172033  · secondary text #667085
-       borders        #E4E1DA  — hairlines
-       success        #176B4D on #EAF3EE — positive states ONLY
-       warning        #A66A18  — attention states
-       gold           #B89555  — whisper of premium accent, used sparingly.
-     No stray decorative hues, no text-colour greens or ambers. */
-  --color-navy: #172033; /* titles and primary text */
-  --color-navy-deep: #10213f; /* dark bands — contract review, confidentiality panel, footer */
-  --color-navy-mid: #183052; /* secondary navy — hovers, dark details */
-  --color-navy-soft: #eef1f5; /* derived light navy zone (6% #10213F on white) */
-  --color-canvas: #f8f7f3; /* ivory page canvas */
-  --color-canvas-tint: #f1f0e9; /* deeper ivory band */
-  --color-ink-muted: #667085; /* secondary text */
-  --color-hairline: #e4e1da; /* neutral hairline / card border */
-  --color-accent: #10213f; /* THE accent — buttons, links, active icons */
-  --color-accent-soft: #eef1f5; /* light accent zones */
-  --color-success-soft: #eaf3ee; /* positive-state backgrounds */
-  --color-gold: #b89555; /* subtle premium accent (rules, micro-labels) */
-
+  /* ── Marketing palette (public pages) ───────────────────────────────────────
+     Premium legal-services identity — warm white, charcoal, one deep muted
+     blue for every action, one whisper of warm accent:
+       canvas        #F7F6F2  — warm white page background
+       surface       #FFFFFF  — documents and alternating bands
+       main text     #1C1C1C  — titles and body copy
+       secondary     #686868  — supporting text
+       border        #E2E0DA  — 1px hairlines
+       primary dark  #172B3A  — the main CTA, the single dark band, the footer
+       accent        #8B7653  — warm bronze, used VERY sparingly: micro-labels
+                                and eyebrow rules only. Never a button, never a
+                                fill, never a background.
+     No gradient, no glow, no neon, no second hue, no second accent. */
+  --color-canvas: #f7f6f2; /* warm white page canvas */
+  --color-surface: #ffffff; /* cards, documents, alternating bands */
+  --color-navy: #1c1c1c; /* main text — titles and body copy */
+  --color-ink-muted: #686868; /* secondary text */
+  --color-hairline: #e2e0da; /* neutral hairline / 1px card border */
+  --color-navy-deep: #172b3a; /* primary dark — main CTA, dark band, footer */
+  --color-navy-mid: #20394a; /* hover shift of the primary dark */
+  --color-navy-soft: #eceff1; /* derived light zone (6% #172B3A on white) */
+  --color-accent: #172b3a; /* the action colour: buttons, links, active icons */
+  --color-accent-soft: #eef1f4; /* derived action zone (hover surfaces) */
+  --color-brass: #8b7653; /* warm accent — micro-labels and rules ONLY */
 }
 
 /* Anchored sections of the marketing pages: keep the sticky header clear. */
@@ -175,11 +174,13 @@
   }
 }
 
+/* The public shell never stretches across the screen: 1200px of content, with
+   20px of side padding on mobile growing to 48px on desktop. */
 @utility container-page {
   margin-inline: auto;
   width: 100%;
-  max-width: 76rem;
-  padding-inline: 1.25rem;
+  max-width: calc(75rem + 6rem);
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
 }
 
 /* Long contract bodies: preserve paragraph breaks without raw whitespace. */

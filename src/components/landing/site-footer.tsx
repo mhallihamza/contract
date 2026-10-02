@@ -2,13 +2,14 @@ import Link from "next/link";
 import { appConfig } from "@/lib/config";
 
 /**
- * Public footer (§23).
+ * Public footer (§17).
  *
- * Four columns — SERVICES / PLATEFORME / ENTREPRISE / LÉGAL — on the deep
- * navy band. Every link points at a real destination: catalogue deep links,
- * section anchors, the contact address from the app configuration, or the
- * legal page. No invented social accounts, addresses or phone numbers; the
- * demonstration disclosure stays visible in every locale.
+ * Four compact columns — SERVICES / PLATEFORME / ENTREPRISE / LÉGAL — on the
+ * deep blue band that closes the page. Every link points at a real
+ * destination: catalogue deep links, section anchors, the support address from
+ * the app configuration, or the legal page. No invented social accounts,
+ * addresses or phone numbers; the demonstration disclosure stays visible in
+ * every locale.
  */
 export function SiteFooter({
   labels,
@@ -25,10 +26,8 @@ export function SiteFooter({
       serviceCommercial: string;
       serviceTravail: string;
       serviceRelecture: string;
-      serviceEntreprise: string;
       howItWorks: string;
       businesses: string;
-      professionals: string;
       resources: string;
       about: string;
       contact: string;
@@ -48,22 +47,20 @@ export function SiteFooter({
         { href: "/contracts?category=PARTNERSHIP", label: labels.links.serviceCommercial },
         { href: "/contracts?category=EMPLOYMENT", label: labels.links.serviceTravail },
         { href: "/#review", label: labels.links.serviceRelecture },
-        { href: "/contracts?category=CONFIDENTIALITY", label: labels.links.serviceEntreprise },
       ],
     },
     {
       title: labels.platform,
       links: [
-        { href: "/#lifecycle", label: labels.links.howItWorks },
+        { href: "/#process", label: labels.links.howItWorks },
         { href: "/#business", label: labels.links.businesses },
-        { href: "/#validation", label: labels.links.professionals },
         { href: "/#faq", label: labels.links.resources },
       ],
     },
     {
       title: labels.company,
       links: [
-        { href: "/#why", label: labels.links.about },
+        { href: "/legal#mentions", label: labels.links.about },
         { href: `mailto:${appConfig.supportEmail}`, label: labels.links.contact },
         { href: "/#faq", label: labels.links.faq },
       ],

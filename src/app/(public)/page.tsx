@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
 import { BusinessSection } from "@/components/landing/business-section";
-import { ConfidentialitySection } from "@/components/landing/confidentiality-section";
-import { ContractLifecycle } from "@/components/landing/contract-lifecycle";
 import { ContractReviewSection } from "@/components/landing/contract-review-section";
-import { DocumentManagementSection } from "@/components/landing/document-management-section";
-import { EntrepreneurSection } from "@/components/landing/entrepreneur-section";
 import { Faq } from "@/components/landing/faq";
 import { FinalCta } from "@/components/landing/final-cta";
 import { Hero } from "@/components/landing/hero";
-import { NeedSection } from "@/components/landing/need-section";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { NeedsSection } from "@/components/landing/needs-section";
 import { ProfessionalValidation } from "@/components/landing/professional-validation";
 import { ServicesSection } from "@/components/landing/services-section";
-import { TrustBar } from "@/components/landing/trust-bar";
-import { WhySection } from "@/components/landing/why-section";
 import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 
@@ -52,14 +47,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Homepage (§7–§23).
+ * Homepage (§5–§17).
  *
- * Fourteen blocks in the order a first-time visitor needs them: the promise
- * with its contract-workspace composition (hero), the trust strip, the
- * need-to-request transformation, the services index, the contract review,
- * the lifecycle, the professional validation, the document management
- * surface, the entrepreneur situations, the company dashboard, the
- * principles, confidentiality, the FAQ and the closing call to action.
+ * Nine blocks, in the order a first-time visitor needs them: the promise with
+ * its single contract document (hero), the two situations a visitor starts
+ * from, the services index, the contract review, the professional validation
+ * (the one dark band of the page), the compact business preview, the
+ * three-step explanation, the FAQ and the closing call to action. That is the
+ * whole page — no trust strip, no lifecycle diagram, no document dashboard, no
+ * second product mockup.
  *
  * Every block is a server component fed from the dictionary: no marketing
  * claim is hard-coded in JSX, so the Arabic page states exactly the same thing
@@ -78,61 +74,37 @@ export default async function HomePage() {
         primaryCta={home.heroCta}
         secondaryCta={home.heroCtaSecondary}
         reassurance={home.heroReassurance}
-        workspace={home.workspace}
+        document={home.heroDocument}
       />
 
-      <TrustBar items={home.trustStrip} />
-
-      <NeedSection title={home.needTitle} subtitle={home.needSubtitle} need={home.need} />
+      <NeedsSection
+        eyebrow={home.needsEyebrow}
+        title={home.needsTitle}
+        subtitle={home.needsSubtitle}
+        needs={home.needs}
+      />
 
       <ServicesSection
         eyebrow={home.servicesEyebrow}
         title={home.servicesTitle}
-        subtitle={home.servicesSubtitle}
         services={home.services}
       />
 
-      <ContractReviewSection
-        title={home.reviewTitle}
-        statement={home.reviewStatement}
-        text={home.reviewText}
-        review={home.review}
-      />
-
-      <ContractLifecycle
-        title={home.lifecycleTitle}
-        subtitle={home.lifecycleSubtitle}
-        steps={home.lifecycle}
-      />
+      <ContractReviewSection title={home.reviewTitle} text={home.reviewText} review={home.review} />
 
       <ProfessionalValidation
         title={home.validationTitle}
         text={home.validationText}
-        points={home.validationPoints}
-        dossier={home.dossier}
+        card={home.validationCard}
       />
 
-      <DocumentManagementSection
-        title={home.documentsTitle}
-        text={home.documentsText}
-        documents={home.documents}
+      <BusinessSection
+        title={home.businessTitle}
+        text={home.businessText}
+        business={home.business}
       />
 
-      <EntrepreneurSection
-        title={home.entrepreneurTitle}
-        text={home.entrepreneurText}
-        cases={home.entrepreneurCases}
-      />
-
-      <BusinessSection title={home.businessTitle} subtitle={home.businessSubtitle} business={home.business} />
-
-      <WhySection title={home.whyTitle} principles={home.why} />
-
-      <ConfidentialitySection
-        title={home.confidentialityTitle}
-        text={home.confidentialityText}
-        points={home.confidentialityPoints}
-      />
+      <HowItWorks title={home.stepsTitle} steps={home.steps} />
 
       <Faq title={d.landing.faqTitle} items={d.landing.faq} />
 
@@ -140,7 +112,6 @@ export default async function HomePage() {
         title={home.finalCtaTitle}
         subtitle={home.finalCtaSubtitle}
         primaryCta={home.finalCtaPrimary}
-        secondaryCta={home.finalCtaSecondary}
       />
     </>
   );

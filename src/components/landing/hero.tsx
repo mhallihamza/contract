@@ -1,26 +1,24 @@
 import Link from "next/link";
-import { ArrowRight, Check, Circle, CircleDot, FileText } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/** Shape of the contract-workspace mockup on the right of the hero (§9). */
-export interface HeroWorkspace {
-  ref: string;
+/** Shape of the single contract document that illustrates the hero (§7). */
+export interface HeroDocument {
+  title: string;
+  preamble: string;
+  sections: readonly { n: string; title: string }[];
   status: string;
-  sidebarLabel: string;
-  sidebar: readonly string[];
-  docTitle: string;
-  docMeta: readonly string[];
-  sections: readonly string[];
-  statesLabel: string;
-  states: readonly { label: string; state: string }[];
-  card: { label: string; subject: string; status: string; cta: string };
+  ready: string;
 }
 
 /**
- * Hero of the homepage (§6–§12) — 46/54 split. The promise on the left; on
- * the right a contract-workspace composition built entirely from interface
- * elements. Zero photography: the visitor sees the product itself. Every
- * string comes from the dictionary so Arabic states the same promise.
+ * Hero of the homepage (§6–§8) — the promise on the left, one contract
+ * document on the right.
+ *
+ * The document is drawn with HTML and CSS only: white sheet, 1px hairline,
+ * 12px radius, restrained shadow, realistic proportions and generous
+ * whitespace. No photograph, no dashboard, no gradient, no glow. Every string
+ * comes from the dictionary so the Arabic page states the same promise.
  */
 export function Hero({
   eyebrow,
@@ -29,7 +27,7 @@ export function Hero({
   primaryCta,
   secondaryCta,
   reassurance,
-  workspace,
+  document,
 }: {
   eyebrow: string;
   title: string;
@@ -37,191 +35,104 @@ export function Hero({
   primaryCta: string;
   secondaryCta: string;
   reassurance: string;
-  workspace: HeroWorkspace;
+  document: HeroDocument;
 }) {
   return (
     <section data-landing-section="hero" className="bg-canvas">
-      <div className="container-page grid items-center gap-12 py-14 lg:grid-cols-[46fr_54fr] lg:gap-16 lg:py-24">
+      <div className="container-page grid items-center gap-16 py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20 lg:py-24">
         {/* Left — the promise. */}
-        <div className="space-y-6">
-          <p className="flex items-center gap-3 text-[13px] font-semibold uppercase tracking-[0.18em] text-accent">
-            <span aria-hidden className="h-px w-7 bg-gold" />
+        <div className="max-w-[650px] space-y-6">
+          <p className="flex items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
+            <span aria-hidden className="h-px w-6 bg-brass" />
             <span dir="auto">{eyebrow}</span>
           </p>
 
-          <h1 className="text-[2.625rem] font-semibold leading-[1.02] tracking-[-0.02em] text-navy sm:text-[3.25rem] lg:text-[4rem]">
+          <h1 className="text-[2.625rem] font-semibold leading-[1.05] tracking-[-0.02em] text-navy sm:text-[3.25rem] lg:text-[3.75rem]">
             {title}
           </h1>
 
-          <p className="max-w-xl text-lg leading-[1.6] text-ink-muted xl:text-xl" dir="auto">
+          <p className="max-w-[34rem] text-[17px] leading-[1.6] text-ink-muted sm:text-lg" dir="auto">
             {subtitle}
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex flex-col items-start gap-5 pt-1 sm:flex-row sm:items-center sm:gap-7">
             <Button
               asChild
               size="lg"
-              className="h-12 rounded-[12px] bg-accent px-7 text-[15px] font-semibold text-white shadow-[0_10px_30px_rgba(16,33,63,0.12)] transition hover:-translate-y-0.5 hover:bg-navy-mid focus-visible:ring-accent"
+              className="h-12 rounded-[10px] bg-navy-deep px-6 text-[15px] font-semibold text-white transition hover:bg-navy-mid focus-visible:ring-navy-deep"
             >
               <Link href="/assistant">
                 {primaryCta}
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="h-12 rounded-[12px] border-hairline bg-white px-7 text-[15px] font-semibold text-accent transition hover:-translate-y-0.5 hover:bg-canvas focus-visible:ring-accent"
+
+            <Link
+              href="/#services"
+              className="group inline-flex items-center gap-2 text-[15px] font-medium text-navy underline-offset-4 transition-colors hover:text-navy-deep hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-deep"
             >
-              <Link href="/#services">{secondaryCta}</Link>
-            </Button>
+              {secondaryCta}
+              <ArrowRight
+                className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5"
+                aria-hidden
+              />
+            </Link>
           </div>
 
-          <p className="text-sm text-ink-muted" dir="auto">
+          <p className="pt-1 text-[14px] text-ink-muted" dir="auto">
             {reassurance}
           </p>
         </div>
 
-        {/* Right — the contract workspace, pure UI. */}
-        <div className="relative">
-          <div className="overflow-hidden rounded-[14px] border border-hairline bg-white shadow-[0_10px_30px_rgba(16,33,63,0.08)]">
-            {/* Window bar: dossier reference, status, controls. */}
-            <div className="flex items-center justify-between gap-3 border-b border-hairline bg-canvas px-4 py-3">
-              <p className="flex min-w-0 items-center gap-2.5 text-[13px] font-medium text-navy" dir="auto">
-                <FileText className="h-4 w-4 shrink-0 text-accent" strokeWidth={1.5} aria-hidden />
-                <span className="truncate">{workspace.ref}</span>
-              </p>
-              <div className="flex shrink-0 items-center gap-3">
-                <span
-                  className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-semibold text-accent"
-                  dir="auto"
-                >
-                  {workspace.status}
-                </span>
-                <span aria-hidden className="hidden items-center gap-1.5 sm:flex">
-                  <span className="h-2 w-2 rounded-full bg-hairline" />
-                  <span className="h-2 w-2 rounded-full bg-hairline" />
-                  <span className="h-2 w-2 rounded-full bg-hairline" />
-                </span>
-              </div>
-            </div>
-
-            <div className="flex">
-              {/* Dossier sidebar — hidden on phones to keep the mock compact. */}
-              <nav
-                aria-label={workspace.sidebarLabel}
-                className="hidden w-40 shrink-0 border-e border-hairline bg-canvas p-3 sm:block"
-              >
-                <p
-                  className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted"
-                  dir="auto"
-                >
-                  {workspace.sidebarLabel}
-                </p>
-                <ul className="space-y-1">
-                  {workspace.sidebar.map((entry, index) => (
-                    <li key={entry}>
-                      <span
-                        className={
-                          index === 1
-                            ? "block rounded-[8px] border border-hairline bg-white px-2.5 py-2 text-[13px] font-semibold text-accent"
-                            : "block rounded-[8px] px-2.5 py-2 text-[13px] text-ink-muted"
-                        }
-                        dir="auto"
-                      >
-                        {entry}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-              {/* Document preview: title, metadata, sections 01–06. */}
-              <div className="min-w-0 flex-1 p-4 sm:p-5">
-                <p className="text-[15px] font-semibold text-navy" dir="auto">
-                  {workspace.docTitle}
-                </p>
-                <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-ink-muted">
-                  {workspace.docMeta.map((meta, index) => (
-                    <span key={meta} className="flex items-center gap-2" dir="auto">
-                      {index > 0 ? <span aria-hidden className="h-1 w-1 rounded-full bg-hairline" /> : null}
-                      {meta}
-                    </span>
-                  ))}
-                </p>
-
-                <div className="mt-4 space-y-3.5 rounded-[10px] border border-hairline bg-canvas p-4">
-                  {workspace.sections.map((section, index) => (
-                    <div key={section} className="space-y-1.5">
-                      <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-navy">
-                        <span className="tabular-nums text-ink-muted">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <span dir="auto">{section}</span>
-                      </p>
-                      <span aria-hidden className="block h-1.5 w-full rounded-full bg-hairline" />
-                      <span aria-hidden className="block h-1.5 w-[72%] rounded-full bg-hairline" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              {/* Dossier status panel — hidden below md to avoid overflow. */}
-              <div className="hidden w-48 shrink-0 border-s border-hairline p-4 md:block">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted"
-                  dir="auto"
-                >
-                  {workspace.statesLabel}
-                </p>
-                <ul className="mt-3 space-y-3">
-                  {workspace.states.map((step) => (
-                    <li key={step.label} className="flex items-start gap-2.5 text-[13px]">
-                      {step.state === "done" ? (
-                        <Check className="mt-px h-4 w-4 shrink-0 text-success" strokeWidth={2.25} aria-hidden />
-                      ) : step.state === "current" ? (
-                        <CircleDot className="mt-px h-4 w-4 shrink-0 text-accent" strokeWidth={1.75} aria-hidden />
-                      ) : (
-                        <Circle className="mt-px h-4 w-4 shrink-0 text-ink-muted/40" strokeWidth={1.75} aria-hidden />
-                      )}
-                      <span
-                        className={step.state === "pending" ? "text-ink-muted" : "font-medium text-navy"}
-                        dir="auto"
-                      >
-                        {step.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* One floating card: validation, overlapping the window edge. */}
-          <div className="relative z-10 mx-5 -mt-10 sm:mx-10 lg:absolute lg:-bottom-7 lg:-start-6 lg:mx-0 lg:mt-0 lg:w-[17.5rem]">
-            <div className="rounded-[14px] border border-hairline bg-white p-4 shadow-[0_10px_30px_rgba(16,33,63,0.14)] sm:p-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-muted" dir="auto">
-                {workspace.card.label}
-              </p>
-              <p className="mt-2 text-[15px] font-semibold text-navy" dir="auto">
-                {workspace.card.subject}
-              </p>
-              <p className="mt-1 flex items-center gap-2 text-[13px] font-medium text-success" dir="auto">
-                <Check className="h-4 w-4 shrink-0" strokeWidth={2.25} aria-hidden />
-                {workspace.card.status}
-              </p>
+        {/* Right — the document itself is the visual. */}
+        <div className="relative mx-auto w-full max-w-[30rem]">
+          <article className="rounded-[12px] border border-hairline bg-surface px-7 pb-9 pt-8 shadow-[0_1px_2px_rgba(23,43,58,0.04),0_14px_34px_rgba(23,43,58,0.07)] sm:px-9 sm:pt-10">
+            <header className="border-b border-hairline pb-5 text-center">
               <p
-                className="mt-3 flex items-center justify-between gap-2 border-t border-hairline pt-3 text-[13px] font-semibold text-accent"
+                className="text-[14px] font-semibold uppercase leading-snug tracking-[0.08em] text-navy sm:text-[15px]"
                 dir="auto"
               >
-                {workspace.card.cta}
-                <ArrowRight className="h-4 w-4 shrink-0 rtl:rotate-180" aria-hidden />
+                {document.title}
+              </p>
+              <p className="mt-2.5 text-[12px] text-ink-muted" dir="auto">
+                {document.preamble}
+              </p>
+            </header>
+
+            <div className="mt-7 space-y-6">
+              {document.sections.map((section) => (
+                <div key={section.n} className="space-y-2.5">
+                  <p className="flex items-baseline gap-3 text-[13px] font-semibold text-navy">
+                    <span className="tabular-nums text-[12px] font-medium text-ink-muted">
+                      {section.n}
+                    </span>
+                    <span dir="auto">{section.title}</span>
+                  </p>
+                  <span aria-hidden className="block h-[3px] w-full rounded-full bg-hairline" />
+                  <span aria-hidden className="block h-[3px] w-[88%] rounded-full bg-hairline" />
+                  <span aria-hidden className="block h-[3px] w-[64%] rounded-full bg-hairline" />
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-center justify-between gap-4 border-t border-hairline pt-4">
+              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-brass" />
+              <p
+                className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted"
+                dir="auto"
+              >
+                {document.ready}
               </p>
             </div>
-          </div>
+          </article>
+
+          {/* One small status element, resting on the edge of the sheet. */}
+          <p className="absolute -bottom-4 start-4 flex items-center gap-2 rounded-[10px] border border-hairline bg-surface px-3.5 py-2 text-[12px] font-medium text-navy shadow-[0_8px_20px_rgba(23,43,58,0.08)] sm:start-6">
+            <Check className="h-3.5 w-3.5 shrink-0 text-navy-deep" strokeWidth={2.25} aria-hidden />
+            <span dir="auto">{document.status}</span>
+          </p>
         </div>
       </div>
     </section>
   );
 }
-
-

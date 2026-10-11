@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BusinessSection } from "@/components/landing/business-section";
+import { ComparisonSection } from "@/components/landing/comparison-section";
 import { ContractReviewSection } from "@/components/landing/contract-review-section";
 import { Faq } from "@/components/landing/faq";
 import { FinalCta } from "@/components/landing/final-cta";
@@ -49,13 +50,14 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Homepage (§5–§17).
  *
- * Nine blocks, in the order a first-time visitor needs them: the promise with
+ * Ten blocks, in the order a first-time visitor needs them: the promise with
  * its single contract document (hero), the two situations a visitor starts
- * from, the services index, the contract review, the professional validation
- * (the one dark band of the page), the compact business preview, the
- * three-step explanation, the FAQ and the closing call to action. That is the
- * whole page — no trust strip, no lifecycle diagram, no document dashboard, no
- * second product mockup.
+ * from, the services index, the contract review, the comparison with the usual
+ * way of getting a contract written, the professional validation (the one dark
+ * band of the page), the compact business preview, the two-track explanation,
+ * the FAQ and the closing call to action. That is the whole page — no trust
+ * strip, no lifecycle diagram, no document dashboard, no second product
+ * mockup, and no pricing table: prices belong to the catalogue, not here.
  *
  * Every block is a server component fed from the dictionary: no marketing
  * claim is hard-coded in JSX, so the Arabic page states exactly the same thing
@@ -92,6 +94,13 @@ export default async function HomePage() {
 
       <ContractReviewSection title={home.reviewTitle} text={home.reviewText} review={home.review} />
 
+      <ComparisonSection
+        eyebrow={home.comparisonEyebrow}
+        title={home.comparisonTitle}
+        text={home.comparisonText}
+        comparison={home.comparison}
+      />
+
       <ProfessionalValidation
         title={home.validationTitle}
         text={home.validationText}
@@ -104,7 +113,7 @@ export default async function HomePage() {
         business={home.business}
       />
 
-      <HowItWorks title={home.stepsTitle} steps={home.steps} />
+      <HowItWorks title={home.stepsTitle} subtitle={home.stepsSubtitle} tracks={home.tracks} />
 
       <Faq title={d.landing.faqTitle} items={d.landing.faq} />
 

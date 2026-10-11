@@ -7,6 +7,10 @@ export interface HeroDocument {
   title: string;
   preamble: string;
   sections: readonly { n: string; title: string }[];
+  stamp: string;
+  stampNote: string;
+  signatures: readonly string[];
+  timestamp: string;
   status: string;
   ready: string;
 }
@@ -17,8 +21,11 @@ export interface HeroDocument {
  *
  * The document is drawn with HTML and CSS only: white sheet, 1px hairline,
  * 12px radius, restrained shadow, realistic proportions and generous
- * whitespace. No photograph, no dashboard, no gradient, no glow. Every string
- * comes from the dictionary so the Arabic page states the same promise.
+ * whitespace. No photograph, no dashboard, no gradient, no glow. Three quiet
+ * details keep it from reading as a wireframe — an approval stamp under the
+ * title, the two empty signature rules of an act not yet signed, and a
+ * timestamped footer. Every string comes from the dictionary so the Arabic
+ * page states the same promise.
  */
 export function Hero({
   eyebrow,
@@ -97,6 +104,19 @@ export function Hero({
               <p className="mt-2.5 text-[12px] text-ink-muted" dir="auto">
                 {document.preamble}
               </p>
+
+              {/* An approval stamp: what tells a reader this is an act, not a wireframe. */}
+              <p className="mt-4 inline-flex flex-col items-center gap-1 rounded-[3px] border border-brass/60 px-2.5 py-1.5">
+                <span
+                  className="text-[9px] font-semibold uppercase leading-none tracking-[0.14em] text-brass"
+                  dir="auto"
+                >
+                  {document.stamp}
+                </span>
+                <span className="text-[9px] leading-none text-ink-muted" dir="auto">
+                  {document.stampNote}
+                </span>
+              </p>
             </header>
 
             <div className="mt-7 space-y-6">
@@ -115,12 +135,27 @@ export function Hero({
               ))}
             </div>
 
-            <div className="mt-8 flex items-center justify-between gap-4 border-t border-hairline pt-4">
-              <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-brass" />
+            {/* Two empty rules, as on an act that has not been signed yet. */}
+            <div className="mt-8 grid grid-cols-2 gap-5 border-t border-hairline pt-6">
+              {document.signatures.map((label) => (
+                <div key={label} className="space-y-2">
+                  <p className="text-[10px] leading-none text-ink-muted" dir="auto">
+                    {label}
+                  </p>
+                  <span aria-hidden className="block h-6 border-b border-dashed border-hairline" />
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-hairline pt-4">
+              <p className="text-[10px] leading-none text-ink-muted" dir="auto">
+                {document.timestamp}
+              </p>
               <p
-                className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted"
+                className="flex items-center gap-2 text-[10px] font-semibold uppercase leading-none tracking-[0.16em] text-ink-muted"
                 dir="auto"
               >
+                <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-brass" />
                 {document.ready}
               </p>
             </div>

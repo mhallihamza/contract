@@ -61,7 +61,7 @@ export default async function DocumentsPage() {
                   </span>
                   <a
                     href={`/api/documents/${document.id}`}
-                    className="rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-accent"
+                    className="rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium shadow-sm transition-colors hover:bg-accent-soft"
                   >
                     {d.common.download}
                   </a>

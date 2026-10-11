@@ -41,6 +41,12 @@ export const publicFr = {
         { n: "04", title: "Durée" },
         { n: "05", title: "Résiliation" },
       ],
+      // The three details that make a sheet read as a real act rather than a
+      // diagram: an approval stamp, the signature block, a timestamp.
+      stamp: "MODÈLE VÉRIFIÉ",
+      stampNote: "Préparé à partir de modèles approuvés",
+      signatures: ["Signature du client", "Signature du prestataire"],
+      timestamp: "Document préparé et horodaté",
       status: "Document préparé",
       ready: "Prêt pour vérification",
     },
@@ -109,6 +115,36 @@ export const publicFr = {
       note: "Aperçu de démonstration — aucune analyse juridique n'est affichée.",
     },
 
+    // §11bis — the question a visitor asks before committing: what does this
+    // change compared to the usual way of getting a contract written?
+    // Deliberately qualitative — no timing, no percentage, no competitor named.
+    comparisonEyebrow: "COMPARATIF",
+    comparisonTitle: "Pourquoi préparer son contrat en ligne ?",
+    comparisonText:
+      "Le même document qu'au cabinet, mais un parcours qui ne vous demande ni déplacement ni attente.",
+    comparison: {
+      criteriaLabel: "CRITÈRE",
+      columns: ["La façon habituelle", "Avec la plateforme"],
+      rows: [
+        { criterion: "Rendez-vous", before: "À organiser en personne", after: "Depuis chez vous, à votre rythme" },
+        {
+          criterion: "Avancée du dossier",
+          before: "Entre deux échanges",
+          after: "Votre document avance dès vos réponses",
+        },
+        {
+          criterion: "Tarifs",
+          before: "Précisés au cas par cas",
+          after: "Le service et son prix sont annoncés avant le paiement",
+        },
+        {
+          criterion: "Suivi",
+          before: "Échanges dispersés par e-mail",
+          after: "Un dossier unique, horodaté, accessible à tout moment",
+        },
+      ],
+    },
+
     // §12 — professional validation: the single dark band of the page.
     validationTitle: "Besoin d'une validation professionnelle ?",
     validationText:
@@ -134,12 +170,62 @@ export const publicFr = {
       note: "Aperçu de démonstration — données fictives.",
     },
 
-    // §14 — how it works: three steps only, no workflow diagram.
+    // §14 — how it works: the two tracks, one per starting point.
     stepsTitle: "Simple du début à la fin.",
-    steps: [
-      { n: "01", title: "Expliquez votre besoin" },
-      { n: "02", title: "Préparez ou faites relire votre contrat" },
-      { n: "03", title: "Finalisez votre document" },
+    stepsSubtitle:
+      "Vous choisissez d'abord votre point de départ : préparer un document, ou faire examiner celui que vous avez déjà. Chaque parcours ne montre que ses propres étapes.",
+    tracks: [
+      {
+        eyebrow: "PARCOURS CRÉATION",
+        title: "Je prépare un document",
+        body: "Vous partez d'un besoin, à partir d'un modèle approuvé.",
+        cta: "Commencer une demande",
+        steps: [
+          {
+            n: "01",
+            title: "Choisissez votre type de document",
+            body: "Bail d'habitation, contrat de travail ou prestation de service.",
+          },
+          {
+            n: "02",
+            title: "Répondez aux questions utiles",
+            body: "Vos réponses remplissent le document, sans vocabulaire juridique.",
+          },
+          {
+            n: "03",
+            title: "Choisissez votre accompagnement",
+            body: "Vous finalisez par vous-même, ou demandez une validation professionnelle si votre dossier le prévoit.",
+          },
+          {
+            n: "04",
+            title: "Recevez votre document",
+            body: "Vous téléchargez un document prêt à être signé avec votre cocontractant.",
+          },
+        ],
+      },
+      {
+        eyebrow: "PARCOURS RELECTURE",
+        title: "J'ai déjà un document",
+        body: "Vous partez du contrat que vous détenez déjà.",
+        cta: "Faire relire un contrat",
+        steps: [
+          {
+            n: "01",
+            title: "Déposez votre contrat",
+            body: "PDF ou Word. Rien n'est rédigé à votre place : nous examinons le vôtre.",
+          },
+          {
+            n: "02",
+            title: "Indiquez ce qui vous préoccupe",
+            body: "Durée, conditions de paiement, résiliation, responsabilités : ciblez les points qui comptent.",
+          },
+          {
+            n: "03",
+            title: "Recevez la relecture",
+            body: "Vous identifiez les points qui méritent votre attention avant de signer.",
+          },
+        ],
+      },
     ],
 
     // §16 — final call to action.
@@ -237,6 +323,11 @@ export const publicFr = {
     title: "Vos documents juridiques, simplement.",
     pageTitle: "Tous les documents",
     pageSubtitle: "Trouvez le document adapté à votre situation.",
+    // Public metadata (§33): the same rule as the landing page — the catalogue
+    // must not advertise itself with the wrong language when served in Arabic.
+    metaTitle: "Tous les documents",
+    metaDescription:
+      "Trouvez le document juridique adapté à votre situation : immobilier, travail, business, vente. Sans création de compte.",
     subtitle:
       "Choisissez un document pour commencer. Aucun compte n'est nécessaire : vous ne le créez, si vous le souhaitez, qu'après le paiement.",
     start: "Commencer",

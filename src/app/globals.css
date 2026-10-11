@@ -1,51 +1,56 @@
 @import "tailwindcss";
 
 /* ───────────────────────────────────────────────────────────────────────────
-   MOROCCO LEGAL PLATFORM — design tokens
-   Premium legal services: warm white canvas (#F7F6F2), charcoal text
-   (#1C1C1C), one deep muted blue for every action (#172B3A), a warm bronze
-   accent (#8B7653) used very sparingly, 1px hairlines, restrained shadows.
+   WATHIQA — design tokens
+   Juriste & fiduciaire en ligne, Maroc.
+   Sand canvas (#FAFAF9), sand-900 ink (#1C1917), one deep emerald for every
+   action (#065F46) with emerald-950 (#022C22) for the dark band and footer,
+   and a gold accent (#D97706) used VERY sparingly.
+   The semantic token NAMES are unchanged from the previous identity, so every
+   component keeps working; only their values moved to the emerald/sand/gold
+   family. That is deliberate — a rebrand should be a token change, not a
+   rewrite of seventy call sites.
    ─────────────────────────────────────────────────────────────────────────── */
 
 :root {
   --radius: 0.75rem;
 
-  --background: oklch(0.991 0.004 95);
-  --foreground: oklch(0.235 0.028 258);
+  --background: #fafaf9;
+  --foreground: #1c1917;
 
-  --card: oklch(1 0 0);
+  --card: #ffffff;
   --card-foreground: var(--foreground);
 
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.505 0.176 275);
-  --primary-foreground: oklch(0.99 0.005 275);
+  --primary: #065f46;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.968 0.006 250);
-  --secondary-foreground: oklch(0.31 0.03 258);
+  --secondary: #f5f5f4;
+  --secondary-foreground: #292524;
 
-  --muted: oklch(0.968 0.006 250);
-  --muted-foreground: oklch(0.53 0.021 258);
+  --muted: #f5f5f4;
+  --muted-foreground: #44403c;
 
-  --accent: oklch(0.955 0.012 265);
-  --accent-foreground: oklch(0.31 0.03 258);
+  --accent: #ecfdf5;
+  --accent-foreground: #064e3b;
 
-  --destructive: oklch(0.567 0.2 26);
-  --destructive-foreground: oklch(0.99 0.005 26);
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
 
-  --success: #176b4d;
+  --success: #047857;
   --success-foreground: #ffffff;
-  --warning: #a66a18;
+  --warning: #b45309;
   --warning-foreground: #ffffff;
-  --info: oklch(0.55 0.12 245);
-  --info-foreground: oklch(0.99 0.005 245);
+  --info: #0e7490;
+  --info-foreground: #ffffff;
 
-  --border: oklch(0.905 0.008 255);
-  --input: oklch(0.905 0.008 255);
-  --ring: oklch(0.505 0.176 275);
+  --border: #e7e5e4;
+  --input: #e7e5e4;
+  --ring: #065f46;
 
-  --sidebar: oklch(0.978 0.005 255);
+  --sidebar: #f5f5f4;
   --sidebar-foreground: var(--foreground);
 }
 
@@ -62,8 +67,6 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
@@ -83,36 +86,41 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-sans: var(--font-geist-sans), "Segoe UI", system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  /* One typographic family for the whole experience: the landing page never
-     mixes a second voice, so no component may reach for the `font-serif`
-     utility — the acceptance check fails if it ever appears in the output. */
+  --font-sans: var(--font-inter), var(--font-cairo), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  /* Two loaded voices plus a fallback chain: Inter carries the interface,
+     Cairo takes over Arabic glyphs so RTL pages never drop to a system face,
+     JetBrains Mono carries reference numbers, prices and timestamps — the
+     "machine" layer of the product. No second display family: the acceptance
+     suite requires a single typographic voice in the rendered output. */
 
-  /* ── Marketing palette (public pages) ───────────────────────────────────────
-     Premium legal-services identity — warm white, charcoal, one deep muted
-     blue for every action, one whisper of warm accent:
-       canvas        #F7F6F2  — warm white page background
-       surface       #FFFFFF  — documents and alternating bands
-       main text     #1C1C1C  — titles and body copy
-       secondary     #686868  — supporting text
-       border        #E2E0DA  — 1px hairlines
-       primary dark  #172B3A  — the main CTA, the single dark band, the footer
-       accent        #8B7653  — warm bronze, used VERY sparingly: micro-labels
-                                and eyebrow rules only. Never a button, never a
-                                fill, never a background.
+  /* Marketing palette (public pages) — Wathiqa identity: sand canvas, ink
+     text, ONE deep emerald for every action and dark surface, one whisper of
+     gold on document details:
+        canvas        #FAFAF9  - sand-50, the page background
+        surface       #FFFFFF  - documents and alternating bands
+        main text     #1C1917  - sand-900, titles and body copy
+        secondary     #44403C  - sand-700, supporting text
+        border        #E7E5E4  - sand-200, 1px hairlines
+        primary dark  #022C22  - emerald-950: the CTA, the dark band, the footer
+        hover dark    #064E3B  - emerald-900, hover shift of the primary dark
+        action text   #065F46  - emerald-800: links, icons, focus rings, eyebrows
+        accent detail #D97706  - gold-600, the document stamp and micro-labels
+                                 ONLY: never a button, never a fill, never a
+                                 background.
      No gradient, no glow, no neon, no second hue, no second accent. */
-  --color-canvas: #f7f6f2; /* warm white page canvas */
+  --color-canvas: #fafaf9; /* sand-50 page canvas */
   --color-surface: #ffffff; /* cards, documents, alternating bands */
-  --color-navy: #1c1c1c; /* main text — titles and body copy */
-  --color-ink-muted: #686868; /* secondary text */
-  --color-hairline: #e2e0da; /* neutral hairline / 1px card border */
-  --color-navy-deep: #172b3a; /* primary dark — main CTA, dark band, footer */
-  --color-navy-mid: #20394a; /* hover shift of the primary dark */
-  --color-navy-soft: #eceff1; /* derived light zone (6% #172B3A on white) */
-  --color-accent: #172b3a; /* the action colour: buttons, links, active icons */
-  --color-accent-soft: #eef1f4; /* derived action zone (hover surfaces) */
-  --color-brass: #8b7653; /* warm accent — micro-labels and rules ONLY */
+  --color-navy: #1c1917; /* sand-900 — main text: titles and body copy */
+  --color-ink-muted: #44403c; /* sand-700 — secondary text */
+  --color-hairline: #e7e5e4; /* sand-200 — neutral hairline / 1px card border */
+  --color-navy-deep: #022c22; /* emerald-950 — CTA, dark band, footer */
+  --color-navy-mid: #064e3b; /* emerald-900 — hover shift of the primary dark */
+  --color-navy-soft: #ecfdf5; /* emerald-50 — derived light zone */
+  --color-accent: #065f46; /* emerald-800 — the action colour */
+  --color-accent-soft: #ecfdf5; /* emerald-50 — hover surfaces */
+  --color-accent-foreground: #ffffff; /* ink ON the dark accent surface: hover of outline/ghost buttons, focused menu items */
+  --color-brass: #d97706; /* gold-600 — micro-labels and rules ONLY */
 }
 
 /* Anchored sections of the marketing pages: keep the sticky header clear. */

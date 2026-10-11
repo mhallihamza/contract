@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, HelpCircle, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -8,11 +9,21 @@ import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 import { logger } from "@/lib/logging";
 
-export const metadata = {
-  title: "Tous les documents — catalogue",
-  description:
-    "Trouvez le document juridique adapté à votre situation : immobilier, travail, business, vente. Sans création de compte.",
-};
+/**
+ * Catalogue metadata (§33). Locale-aware, exactly like the landing and legal
+ * pages: the Arabic catalogue must not advertise itself with the French title,
+ * so title and description come from the dictionary that is actually rendered.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { d } = await getServerI18n();
+  const t = d.public.catalogue;
+
+  return {
+    title: t.metaTitle,
+    description: t.metaDescription,
+    alternates: { canonical: "/contracts" },
+  };
+}
 
 /**
  * Catalogue (§1, §6, §17).

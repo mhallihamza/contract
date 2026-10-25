@@ -7,9 +7,18 @@ export async function seedLegalRules(
     typeFreelanceService: { id: string };
     typeCommercialLease: { id: string };
     typeRealEstateSale: { id: string };
+    typeNda: { id: string };
+    typeVehicleSale: { id: string };
+    typeEmploymentCdd: { id: string };
+    typeEmploymentCdi: { id: string };
+    typeFurnishedLease: { id: string };
+    typeSeasonalLease: { id: string };
+    typeLoanAgreement: { id: string };
+    typePowerOfAttorney: { id: string };
   },
   sources: {
     sourceLoi6712: { id: string };
+    sourceLoi6599: { id: string };
     sourceLoi4916: { id: string };
     sourceLoi3908: { id: string };
   },
@@ -222,6 +231,314 @@ export async function seedLegalRules(
     },
   });
 
+  // 7. Mutual NDA -> SELF_SERVICE (freedom of contract, DOC).
+  const ruleNdaStandard = await db.legalRule.upsert({
+    where: { code: "MA-NDA-STANDARD-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-NDA-STANDARD-001",
+      title: "Accord de confidentialité standard (one-way ou mutuel)",
+      titleAr: "اتفاقية عدم إفصاح عادية (من طرف واحد أو متبادلة)",
+      description:
+        "L'accord de confidentialité relève de la liberté contractuelle (DOC 1913): la plate-forme exige un écrit daté mais aucun avocat n'est impératif. Policy conforme aux règles vérifiées.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeNda.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "POLICY_NDA_STANDARD",
+      internalPolicyRef: "POL-NDA-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "durationYears",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 1,
+            groupIndex: 0,
+            label: "Durée de confidentialité >= 1 an",
+          },
+        ],
+      },
+    },
+  });
+
+  // 8. Vehicle sale between individuals -> SELF_SERVICE.
+  const ruleVehicleStandard = await db.legalRule.upsert({
+    where: { code: "MA-VEHICLE-STANDARD-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-VEHICLE-STANDARD-001",
+      title: "Vente de véhicule d'occasion de droit commun",
+      titleAr: "بيع مركبة مستعملة وفق القانون العادي",
+      description:
+        "La vente d'un véhicule d'occasion se fait par acte sous seing privé (liberté contractuelle DOC). Policy de la plate-forme: mentions du certificat d'immatriculation exigées dans le questionnaire.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeVehicleSale.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "POLICY_VEHICLE_STANDARD",
+      internalPolicyRef: "POL-VEH-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "salePriceMad",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Tout prix de vente",
+          },
+        ],
+      },
+    },
+  });
+
+  // 9. Fixed-term employment contract -> LAWYER_REQUIRED (requalification risk).
+  const ruleEmploymentCdd = await db.legalRule.upsert({
+    where: { code: "MA-EMPLOYMENT-CDD-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-EMPLOYMENT-CDD-001",
+      title: "Contrat à durée déterminée (Code du travail)",
+      titleAr: "عقد عمل محدد المدة (مدونة الشغل)",
+      description:
+        "Le CDD n'est licite que dans les cas prévus par la loi n° 65-99: le fondement du recours au CDD est vérifié par un professionnel, faute de quoi le contrat risque la requalification en CDI.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeEmploymentCdd.id,
+      status: "VERIFIED",
+      route: "LAWYER_REQUIRED",
+      lawyerReview: "REQUIRED",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 40,
+      reasonCode: "POLICY_CDD_REQUIRES_LAWYER",
+      internalPolicyRef: "POL-EMP-CDD-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "grossMonthlySalaryMad",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Toute rémunération",
+          },
+        ],
+      },
+    },
+  });
+
+  // 10. Indefinite-term employment contract -> LAWYER_REQUIRED (Code du Travail).
+  const ruleEmploymentCdi = await db.legalRule.upsert({
+    where: { code: "MA-EMPLOYMENT-CDI-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-EMPLOYMENT-CDI-001",
+      title: "Contrat à durée indéterminée (Code du travail 65-99)",
+      titleAr: "عقد عمل غير محدد المدة (القانون 65.99)",
+      description: "Le CDI est la forme normale du lien de travail: la rupture repose sur un motif légal et un préavis — un avocat vérifie les clauses de rupture.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeEmploymentCdi.id,
+      status: "VERIFIED",
+      route: "LAWYER_REQUIRED",
+      lawyerReview: "REQUIRED",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 40,
+      reasonCode: "POLICY_CDI_REQUIRES_LAWYER",
+      internalPolicyRef: "POL-EMP-CDI-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "grossMonthlySalaryMad",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Toute rémunération",
+          },
+        ],
+      },
+    },
+  });
+
+  // 11. Furnished residential lease -> SELF_SERVICE.
+  const ruleFurnishedLease = await db.legalRule.upsert({
+    where: { code: "MA-LEASE-FURNISHED-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-LEASE-FURNISHED-001",
+      title: "Bail d'habitation meublé (Loi 67-12)",
+      titleAr: "كراء سكني مفروش وفق القانون 67.12",
+      description: "Le bail meublé obéit au même régime que le bail vide, avocat non obligatoire.",
+      ruleKind: "LEGAL_REQUIREMENT",
+      jurisdiction: "MA",
+      contractTypeId: types.typeFurnishedLease.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "MA_LAW_67_12_FURNISHED_LEASE",
+      legalSourceId: sources.sourceLoi6712.id,
+      article: "Art. 1 & 3",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "durationMonths",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 1,
+            groupIndex: 0,
+            label: "Durée du bail >= 1 mois",
+          },
+        ],
+      },
+    },
+  });
+
+  // 12. Seasonal lease -> SELF_SERVICE.
+  const ruleSeasonalLease = await db.legalRule.upsert({
+    where: { code: "MA-LEASE-SEASONAL-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-LEASE-SEASONAL-001",
+      title: "Bail saisonnier / location de vacances",
+      titleAr: "كراء موسم / إيجار سياحي",
+      description: "Location courte durée à usage de villégiature: avocat non obligatoire.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeSeasonalLease.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "POLICY_SEASONAL_LEASE_SELF_SERVICE",
+      internalPolicyRef: "POL-RENT-SEASONAL-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "startDate",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Date de début renseignée",
+          },
+        ],
+      },
+    },
+  });
+
+  // 13. Loan between individuals -> SELF_SERVICE.
+  const ruleLoanStandard = await db.legalRule.upsert({
+    where: { code: "MA-LOAN-STANDARD-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-LOAN-STANDARD-001",
+      title: "Prêt entre particuliers (Dahîr des Obligations et des Contrats)",
+      titleAr: "قرض بين الأفراد (ظهير الالتزامات والعقود)",
+      description: "Le prêt d'argent entre particuliers relève de la liberté contractuelle (DOC): avocat non obligatoire.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typeLoanAgreement.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "POLICY_LOAN_STANDARD",
+      internalPolicyRef: "POL-LOAN-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "loanAmountMad",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Tout montant de prêt",
+          },
+        ],
+      },
+    },
+  });
+
+  // 14. Power of attorney -> SELF_SERVICE (administrative acts only).
+  const rulePowerOfAttorney = await db.legalRule.upsert({
+    where: { code: "MA-POA-STANDARD-001" },
+    update: { status: "VERIFIED", active: true },
+    create: {
+      code: "MA-POA-STANDARD-001",
+      title: "Procuration administrative courante",
+      titleAr: "توكيل إداري عادي",
+      description: "Mandat pour actes administratifs courants: avocat non obligatoire, hors actes notariés.",
+      ruleKind: "PLATFORM_POLICY",
+      jurisdiction: "MA",
+      contractTypeId: types.typePowerOfAttorney.id,
+      status: "VERIFIED",
+      route: "SELF_SERVICE",
+      lawyerReview: "OPTIONAL",
+      lawyerSignature: "NOT_REQUIRED",
+      specialistRequired: false,
+      writtenContractRequired: true,
+      manualReviewRequired: false,
+      priority: 100,
+      reasonCode: "POLICY_POA_ADMINISTRATIVE",
+      internalPolicyRef: "POL-POA-01",
+      active: true,
+      createdById: adminId,
+      conditions: {
+        create: [
+          {
+            field: "mandatePurpose",
+            operator: "GREATER_THAN_OR_EQUAL",
+            valueNumber: 0,
+            groupIndex: 0,
+            label: "Objet du mandat renseigné",
+          },
+        ],
+      },
+    },
+  });
+
   return {
     ruleLeaseStandard,
     ruleLeaseHighValue,
@@ -229,5 +546,13 @@ export async function seedLegalRules(
     ruleServiceIpHigh,
     ruleCommercialLease,
     ruleRealEstate,
+    ruleNdaStandard,
+    ruleVehicleStandard,
+    ruleEmploymentCdd,
+    ruleEmploymentCdi,
+    ruleFurnishedLease,
+    ruleSeasonalLease,
+    ruleLoanStandard,
+    rulePowerOfAttorney,
   };
 }

@@ -9,7 +9,7 @@ export async function seedDemoCaseA(
   ruleLeaseStandardId: string,
   client1Id: string,
 ) {
-  const refA = "MLP-2026-001";
+  const refA = "WQC-2026-001";
   const contractA = await db.contract.upsert({
     where: { reference: refA },
     update: {},

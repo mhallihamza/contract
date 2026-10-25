@@ -7,7 +7,7 @@ export async function seedDemoCaseB(
   client1Id: string,
   lawyerAId: string,
 ) {
-  const refB = "MLP-2026-002";
+  const refB = "WQC-2026-002";
   const contractB = await db.contract.upsert({
     where: { reference: refB },
     update: {},

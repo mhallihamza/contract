@@ -101,7 +101,12 @@ export class MockPaymentProvider implements PaymentProvider {
       failureReason?: string;
     };
     const status: PaymentStatus =
-      payload.status === "PAID" ? "PAID" : payload.status === "FAILED" ? "FAILED" : "PENDING";
+      payload.status === "PAID" ? "PAID"
+      : payload.status === "AUTHORIZED" ? "AUTHORIZED"
+      : payload.status === "CANCELLED" ? "CANCELLED"
+      : payload.status === "REFUNDED" ? "REFUNDED"
+      : payload.status === "FAILED" ? "FAILED"
+      : "PENDING";
     return {
       providerPaymentId: String(payload.providerPaymentId ?? ""),
       status,

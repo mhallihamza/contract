@@ -59,6 +59,12 @@ export interface CatalogueItem {
   signatureAvailable: boolean;
   requiredDocuments: string[];
   supportedLanguages: string[];
+  /**
+   * Routes reachable by the VERIFIED rules of this type (per-type + globals).
+   * The detail page derives its "when is a lawyer mandatory" wording from
+   * this — never hardcoded, never a client choice.
+   */
+  routes: RoutingRoute[];
 }
 
 export interface CatalogueGroup {
@@ -130,7 +136,8 @@ function priceForRoutes(routes: RoutingRoute[], currency: string): RoutePricing 
   };
 }
 
-function estimateMinutes(questionCount: number, hasLawyerBranch: boolean): number {
+/** Rough filling time for a questionnaire — shared by the catalogue and the wizard's remaining-time display. */
+export function estimateMinutes(questionCount: number, hasLawyerBranch: boolean): number {
   const base = 2 + questionCount * 1.5 + (hasLawyerBranch ? 1 : 0);
   return Math.max(5, Math.round(base / 5) * 5);
 }
@@ -174,6 +181,7 @@ function toItem(type: RawType, routes: RoutingRoute[], currency: string): Catalo
     signatureAvailable: price.signatureAvailable,
     requiredDocuments: type.requiredDocuments,
     supportedLanguages: type.supportedLanguages,
+    routes,
   };
 }
 
@@ -238,24 +246,64 @@ export function catalogueCategoryLabel(category: ContractCategory, locale: "fr" 
 /** What the approved template of a document actually contains (product page §7). */
 export async function loadDocumentOutline(
   contractTypeCode: string,
-): Promise<{ sectionCount: number; clauseCount: number; templateVersionNumber: number | null }> {
+): Promise<{
+  sectionCount: number;
+  clauseCount: number;
+  templateVersionNumber: number | null;
+  /** Rough final length of the generated document — character count / ~2800. */
+  pageEstimate: number;
+  /** Law texts the VERIFIED rules of this type cite (product page: "basé sur"). */
+  legalSources: { labelFr: string; labelAr: string }[];
+}> {
   const type = await db.contractType.findUnique({
     where: { code: contractTypeCode },
     select: { id: true },
   });
-  if (!type) return { sectionCount: 0, clauseCount: 0, templateVersionNumber: null };
+  if (!type) {
+    return { sectionCount: 0, clauseCount: 0, templateVersionNumber: null, pageEstimate: 0, legalSources: [] };
+  }
 
   const version = await loadActiveTemplateVersion(type.id);
-  if (!version) return { sectionCount: 0, clauseCount: 0, templateVersionNumber: null };
+  if (!version) {
+    return { sectionCount: 0, clauseCount: 0, templateVersionNumber: null, pageEstimate: 0, legalSources: [] };
+  }
 
   const sections = new Set<string>();
   version.templateClauses.forEach((clause, index) => {
     sections.add(clause.sectionNumber ?? String(index + 1));
   });
 
+  // Rough physical length: the French bodies the template actually carries,
+  // counted against a common paper density. "Environ N pages", never exact.
+  const totalChars = version.templateClauses.reduce(
+    (sum, entry) => sum + (entry.clause.bodyFr?.length ?? 0),
+    0,
+  );
+
+  const rules = await db.legalRule.findMany({
+    where: {
+      active: true,
+      status: "VERIFIED",
+      contractTypeId: type.id,
+    },
+    select: { legalSource: { select: { lawNumber: true, title: true, titleAr: true } } },
+  });
+
+  const legalSources: { labelFr: string; labelAr: string }[] = [];
+  for (const rule of rules) {
+    const source = rule.legalSource;
+    if (!source) continue;
+    const label = { labelFr: source.title, labelAr: source.titleAr ?? source.title };
+    if (!legalSources.some((entry) => entry.labelFr === label.labelFr)) legalSources.push(label);
+  }
+
   return {
     sectionCount: sections.size,
     clauseCount: version.templateClauses.length,
     templateVersionNumber: version.versionNumber,
+    pageEstimate: totalChars > 0 ? Math.max(1, Math.ceil(totalChars / 2800)) : 0,
+    legalSources,
   };
 }
+
+export { lawyerRequirementForType } from "./route-reading";

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Clock, MapPin, Phone } from "lucide-react";
+import { Clock, MapPin, MessageCircle, Phone } from "lucide-react";
 import { WathiqaMark } from "@/components/marketing/wathiqa-mark";
 import { appConfig } from "@/lib/config";
 
@@ -13,7 +13,7 @@ export interface FooterLabels {
   laws: readonly string[];
   address: string;
   hours: string;
-  phone: string;
+  /** Label of the WhatsApp link (the number itself comes from the env config). */
   whatsapp: string;
   legal: string;
   privacy: string;
@@ -22,14 +22,15 @@ export interface FooterLabels {
 
 /**
  * Service links point at their real destination: the catalogue page carries
- * every act type, and the verifier is the simulator's second mode. Nothing in
- * the footer is decorative — each anchor leads somewhere a visitor can act.
+ * every act type, and the verify link leads to the dedicated verification
+ * journey. Nothing in the footer is decorative — each anchor leads somewhere
+ * a visitor can act.
  */
 const SERVICE_HREF: Record<string, string> = {
   bail: "/contracts?template=contrat-location-habitation",
   cdi: "/contracts?template=contrat-travail-cdd",
   prestation: "/contracts?template=contrat-prestation-services",
-  verify: "/#simulator",
+  verify: "/verify",
 };
 
 /**
@@ -94,7 +95,9 @@ export function SiteFooter({ labels, rights }: { labels: FooterLabels; rights: s
             </ul>
           </div>
 
-          {/* Contact — seat, hours, phone, WhatsApp. */}
+          {/* Contact — seat, hours, phone, WhatsApp. Phone and WhatsApp only
+              appear when the operator configured them: no placeholder number
+              is ever published. */}
           <div>
             <h3 className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-brass-bright">
               {labels.contact}
@@ -108,16 +111,32 @@ export function SiteFooter({ labels, rights }: { labels: FooterLabels; rights: s
                 <Clock aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
                 <span dir="auto">{labels.hours}</span>
               </li>
-              <li className="flex items-start gap-2">
-                <Phone aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
-                <a
-                  href={`tel:${labels.phone.replace(/\s/g, "")}`}
-                  className="underline-offset-4 transition-colors hover:text-white hover:underline"
-                  dir="auto"
-                >
-                  {labels.phone}
-                </a>
-              </li>
+              {appConfig.supportPhone ? (
+                <li className="flex items-start gap-2">
+                  <Phone aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
+                  <a
+                    href={`tel:${appConfig.supportPhone.replace(/\s/g, "")}`}
+                    className="underline-offset-4 transition-colors hover:text-white hover:underline"
+                    dir="auto"
+                  >
+                    {appConfig.supportPhone}
+                  </a>
+                </li>
+              ) : null}
+              {appConfig.whatsappNumber ? (
+                <li className="flex items-start gap-2">
+                  <MessageCircle aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
+                  <a
+                    href={`https://wa.me/${appConfig.whatsappNumber}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline-offset-4 transition-colors hover:text-white hover:underline"
+                    dir="auto"
+                  >
+                    {labels.whatsapp}
+                  </a>
+                </li>
+              ) : null}
             </ul>
           </div>
         </div>
@@ -139,9 +158,11 @@ export function SiteFooter({ labels, rights }: { labels: FooterLabels; rights: s
             >
               {labels.privacy}
             </Link>
-            <span className="text-accent-tint/50" dir="auto">
-              {rights}
-            </span>
+            {rights ? (
+              <span className="text-accent-tint/50" dir="auto">
+                {rights}
+              </span>
+            ) : null}
           </div>
           <p dir="auto">{labels.copyright}</p>
         </div>

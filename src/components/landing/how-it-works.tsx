@@ -1,5 +1,5 @@
 import { FilePlus2, FileUp } from "lucide-react";
-import { SimulatorJump } from "@/components/landing/simulator-jump";
+import Link from "next/link";
 
 /** One numbered step inside a parcours; the tier box follows its own step. */
 interface TrackStep {
@@ -18,9 +18,8 @@ interface Track {
   };
   cta: string;
   /**
-   * Which parcours the CTA announces to the simulator — "create" or "verify".
-   * `string` because dictionaries arrive `DeepWiden`-ed; the card narrows it
-   * back with `=== "create"` and treats anything else as verify.
+   * Where the CTA leads — `/contracts` for the create parcours, `/verify`
+   * for the verification parcours. A real destination, never an anchor.
    */
   ctaHref: string;
 }
@@ -29,7 +28,7 @@ interface Track {
  * How it works (§14) — the two parcours of the Wathiqa page: create a
  * document, or verify one you already hold. Each card lists only its own
  * steps, with the pricing choice shown exactly where the choice happens.
- * The CTAs dispatch the visitor's intent into the simulator below.
+ * Every CTA leads to its dedicated journey page.
  */
 export function HowItWorks({
   eyebrow,
@@ -84,11 +83,6 @@ function ParcoursCard({ track, tone }: { track: Track; tone: "create" | "verify"
     tone === "create"
       ? "flex flex-col justify-between rounded-2xl border border-hairline bg-canvas p-6 sm:p-8"
       : "flex flex-col justify-between rounded-2xl border-2 border-navy-mid/20 bg-white p-6 shadow-md sm:p-8";
-
-  const ctaIntent =
-    track.ctaHref === "create"
-      ? ({ mode: "create" } as const)
-      : ({ mode: "verify" } as const);
 
   return (
     <div className={cardClass}>
@@ -152,8 +146,8 @@ function ParcoursCard({ track, tone }: { track: Track; tone: "create" | "verify"
         </ol>
       </div>
 
-      <SimulatorJump
-        intent={ctaIntent}
+      <Link
+        href={track.ctaHref}
         className={`mt-6 block w-full rounded-xl py-2.5 text-center text-xs font-bold text-white transition-colors ${
           tone === "create"
             ? "bg-navy hover:bg-ink-deep"
@@ -161,7 +155,7 @@ function ParcoursCard({ track, tone }: { track: Track; tone: "create" | "verify"
         }`}
       >
         <span dir="auto">{track.cta}</span>
-      </SimulatorJump>
+      </Link>
     </div>
   );
 }

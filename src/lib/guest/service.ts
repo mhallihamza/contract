@@ -114,6 +114,8 @@ export interface GuestCaseView {
   } | null;
   /** Whether a lawyer engagement exists on this case (drives service selection UI). */
   lawyerRequested: boolean;
+  /** Offer key pre-picked on a marketing entry point, applied once after routing. */
+  preselectedOffer: ServiceOfferKey | null;
   routedAt: Date | null;
   isFinal: boolean;
 }
@@ -149,6 +151,12 @@ export async function requireGuestCase(token?: string | null): Promise<GuestCase
 export interface StartGuestIntakeParams {
   slug: string;
   locale: "fr" | "ar";
+  /**
+   * Service offer key pre-picked on a marketing entry point. Stored on the
+   * session and applied once after routing — only if the routing engine's
+   * decision allows that offer, so the visitor never picks the route.
+   */
+  tier?: string;
 }
 
 export interface StartGuestIntakeResult {
@@ -166,6 +174,21 @@ export interface StartGuestIntakeResult {
  * from the *server-side* contract type resolved through its slug, and the token is
  * stored in an httpOnly cookie while also living in the URL.
  */
+/**
+ * Marketing tier → offer key map. Deliberately narrow: only the lawyer-review
+ * offer can be pre-picked from a pricing card. Verification tiers belong to
+ * the dedicated verification journey, not to the create wizard.
+ */
+const PRESELECTABLE_TIERS: Record<string, ServiceOfferKey> = {
+  avocat: "LAWYER_REVIEW",
+};
+
+/** Validates a marketing tier and returns the offer key, or null when unknown. */
+export function preselectedOfferFor(tier: string | undefined | null): ServiceOfferKey | null {
+  if (!tier) return null;
+  return PRESELECTABLE_TIERS[tier] ?? null;
+}
+
 export async function startGuestIntake(params: StartGuestIntakeParams): Promise<StartGuestIntakeResult> {
   const contractType = await db.contractType.findFirst({
     where: { slug: params.slug, active: true, status: "ACTIVE" },
@@ -173,9 +196,12 @@ export async function startGuestIntake(params: StartGuestIntakeParams): Promise<
   });
   if (!contractType) throw new Error("CONTRACT_TYPE_UNRESOLVED");
 
+  const preselectedOffer = preselectedOfferFor(params.tier);
+
   const { token, sessionId, expiresAt } = await issueGuestSession({
     contractTypeId: contractType.id,
     locale: params.locale,
+    preselectedOffer,
   });
 
   const created = await createContractCase({
@@ -331,6 +357,7 @@ export async function loadGuestCase(session: GuestSessionSummary & { contractId:
         }
       : null,
     lawyerRequested: Boolean(contract.lawyerRequest),
+    preselectedOffer: preselectedOfferFor(session.preselectedOffer),
     routedAt: contract.routedAt,
     isFinal: contract.status === "FINAL",
   };
@@ -447,6 +474,13 @@ export async function routeGuestCase(params: { token: string }): Promise<GuestRo
 
   const outcome = await routeContract({ contractId: view.contractId, actor });
 
+  // A tier pre-picked on a marketing page is applied exactly once, right after
+  // routing — and only when the engine's decision actually allows that offer
+  // (a selectable LAWYER_REVIEW offer). The route itself is never overridden.
+  if (view.preselectedOffer) {
+    await applyPreselectedService(params.token, actor, view.preselectedOffer);
+  }
+
   return {
     route: outcome.decision.route,
     decisionId: outcome.decisionId,
@@ -460,6 +494,31 @@ export async function routeGuestCase(params: { token: string }): Promise<GuestRo
     missingRuleContext: outcome.decision.missingRuleContext,
     alreadyDecided: false,
   };
+}
+
+/**
+ * Applies a pre-picked offer when the routed decision allows it. Fails soft:
+ * if the offer is not offered or not selectable for this route, the visitor
+ * simply chooses at checkout like every other case.
+ */
+async function applyPreselectedService(
+  token: string,
+  actor: GuestActor,
+  offerKey: ServiceOfferKey,
+): Promise<void> {
+  try {
+    const { view: fresh } = await requireGuestCase(token);
+    const offer = fresh.offers?.offers.find((entry) => entry.key === offerKey);
+    if (offer?.selectable && !fresh.lawyerRequested) {
+      await selectContractService({ contractId: fresh.contractId, actor, offerKey });
+      logger.info("guest.preselected_offer_applied", { contractId: fresh.contractId, offerKey });
+    }
+  } catch (error) {
+    logger.warn("guest.preselected_offer_skipped", {
+      offerKey,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 }
 
 /** Records the client's service choice (never the price, never the lawyer). */

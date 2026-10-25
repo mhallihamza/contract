@@ -37,13 +37,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CataloguePage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; category?: string }>;
+  searchParams: Promise<{ error?: string; category?: string; tier?: string }>;
 }) {
   const [{ locale, d }, params] = await Promise.all([getServerI18n(), searchParams]);
   const t = d.public.catalogue;
   // Deep link from a marketing entry point (§11 solutions, §18 footer): the chip
   // starts on that family. Unknown values are ignored, never applied.
   const initialCategory = isContractCategory(params.category) ? params.category : undefined;
+  // Tier memory from a pricing card: only carried through to the start form —
+  // the allowlist inside the guest start service decides what is honored.
+  const tier = params.tier?.trim() || undefined;
 
   let groups: Awaited<ReturnType<typeof loadCatalogue>> = [];
   try {
@@ -55,7 +58,9 @@ export default async function CataloguePage({
   const cardLabels = {
     from: t.from,
     estimatedTime: t.estimatedTime,
+    questions: t.questions,
     lawyerBadge: t.lawyerBadge,
+    documentsAtHand: t.documentsAtHand,
   } as const;
 
   return (
@@ -101,6 +106,7 @@ export default async function CataloguePage({
           groups={groups}
           labels={cardLabels}
           initialCategory={initialCategory}
+          tier={tier}
           strings={{
             searchLabel: t.searchLabel,
             searchPlaceholder: t.searchPlaceholder,

@@ -27,9 +27,9 @@ export const LOCALE_TAGS: Record<AppLocale, string> = {
 };
 
 export const appConfig = {
-  /** Working identifier — replace with the marketing brand when decided. */
-  name: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MOROCCO_LEGAL_PLATFORM",
-  shortName: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MLP",
+  /** Working name — the operator can override via env, never a dead brand. */
+  name: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "Wathiqa",
+  shortName: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "Wathiqa",
   /**
    * Public marketing brand shown by the landing pages (Wathiqa identity:
    * emerald / sand / gold). Internal surfaces keep using `name`; this one is
@@ -40,6 +40,14 @@ export const appConfig = {
   },
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@example.ma",
   supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim() || "",
+  /** WhatsApp business number, international digits only (e.g. 2126…). Empty = the channel is not offered at all. */
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim().replace(/[^0-9]/g, "") || "",
+  /**
+   * Demonstration notice (fail-safe): the "démonstration — données fictives"
+   * mention stays visible unless the operator explicitly turns it off, so a
+   * brand-new deployment never presents itself as a live merchant.
+   */
+  demoMode: (process.env.NEXT_PUBLIC_DEMO_MODE ?? "true").trim().toLowerCase() !== "false",
   appUrl: process.env.APP_URL?.trim() || "http://localhost:3010",
   defaultLocale: DEFAULT_LOCALE,
   supportedLocales: SUPPORTED_LOCALES,
@@ -51,12 +59,31 @@ export const appConfig = {
     text: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "Wathiqa",
     favicon: "/favicon.ico",
   },
+  /**
+   * Seller identity printed on invoices. Every field is environment-driven: an
+   * empty value is printed as "à compléter" rather than invented, because a
+   * fake tax identity on an invoice is worse than an explicit gap.
+   */
+  invoice: {
+    legalName: process.env.INVOICE_LEGAL_NAME?.trim() || "",
+    address: process.env.INVOICE_ADDRESS?.trim() || "",
+    city: process.env.INVOICE_CITY?.trim() || "",
+    /** Identifiant Commun de l'Entreprise. */
+    ice: process.env.INVOICE_ICE?.trim() || "",
+    /** Registre de Commerce. */
+    rc: process.env.INVOICE_RC?.trim() || "",
+    /** Identifiant Fiscal. */
+    taxId: process.env.INVOICE_TAX_ID?.trim() || "",
+    email: process.env.INVOICE_EMAIL?.trim() || process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "",
+  },
 } as const;
 
 /** Prices published in the MVP (MAD). Kept in one place for admin editing later. */
 export const SERVICE_PRICING = {
   /** Generating and downloading a contract without lawyer involvement. */
   selfService: 290,
+  /** Automated completeness/coherence verification of an existing document. */
+  verificationAssisted: 79,
   /** Optional lawyer review requested by the client. */
   lawyerReview: 990,
   /** Lawyer review + validation where the routing engine requires it. */
@@ -66,3 +93,11 @@ export const SERVICE_PRICING = {
 } as const;
 
 export type ServicePricingKey = keyof typeof SERVICE_PRICING;
+
+/** Standard VAT rate (Morocco: 20 %). Configurable — checkout shows it. */
+const DEFAULT_VAT_RATE = 0.2;
+
+export function vatRate(source: Record<string, string | undefined> = process.env): number {
+  const raw = Number(source.VAT_RATE ?? DEFAULT_VAT_RATE);
+  return Number.isFinite(raw) && raw >= 0 && raw < 1 ? raw : DEFAULT_VAT_RATE;
+}

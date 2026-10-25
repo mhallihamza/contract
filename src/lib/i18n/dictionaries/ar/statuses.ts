@@ -30,6 +30,8 @@ export const statusesAr = {
     SIGNATURE_PENDING: "في انتظار التوقيع",
     SIGNED: "موقّع",
     FINAL: "نهائي",
+    VERIFICATION_IN_PROGRESS: "التحقق جارٍ",
+    REPORT_DELIVERED: "تم تسليم تقرير التحقق",
     CANCELLED: "ملغى",
   },
   contractRoute: {
@@ -84,12 +86,14 @@ export const statusesAr = {
   paymentStatus: {
     PENDING: "في الانتظار",
     PAID: "مدفوع",
+    AUTHORIZED: "مؤجَّل — الأداء بعد المصادقة",
     FAILED: "فشل",
     REFUNDED: "مُسترد",
     CANCELLED: "ملغى",
   },
   paymentType: {
     SELF_SERVICE_CONTRACT: "عقد ذاتي",
+    VERIFICATION_ASSISTED: "تحقق آلي من وثيقة",
     LAWYER_REVIEW: "مراجعة محامٍ",
     LAWYER_REQUIRED_SERVICE: "خدمة قانونية إلزامية",
     OTHER: "أخرى",

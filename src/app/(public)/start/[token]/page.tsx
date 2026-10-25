@@ -1,12 +1,10 @@
 import { redirect } from "next/navigation";
 import { FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  QuestionnaireWizard,
-  type WizardPartyDraft,
-  type WizardSection,
-} from "@/components/guest/questionnaire-wizard";
+import type { WizardPartyDraft, WizardSection } from "@/components/guest/questionnaire-wizard";
+import { WizardWithPreview } from "@/components/guest/wizard-preview-panel";
 import { GuestUnavailableCard } from "@/components/guest/unavailable-card";
+import { estimateMinutes } from "@/lib/contracts/catalogue";
 import { requireGuestCase, type GuestCaseView } from "@/lib/guest/service";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
@@ -23,7 +21,9 @@ export const metadata = {
  * render once the routing engine already ran (the questionnaire is closed
  * then) and pre-fills everything from the stored case — answers, parties and
  * the field catalogue — so an interrupted session resumes exactly where it
- * stopped.
+ * stopped. The wizard sits in the `WizardWithPreview` shell, which shows the
+ * live, always-locked document preview beside the form on desktop and as a
+ * tab on mobile.
  */
 export default async function GuestStartPage({
   params,
@@ -82,8 +82,20 @@ export default async function GuestStartPage({
 
   const contractTypeName = locale === "ar" ? view.contractType.nameAr : view.contractType.nameFr;
 
+  // Remaining-time source: the catalogue's own estimate, driven by the number
+  // of questions the server actually asks (parties step included implicitly).
+  const questionCount = Math.max(sections.reduce((sum, section) => sum + section.fields.length, 0), 1);
+  const estimatedMinutes = estimateMinutes(questionCount, view.lawyerRequested);
+
+  // The preview labels reuse the checkout wording — one voice, one source.
+  const previewLabels = {
+    ...d.public.wizardPreview,
+    lockedNote: d.public.checkout.locked,
+    pageEstimate: d.public.checkout.pages,
+  };
+
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+    <div className="mx-auto w-full max-w-3xl px-4 py-12 sm:px-6 lg:max-w-6xl lg:py-16">
       <div className="mb-8 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="gap-1">
@@ -98,14 +110,19 @@ export default async function GuestStartPage({
         </p>
       </div>
 
-      <QuestionnaireWizard
-        token={token}
+      <WizardWithPreview
+        wizard={{
+          token,
+          labels: t,
+          sections,
+          savedAnswers: view.answers,
+          roles: view.partyRoles,
+          existingParties,
+          estimatedMinutes,
+        }}
+        preview={view.preview}
         locale={locale}
-        labels={t}
-        sections={sections}
-        savedAnswers={view.answers}
-        roles={view.partyRoles}
-        existingParties={existingParties}
+        previewLabels={previewLabels}
       />
     </div>
   );

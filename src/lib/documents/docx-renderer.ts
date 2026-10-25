@@ -65,7 +65,7 @@ export async function renderDocx(input: DocxRenderInput): Promise<Buffer> {
   });
 
   const document = new Document({
-    creator: "MOROCCO_LEGAL_PLATFORM",
+    creator: "Wathiqa",
     title: input.title,
     description: `${input.metadata.contractTypeFr} / ${input.metadata.contractTypeAr}`,
     styles: {

@@ -73,6 +73,7 @@ export default async function GuestDossierPage({
     emailCta: co.emailCta,
     summary: co.summary,
     total: co.total,
+    modifyChoice: co.modifyChoice,
     payCta: co.payCta,
     paying: co.paying,
     simulated: co.simulated,
@@ -87,12 +88,19 @@ export default async function GuestDossierPage({
     },
   };
 
+  /**
+   * The chosen offer: the engine's mandatory path wins, then an explicit
+   * client selection (lawyerRequested), then a tier pre-picked on a marketing
+   * page — only if the engine actually offers it.
+   */
   const selectedOfferKey = view.offers
     ? view.offers.offers.length === 1
       ? view.offers.offers[0]!.key
       : view.lawyerRequested
         ? ("LAWYER_REVIEW" as const)
-        : ("SELF_SERVICE" as const)
+        : view.preselectedOffer && view.offers.offers.some((offer) => offer.key === view.preselectedOffer)
+          ? view.preselectedOffer
+          : ("SELF_SERVICE" as const)
     : ("SELF_SERVICE" as const);
 
   return (

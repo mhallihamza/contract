@@ -199,6 +199,17 @@ enum RoutingDecisionStatus {
 
 // ── Contract lifecycle (§37) ────────────────────────────────────────────────
 
+/// Where a case came from. The origin decides which lifecycle branches are
+/// legal: questionnaire cases are generated, verification cases are checked.
+enum ContractOrigin {
+  /// Case created through the questionnaire journey (§8).
+  QUESTIONNAIRE
+  /// Case created from a previously uploaded document (§8b).
+  VERIFICATION
+
+  @@schema("legal_platform")
+}
+
 enum ContractStatus {
   DRAFT
   INFORMATION_REQUIRED
@@ -216,6 +227,10 @@ enum ContractStatus {
   SIGNATURE_PENDING
   SIGNED
   FINAL
+  /// §8b — uploaded document received and paid, automated check in progress.
+  VERIFICATION_IN_PROGRESS
+  /// §8b — verification report delivered; a lawyer tier may follow.
+  REPORT_DELIVERED
   CANCELLED
 
   @@schema("legal_platform")
@@ -332,6 +347,9 @@ enum AssignmentStatus {
 enum PaymentStatus {
   PENDING
   PAID
+  /// Funds secured by the provider but not yet captured — capture happens only
+  /// after the lawyer validates the case (§26, product rule 4).
+  AUTHORIZED
   FAILED
   REFUNDED
   CANCELLED
@@ -343,6 +361,8 @@ enum PaymentType {
   SELF_SERVICE_CONTRACT
   LAWYER_REVIEW
   LAWYER_REQUIRED_SERVICE
+  /// Automated verification of an existing document (assisted tier, §8b).
+  VERIFICATION_ASSISTED
   OTHER
 
   @@schema("legal_platform")
@@ -390,8 +410,15 @@ enum AuditAction {
   LAWYER_SERVICE_SELECTED
   PAYMENT_INITIATED
   PAYMENT_COMPLETED
+  /// Provider secured the funds (hold) — not yet captured (§26).
+  PAYMENT_AUTHORIZED
+  /// The provider actually debited a previously authorized payment.
+  PAYMENT_CAPTURED
   PAYMENT_FAILED
   PAYMENT_REFUNDED
+  /// A captured payment received its sequential invoice number.
+  INVOICE_ISSUED
+  INVOICE_DOWNLOADED
   DRAFT_GENERATED
   DRAFT_EDITED
   LAWYER_ASSIGNED
@@ -409,6 +436,7 @@ enum AuditAction {
   CONTRACT_FINALIZED
   DOCUMENT_UPLOADED
   DOCUMENT_DOWNLOADED
+  VERIFICATION_UPLOADED
   LEGAL_SOURCE_CREATED
   LEGAL_SOURCE_UPDATED
   LEGAL_SOURCE_VERIFIED
@@ -568,6 +596,10 @@ model GuestSession {
   tokenHash       String    @unique
   contractTypeId  String?   @db.Uuid
   locale          Language  @default(FR)
+  /// Offer key the visitor pre-picked on a marketing entry point (pricing card,
+  /// document page). Applied once after routing, only if the routing engine
+  /// allows that offer: the engine, never the visitor, decides the route.
+  preselectedOffer String?
   email           String?
   emailVerifiedAt DateTime?
   expiresAt       DateTime
@@ -586,6 +618,68 @@ model GuestSession {
 
   @@index([expiresAt])
   @@index([email])
+  @@schema("legal_platform")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VERIFICATION OF AN EXISTING DOCUMENT (§8b)
+// ═══════════════════════════════════════════════════════════════════════════
+
+/// Tier of the "check an existing document" journey.
+enum VerificationTier {
+  /// Automated coherence and completeness check, delivered as a plain list of
+  /// points to look at. Not legal advice.
+  ASSISTED
+  /// A lawyer reviews the file and issues a separate signed attestation.
+  LAWYER
+
+  @@schema("legal_platform")
+}
+
+/// Lifecycle of an uploaded document. At payment time (Phase 3) the intake is
+/// attached to a contract case and its further states keep auditing there.
+enum VerificationIntakeStatus {
+  RECEIVED
+  CHECKING
+  REPORT_READY
+  LAWYER_REVIEW
+  CLOSED
+  /// Retention sweep: the stored file has been erased.
+  DELETED
+
+  @@schema("legal_platform")
+}
+
+/// A document the visitor already holds, uploaded to be checked. Private
+/// storage only — the bearer token is stored as a domain-separated SHA-256,
+/// exactly like guest sessions (§8).
+model VerificationIntake {
+  id              String                   @id @default(uuid()) @db.Uuid
+  tokenHash       String                   @unique
+  /// Human reference shown on the confirmation screen (WQV-YYYY-NNN).
+  reference       String                   @unique
+  tier            VerificationTier
+  language        Language                 @default(FR)
+  /// Optional e-mail for report delivery (filled at payment, never required before).
+  email           String?
+  /// Contract case this intake becomes after payment (Phase 3 wiring).
+  contractId      String?                  @db.Uuid
+  filename        String
+  mimeType        String
+  sizeBytes       Int
+  checksum        String
+  storageProvider String
+  storagePath     String
+  status          VerificationIntakeStatus @default(RECEIVED)
+  /// Retention deadline shown to the user — the file is erased after this.
+  expiresAt       DateTime
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  report Json?
+
+  @@index([expiresAt])
+  @@index([status])
   @@schema("legal_platform")
 }
 
@@ -745,6 +839,8 @@ model Contract {
   language           Language       @default(FR)
   jurisdiction       String         @default("MA")
   status             ContractStatus @default(DRAFT)
+  /// Which journey created this case (§8 questionnaire vs §8b verification).
+  origin             ContractOrigin @default(QUESTIONNAIRE)
   route              RoutingRoute?
   intentCode         String?
   intentConfidence   Float?
@@ -1019,6 +1115,10 @@ model Payment {
   idempotencyKey    String?       @unique
   metadata          Json?
   failureReason     String?
+  /// Sequential invoice number (WQI-YYYY-NNNN), assigned when the payment is
+  /// captured. Unique — the numbering is a legal requirement for invoices.
+  invoiceNumber     String?       @unique
+  invoiceIssuedAt   DateTime?
   paidAt            DateTime?
   refundedAt        DateTime?
   createdAt         DateTime      @default(now())

@@ -39,6 +39,8 @@ export interface CheckoutLabels {
   emailCta: string;
   summary: string;
   total: string;
+  /** Link shown next to the preselected offer — jumps back to the choice list. */
+  modifyChoice: string;
   payCta: string;
   paying: string;
   simulated: string;
@@ -168,7 +170,7 @@ export function CheckoutPanel({
   return (
     <div className="space-y-5">
       {showChoice ? (
-        <Card>
+        <Card id="service-choice">
           <CardHeader>
             <CardTitle className="text-lg">{labels.servicesTitle}</CardTitle>
             {mandatoryNote ? <CardDescription dir="auto">{mandatoryNote}</CardDescription> : null}
@@ -197,7 +199,7 @@ export function CheckoutPanel({
                     </span>
                   </span>
                   <span className="whitespace-nowrap text-sm font-semibold">
-                    {offer.quote.amount} {offer.quote.currency}
+                    {offer.quote.vat ? offer.quote.vat.total : offer.quote.amount} {offer.quote.currency}
                   </span>
                 </button>
               );
@@ -281,16 +283,38 @@ export function CheckoutPanel({
                     </span>
                   </li>
                 ))}
+                {currentOffer.quote.vat ? (
+                  <li className="flex justify-between gap-3 text-xs">
+                    <span className="text-muted-foreground" dir="auto">
+                      {locale === "ar" ? currentOffer.quote.vat.labelAr : currentOffer.quote.vat.labelFr}
+                    </span>
+                    <span>
+                      {currentOffer.quote.vat.vatAmount} {currentOffer.quote.currency}
+                    </span>
+                  </li>
+                ) : null}
               </ul>
             </>
           ) : null}
 
-          <div className="flex justify-between border-t border-border pt-3 text-sm font-semibold">
+          <div className="flex items-center justify-between border-t border-border pt-3 text-sm font-semibold">
             <span>{labels.total}</span>
             <span>
-              {currentOffer ? `${currentOffer.quote.amount} ${currentOffer.quote.currency}` : "—"}
+              {currentOffer
+                ? `${currentOffer.quote.vat ? currentOffer.quote.vat.total : currentOffer.quote.amount} ${currentOffer.quote.currency}`
+                : "—"}
             </span>
           </div>
+
+          {showChoice ? (
+            <a
+              href="#service-choice"
+              className="text-xs font-medium text-primary underline underline-offset-4"
+              dir="auto"
+            >
+              {labels.modifyChoice}
+            </a>
+          ) : null}
 
           {error ? (
             <p className="text-sm text-destructive" dir="auto">

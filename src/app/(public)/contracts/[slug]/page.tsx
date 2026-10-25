@@ -15,7 +15,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { loadCatalogueItem, loadDocumentOutline, type CatalogueItem } from "@/lib/contracts/catalogue";
+import { loadCatalogueItem, loadDocumentOutline, lawyerRequirementForType, type CatalogueItem } from "@/lib/contracts/catalogue";
+import { preselectedOfferFor } from "@/lib/guest/service";
 import { getFieldSpecs, partyRoleLabel, partyRolesFor } from "@/lib/contracts/field-catalog";
 import { appConfig } from "@/lib/config";
 import { interpolate } from "@/lib/i18n/dictionaries";
@@ -33,12 +34,23 @@ import { logger } from "@/lib/logging";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const item = await loadCatalogueItem(slug, appConfig.currency).catch(() => null);
-  if (!item) return { title: "Document indisponible" };
-  return { title: `${item.nameFr} — ${appConfig.name}`, description: item.descriptionFr };
+  if (!item) return { title: "Document indisponible", robots: { index: false } };
+  return {
+    title: `${item.nameFr} — ${appConfig.name}`,
+    description: item.descriptionFr,
+    alternates: { canonical: `/contracts/${(await params).slug}` },
+  };
 }
 
-export default async function ContractProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const [{ slug }, { locale, d }] = await Promise.all([params, getServerI18n()]);
+export default async function ContractProductPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  /** Marketing tier memory: a pricing card can pre-pick the lawyer review. */
+  searchParams: Promise<{ tier?: string }>;
+}) {
+  const [{ slug }, query, { locale, d }] = await Promise.all([params, searchParams, getServerI18n()]);
   const t = d.public.product;
 
   let item: CatalogueItem | null = null;
@@ -48,6 +60,10 @@ export default async function ContractProductPage({ params }: { params: Promise<
     logger.warn("product.unavailable", { slug, error: error instanceof Error ? error.message : String(error) });
   }
   if (!item) notFound();
+
+  // The pre-picked tier is only a convenience: the routing engine keeps every
+  // decision, and this narrow allowlist turn a stray query into nothing.
+  const preselectedOffer = preselectedOfferFor(query.tier);
 
   const outline = await loadDocumentOutline(item.code);
   const name = locale === "ar" ? item.nameAr : item.nameFr;
@@ -102,6 +118,12 @@ export default async function ContractProductPage({ params }: { params: Promise<
                 <ListChecks className="h-4 w-4" aria-hidden />
                 {interpolate(d.public.catalogue.questions, { count: item.questionCount })}
               </li>
+              {outline.pageEstimate > 0 ? (
+                <li className="flex items-center gap-2">
+                  <FileText className="h-4 w-4" aria-hidden />
+                  {interpolate(t.pages, { count: outline.pageEstimate })}
+                </li>
+              ) : null}
               {item.lawyerReviewAvailable ? (
                 <li className="flex items-center gap-2">
                   <BadgeCheck className="h-4 w-4" aria-hidden />
@@ -110,6 +132,23 @@ export default async function ContractProductPage({ params }: { params: Promise<
               ) : null}
             </ul>
           </div>
+
+          {/* What the document relies on — the VERIFIED rule sources only,
+                   phrased as "based on", never as a conformity claim. */}
+          {outline.legalSources.length > 0 ? (
+            <div className="rounded-lg border border-border bg-muted/30 p-4">
+              <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground" dir="auto">
+                <ShieldCheck className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+                <span className="font-medium text-foreground">{t.basedOn}</span>
+                {outline.legalSources.map((source) => (
+                  <span key={source.labelFr} className="rounded-full border border-border bg-background px-2.5 py-0.5">
+                    {(locale === "ar" ? source.labelAr : source.labelFr).trim()}
+                  </span>
+                ))}
+                <span className="text-[11px]">· {t.basedOnNote}</span>
+              </p>
+            </div>
+          ) : null}
 
           <Card>
             <CardHeader>
@@ -185,8 +224,25 @@ export default async function ContractProductPage({ params }: { params: Promise<
                 ) : null}
               </div>
 
+              {/* Read from the VERIFIED routing rules — never hardcoded. */}
+              {lawyerRequirementForType(item.routes) === "mandatory" ? (
+                <p
+                  className="flex items-start gap-2 rounded-md border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200"
+                  dir="auto"
+                >
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <span>
+                    <span className="font-semibold">{t.lawyerMandatoryTitle}</span>{" "}
+                    <span>{t.lawyerMandatoryBody}</span>
+                  </span>
+                </p>
+              ) : null}
+
               <form action="/api/guest/start" method="post">
                 <input type="hidden" name="slug" value={item.slug} />
+                {preselectedOffer ? <input type="hidden" name="tier" value={query.tier} /> : null}
+                {/* Honeypot: invisible to humans, filled only by bots (§48). */}
+                <input type="text" name="company_website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
                 <Button type="submit" size="lg" className="w-full">
                   {t.start}
                   <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
@@ -216,10 +272,13 @@ export default async function ContractProductPage({ params }: { params: Promise<
               </div>
 
               {item.lawyerReviewAvailable ? (
-                <div className="space-y-1 border-t border-border/60 pt-3">
+                <div className={`space-y-1 border-t border-border/60 pt-3 ${preselectedOffer === "LAWYER_REVIEW" ? "rounded-lg border bg-primary/5 p-3" : ""}`}>
                   <p className="flex items-center gap-2 font-medium">
                     <PenLine className="h-4 w-4" aria-hidden />
                     {t.lawyerTitle}
+                    {preselectedOffer === "LAWYER_REVIEW" ? (
+                      <Badge variant="secondary">{t.preselected}</Badge>
+                    ) : null}
                   </p>
                   <p className="text-xs text-muted-foreground" dir="auto">
                     {t.lawyerBody}

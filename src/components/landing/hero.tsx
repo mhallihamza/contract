@@ -2,25 +2,25 @@ import Link from "next/link";
 import { ArrowRight, CircleCheck, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WathiqaMark } from "@/components/marketing/wathiqa-mark";
+import { appConfig } from "@/lib/config";
 
-/** The sample bail the right column typesets, verbatim from the brand page. */
+/**
+ * The sample bail the right column typesets: the first page of a multi-page
+ * contract, never a one-pager and never an official State document.
+ */
 export interface HeroDocument {
-  kingdom: string;
   ref: string;
   title: string;
   law: string;
-  stamp: string;
-  stampNote: string;
+  badge: string;
+  pages: string;
   partiesLabel: string;
   party1: string;
   party2: string;
   articles: readonly { title: string; body: string }[];
-  sig1Label: string;
-  sig1: string;
-  sig2Label: string;
-  sig2: string;
+  sommaireLabel: string;
+  sommaireItems: readonly string[];
   timestamp: string;
-  refNote: string;
 }
 
 /**
@@ -28,10 +28,11 @@ export interface HeroDocument {
  *
  * Left: the trust pill, the two-line promise with its italic emerald accent,
  * the three statutory reference chips, the two actions and the proof row.
- * Right: a dense paper mockup of a residential lease resting on a rotated
- * sheet with the document mark as its watermark. Background: the deep
- * emerald gradient with the white dot lattice. Every string comes from the
- * dictionary so the Arabic page states the same promise.
+ * Right: a stack of pages — the front sheet typesets the first page of an
+ * eight-page residential lease over two rotated sheets peeking out from
+ * behind, a summary strip of the full contract, then a fade to paper.
+ * Background: the deep emerald gradient with the white dot lattice.
+ * Every string comes from the dictionary so the Arabic page mirrors it RTL.
  */
 export function Hero({
   badge,
@@ -105,23 +106,25 @@ export function Hero({
               size="lg"
               className="w-full rounded-xl bg-accent-bright px-8 py-4 text-sm font-bold text-navy-deep shadow-xl transition hover:bg-accent-contrast focus-visible:ring-accent-bright sm:w-auto"
             >
-              <Link href="/#simulator">
+              <Link href="/contracts">
                 <span dir="auto">{primaryCta}</span>
                 <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
               </Link>
             </Button>
 
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="w-full rounded-xl border-2 border-white/20 bg-white/10 px-6 py-4 text-sm font-medium text-white transition hover:bg-white/20 hover:text-white focus-visible:ring-white sm:w-auto"
-            >
-              <a href="https://wa.me/212600000000" target="_blank" rel="noreferrer">
-                <WhatsAppGlyph className="h-4 w-4 text-accent-contrast" />
-                <span dir="auto">{secondaryCta}</span>
-              </a>
-            </Button>
+            {appConfig.whatsappNumber ? (
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="w-full rounded-xl border-2 border-white/20 bg-white/10 px-6 py-4 text-sm font-medium text-white transition hover:bg-white/20 hover:text-white focus-visible:ring-white sm:w-auto"
+              >
+                <a href={`https://wa.me/${appConfig.whatsappNumber}`} target="_blank" rel="noreferrer">
+                  <WhatsAppGlyph className="h-4 w-4 text-accent-contrast" />
+                  <span dir="auto">{secondaryCta}</span>
+                </a>
+              </Button>
+            ) : null}
           </div>
 
           {/* Proof row. */}
@@ -138,83 +141,107 @@ export function Hero({
           </div>
         </div>
 
-        {/* Right — the paper mockup. */}
+        {/* Right — the paper mockup: a stack of pages, the front sheet
+                   showing the first page of an eight-page lease. */}
         <div className="lg:col-span-5">
-          <div className="paper-sheet relative mx-auto w-full max-w-[430px] rotate-1 transform rounded-xl border border-line-strong p-6 text-navy shadow-2xl transition-transform duration-500 hover:rotate-0 sm:p-7">
-            <WathiqaMark className="watermark-seal" />
+          <div className="relative mx-auto w-full max-w-[430px]">
+            {/* The rest of the contract peeking out from under the front
+                       sheet — two pages, rotated and offset like a real stack. */}
+            <div
+              aria-hidden
+              className="paper-sheet absolute inset-0 origin-bottom translate-x-10 translate-y-8 rotate-[4.5deg] rounded-xl border border-line-strong"
+            />
+            <div
+              aria-hidden
+              className="paper-sheet absolute inset-0 origin-bottom -translate-x-7 translate-y-11 -rotate-[3deg] rounded-xl border border-line-strong"
+            />
 
-            <header className="mb-4 flex items-start justify-between border-b border-line-strong pb-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] uppercase text-ink-soft" dir="auto">
-                    {document.kingdom}
+            <div className="paper-sheet relative z-10 rounded-xl border border-line-strong p-6 text-navy transition-transform duration-500 hover:rotate-0 sm:p-7">
+              <WathiqaMark className="watermark-seal" />
+
+              {/* Wathiqa mark — never a heading of a State document. */}
+              <header className="mb-4 border-b border-line-strong pb-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-1.5">
+                    <WathiqaMark className="h-6 w-6" />
+                    <span className="text-sm font-bold tracking-wide text-navy">
+                      {appConfig.brand.name}
+                    </span>
                   </span>
                   <span
-                    className="rounded bg-accent-tint px-1.5 py-0.5 font-mono text-[9px] font-bold text-navy-deep"
+                    className="rounded bg-accent-tint px-1.5 py-0.5 font-mono text-[11px] font-bold text-navy-deep"
                     dir="auto"
                   >
-                    {document.ref}
+                    {document.badge}
                   </span>
                 </div>
+                <p className="mt-2 font-mono text-[11px] uppercase text-ink-soft" dir="auto">
+                  {document.ref}
+                </p>
                 <h2 className="mt-1 font-serif text-base font-bold text-navy" dir="auto">
                   {document.title}
                 </h2>
-                <p className="font-mono text-[10px] text-ink-soft" dir="auto">
+                <p className="font-mono text-[11px] text-ink-soft" dir="auto">
                   {document.law}
                 </p>
-              </div>
+              </header>
 
-              <div className="legal-stamp-seal shrink-0 text-center text-[9px]">
-                <span dir="auto">{document.stamp}</span>
-                <span className="block text-[7px] font-normal text-accent-strong" dir="auto">
-                  {document.stampNote}
-                </span>
-              </div>
-            </header>
+              <div className="space-y-3 font-serif text-[12px] leading-relaxed text-ink-deep">
+                <p className="font-bold" dir="auto">
+                  {document.partiesLabel}
+                </p>
+                <div className="space-y-1 rounded border border-hairline bg-canvas p-2.5 font-sans text-[12px]">
+                  <p dir="auto">{document.party1}</p>
+                  <p dir="auto">{document.party2}</p>
+                </div>
 
-            <div className="space-y-3 font-serif text-[11px] leading-relaxed text-ink-deep">
-              <p className="font-bold" dir="auto">
-                {document.partiesLabel}
-              </p>
-              <div className="space-y-1 rounded border border-hairline bg-canvas p-2.5 font-sans text-[11px]">
-                <p dir="auto">{document.party1}</p>
-                <p dir="auto">{document.party2}</p>
-              </div>
+                {document.articles.map((article) => (
+                  <div key={article.title}>
+                    <p className="font-serif text-[12px] font-bold text-navy" dir="auto">
+                      {article.title}
+                    </p>
+                    <p className="text-[12px] text-ink-soft" dir="auto">
+                      {article.body}
+                    </p>
+                  </div>
+                ))}
 
-              {document.articles.map((article) => (
-                <div key={article.title}>
-                  <p className="font-serif text-[11px] font-bold text-navy" dir="auto">
-                    {article.title}
+                {/* Summary of the whole contract, then the rest of the page
+                        fades out under the stack. */}
+                <div className="rounded border border-hairline bg-canvas p-2.5 font-sans">
+                  <p className="font-mono text-[11px] font-bold uppercase text-navy" dir="auto">
+                    {document.sommaireLabel}
                   </p>
-                  <p className="text-[11px] text-ink-soft" dir="auto">
-                    {article.body}
-                  </p>
+                  <ol className="mt-1 grid grid-cols-1 gap-0.5 text-[11px] text-ink-soft sm:grid-cols-2">
+                    {document.sommaireItems.map((item) => (
+                      <li key={item} className="truncate" dir="auto">
+                        · {item}
+                      </li>
+                    ))}
+                  </ol>
                 </div>
-              ))}
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-4 border-t border-line-strong pt-4 font-mono text-[10px]">
-              <div>
-                <span className="block text-[9px] text-ink-faint" dir="auto">
-                  {document.sig1Label}
-                </span>
-                <div className="signature-font mt-1 text-sm text-navy" dir="auto">
-                  {document.sig1}
-                </div>
-              </div>
-              <div>
-                <span className="block text-[9px] text-ink-faint" dir="auto">
-                  {document.sig2Label}
-                </span>
-                <div className="signature-font mt-1 text-sm text-navy-deep" dir="auto">
-                  {document.sig2}
+                {/* The page continues below the fold — suggested by skeleton
+                        lines that fade under the gradient. */}
+                <div aria-hidden className="space-y-2 pt-1">
+                  <div className="h-2.5 w-full rounded bg-ink-faint/40" />
+                  <div className="h-2.5 w-11/12 rounded bg-ink-faint/40" />
+                  <div className="h-2.5 w-full rounded bg-ink-faint/40" />
+                  <div className="h-2.5 w-4/5 rounded bg-ink-faint/40" />
                 </div>
               </div>
-            </div>
 
-            <div className="mt-3 flex items-center justify-between border-t border-dashed border-line-strong pt-2 font-mono text-[9px] text-ink-faint">
-              <span dir="auto">{document.timestamp}</span>
-              <span dir="auto">{document.refNote}</span>
+              {/* The sheet continues behind the stack — fade it to the paper. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-36 rounded-xl bg-gradient-to-b from-transparent via-white/85 to-white"
+              />
+
+              <div className="mt-4 flex items-center justify-between border-t border-dashed border-line-strong pt-2 font-mono text-[11px] text-ink-faint">
+                <span dir="auto">{document.timestamp}</span>
+                <span className="shrink-0 tabular-nums" dir="auto">
+                  {document.pages}
+                </span>
+              </div>
             </div>
           </div>
         </div>

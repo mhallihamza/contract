@@ -5,6 +5,7 @@ import { db } from "@/lib/db/prisma";
 import { readDocument } from "@/lib/documents/service";
 import { logger } from "@/lib/logging";
 import { resolveGuestRequest } from "@/lib/guest/session";
+import { enforceRateLimit, RATE_RULES } from "@/lib/security/rate-limit";
 
 /**
  * Document download (§38).
@@ -15,6 +16,9 @@ import { resolveGuestRequest } from "@/lib/guest/session";
  * re-verified on every read and reported in a response header.
  */
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+  const limited = enforceRateLimit(request, "document-download", RATE_RULES.documentDownload);
+  if (limited) return limited;
+
   const user = await getCurrentUser();
   const { id } = await context.params;
 

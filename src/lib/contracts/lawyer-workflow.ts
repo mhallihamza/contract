@@ -2,6 +2,8 @@ import { db } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/audit/logger";
 import { roleAtLeast } from "@/lib/auth/session";
 import { transitionStatus, type ActorContext } from "@/lib/contracts/service";
+import { captureAuthorizedPaymentInSandbox } from "@/lib/payments/service";
+import { logger } from "@/lib/logging";
 import { assertLawyerRequestTransition } from "@/lib/contracts/state-machine";
 import { declineAndReassign } from "@/lib/lawyers/assignment";
 import { generateAndStoreDocument } from "@/lib/documents/service";
@@ -296,6 +298,25 @@ export async function validateCaseAsLawyer(params: { contractId: string; actor: 
     actorRole: params.actor.role,
     metadata: { contractId: contract.id, requiresSignature: request.requiresSignature },
   });
+
+  // Product rule 4 — validation is the trigger enabling capture: any authorized
+  // hold (§26) is now being cashed. A failure to capture never invalidates the
+  // validation itself; it is logged for the operator to retry.
+  try {
+    const capture = await captureAuthorizedPaymentInSandbox({
+      contractId: contract.id,
+      actorRole: params.actor.role,
+      actorId: params.actor.id,
+    });
+    if (capture.captured) {
+      logger.info("payment.captured_after_validation", { contractId: contract.id });
+    }
+  } catch (error) {
+    logger.warn("payment.capture_after_validation_failed", {
+      contractId: contract.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
 
   await notifyCaseOwner({
     contract,

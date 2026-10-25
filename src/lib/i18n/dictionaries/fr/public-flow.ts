@@ -4,7 +4,7 @@ export const publicFr = {
     home: "Accueil",
     contracts: "Contrats",
     how: "Comment ça marche",
-    simulator: "Simulateur d'Acte",
+    catalogue: "Documents",
     pricing: "Services & Tarifs",
     why: "Pourquoi nous",
     faq: "FAQ",
@@ -27,7 +27,7 @@ export const publicFr = {
     // §33 — SEO metadata (no technology wording).
     metaTitle: "Contrats et documents juridiques au Maroc",
     metaDescription:
-      "Rédigez, faites vérifier et formalisez vos actes juridiques et administratifs au Maroc : un juriste basé au Maroc, un cadre conforme au droit marocain, en ligne.",
+      "Préparez vos actes juridiques et administratifs à partir de modèles approuvés, faites-les vérifier et finalisez-les en ligne : une équipe basée au Maroc, un cadre basé sur le droit marocain.",
     // §6 — announcement strip above the sticky bar.
     announcement: {
       badge: "Cadre Légal Marocain",
@@ -50,37 +50,58 @@ export const publicFr = {
         { value: "100%", label: "Plateforme Numérique" },
         { value: "4.9/5", label: "Satisfaction Clients" },
       ],
-      // The dense paper mockup: a residential bail, typeset verbatim.
+      // The dense paper mockup: the first page of a multi-page residential
+      // bail. No heading of a State document, no conformity stamp — a neutral
+      // "type template" sheet, with a summary of the whole contract under the
+      // first two articles and a "page 1 / 8" footer.
       document: {
-        kingdom: "Royaume du Maroc",
-        ref: "N° DM-2026-8849",
+        ref: "N° WQ-2026-0321",
         title: "CONTRAT DE BAIL À USAGE D'HABITATION",
-        law: "Dahir n° 1-13-111 • Conforme Loi 67-12",
-        stamp: "MODÈLE TYPE",
-        stampNote: "CONFORME LOI 67-12",
+        law: "Modèle basé sur la loi 67-12 (dahir n° 1-13-111, 19 novembre 2013)",
+        badge: "Modèle type",
+        pages: "Page 1 / 8",
         partiesLabel: "ENTRE LES SOUSSIGNÉS :",
         party1: "1. Le Bailleur : M. Omar Benjelloun (CIN N° AB123456)",
         party2: "2. Le Preneur : Mme Sarah Tazi (CIN N° CD789012)",
         articles: [
           {
-            title: "Article 1 — Objet du Contrat",
-            body: "Le bailleur donne à bail d'habitation au preneur le bien situé à Casablanca, Quartier Gauthier.",
+            title: "Article 1 — Objet du contrat",
+            body: "Le bailleur donne à bail d'habitation au preneur le bien situé à Casablanca, quartier Gauthier, à usage exclusif d'habitation.",
           },
           {
-            title: "Article 2 — Loyer & Charges",
-            body: "Le loyer mensuel est fixé à la somme de 6 500 DH, payable d'avance le 1er du mois.",
-          },
-          {
-            title: "Article 3 — Durée du Bail",
-            body: "Le présent contrat est conclu pour une durée d'une (1) année renouvelable par tacite reconduction.",
+            title: "Article 2 — Loyer et charges",
+            body: "Le loyer mensuel est fixé à la somme de 6 500 DH, payable d'avance le 1er du mois, charges locatives en sus.",
           },
         ],
-        sig1Label: "Signature Bailleur:",
-        sig1: "O. Benjelloun",
-        sig2Label: "Signature Preneur:",
-        sig2: "S. Tazi",
-        timestamp: "Document généré et horodaté",
-        refNote: "Réf. juridique conforme à la Loi 67-12",
+        sommaireLabel: "Sommaire des articles",
+        sommaireItems: [
+          "Article 1 — Objet du contrat",
+          "Article 2 — Loyer et charges",
+          "Article 3 — Durée du bail",
+          "Article 4 — Dépôt de garantie",
+          "Article 5 — État des lieux",
+          "Article 6 — Obligations du bailleur",
+          "Article 7 — Obligations du preneur",
+          "Article 8 — Sous-location et cession",
+          "Article 9 — Résiliation",
+          "Article 10 — Restitution des lieux",
+          "Article 11 — Litiges et juridiction",
+        ],
+        timestamp: "Document préparé à partir de modèles approuvés — à valider selon votre situation",
+      },
+    },
+    // §6b — the category row: one card per database category, deep-linking
+    // the catalogue's ?category= filter, plus the verification path.
+    categories: {
+      eyebrow: "Vos documents",
+      title: "Choisissez votre catégorie",
+      subtitle: "Chaque groupe rassemble les documents correspondant à votre situation.",
+      countLabel: "{count} documents",
+      browse: "Voir les documents",
+      verifyCard: {
+        title: "J'ai déjà un document — le faire vérifier",
+        body: "Téléversez votre PDF ou Word, choisissez le niveau de contrôle et recevez le résultat par email.",
+        cta: "Faire vérifier",
       },
     },
     // §14 — how it works: the two parcours, one per starting point.
@@ -123,7 +144,7 @@ export const publicFr = {
           },
         },
         cta: "Créer un document",
-        ctaHref: "create",
+        ctaHref: "/contracts",
       },
       verifyTrack: {
         title: "J'ai déjà un document",
@@ -155,249 +176,9 @@ export const publicFr = {
           },
         },
         cta: "Vérifier un document",
-        ctaHref: "verify",
+        ctaHref: "/verify",
       },
     },
-
-    // §8 — the interactive simulator: create a document end-to-end, or verify
-    // one already held. The paper templates carry {f0_0}-style tokens that the
-    // live sheet fills from the wizard answers.
-    simulator: {
-      eyebrow: "Testez par vous-même",
-      title: "Simulateur & Générateur d'Acte en Direct",
-      subtitle:
-        "Créez un nouveau document de A à Z, ou téléversez un document que vous avez déjà pour le faire vérifier.",
-      choiceLabel: "Que souhaitez-vous faire ?",
-      choiceCreate: {
-        title: "Créer un nouveau document",
-        body: "Choisissez un modèle, répondez aux questions, puis décidez de le faire relire par un avocat ou non.",
-      },
-      choiceVerify: {
-        title: "Vérifier un document existant",
-        body: "Vous avez déjà un contrat ? Faites-le examiner avant de le signer.",
-      },
-      back: "Retour",
-      stepsCreate: ["Type d'acte", "Informations", "Accompagnement", "Finalisation"],
-      stepsVerify: ["Téléversez", "Contrôle", "Confirmation"],
-      labels: {
-        createType: "Type d'acte",
-        createInfo: "Vos informations",
-        createTier: "Accompagnement",
-        createFinal: "Finalisation",
-        verifyUpload: "Téléversez le document",
-        verifyTier: "Niveau de contrôle",
-        verifyFinal: "Confirmation",
-      },
-      continueBtn: "Continuer",
-      toTierBtn: "Choisir l'accompagnement",
-      prev: "Précédent",
-      sendBtn: "Envoyer le document",
-      typeIntro: "Choisissez le type d'acte que vous souhaitez rédiger :",
-      docTypes: {
-        bail: {
-          title: "Contrat de Bail d'Habitation",
-          sub: "Conforme à la Loi 67-12",
-        },
-        cdi: {
-          title: "Contrat de Travail (CDI / CDD)",
-          sub: "Conforme au Code du Travail 65-99",
-        },
-        prestation: {
-          title: "Prestation de Service / Freelance",
-          sub: "Conforme au Dahir des Obligations et Contrats",
-        },
-      },
-      tierIntro: "Souhaitez-vous faire relire votre document par un avocat ?",
-      tierWarning: "Choisissez un niveau de contrôle pour continuer.",
-      createTiers: {
-        sans: {
-          label: "Sans avocat",
-          price: "290 DH",
-          desc: "Vous téléchargez votre document prêt à signer, immédiatement. Aucune relecture par un avocat.",
-          cta: "Télécharger le PDF",
-        },
-        avocat: {
-          label: "Avec avocat",
-          price: "990 DH",
-          desc: "Un avocat au barreau marocain examine votre projet. S'il est en ordre, il délivre une attestation de relecture signée.",
-          note: "Paiement capturé uniquement après validation effective par l'avocat (24h ouvrées).",
-          cta: "Confirmer la demande d'avocat",
-        },
-      },
-      verifyTiers: {
-        assistee: {
-          label: "Vérification assistée",
-          price: "79 DH",
-          desc: "Contrôle automatisé de complétude : identités, dates, montants et clauses. Ne constitue pas un avis juridique.",
-        },
-        avocat: {
-          label: "Validation par Avocat",
-          price: "990 DH",
-          desc: "Un avocat au barreau marocain relit intégralement votre document et délivre une attestation de relecture signée.",
-          note: "Paiement capturé uniquement après validation effective par l'avocat.",
-        },
-      },
-      uploadIntro: "Téléversez le document que vous avez déjà (PDF ou Word) :",
-      uploadCta: "Cliquez pour téléverser un fichier",
-      uploadFormats: "PDF, DOC, DOCX, PNG, JPG",
-      uploadWarning: "Veuillez sélectionner un fichier avant de continuer.",
-      confirmTitle: "Document transmis",
-      confirmBody: "Votre document a bien été transmis pour contrôle. Vous recevrez le résultat par email.",
-      launchCta: "Créer un nouveau document",
-      previewLabel: "Aperçu du document",
-      previewNote: "Les valeurs saisies se mettent à jour en direct.",
-      previewWaiting: "Téléversez un fichier pour l'apercevoir ici.",
-      fileRemoveLabel: "Retirer le fichier",
-      finalRecapLabel: "Récapitulatif",
-      finalLawyerTitle: "Validation par un avocat",
-      finalLawyerBody:
-        "Un avocat au barreau marocain examine votre document et délivre une attestation de relecture signée. Le paiement n'est capturé qu'après validation effective (24h ouvrées).",
-      finalReadyTitle: "Téléchargement immédiat",
-      finalReadyBody:
-        "Votre document est prêt à signer. Vous pouvez le télécharger et le transmettre à votre cocontractant.",
-      finalNoReviewNote: "Sans relecture par un avocat.",
-      handoffNote: "En continuant, vous ouvrez le questionnaire du document choisi sur la plateforme.",
-      liveHint: "Le document ci-contre se met à jour à mesure que vous répondez.",
-      kingdomLabel: "Royaume du Maroc",
-      stampDraft: "PROJET GÉNÉRÉ",
-      stampWaiting: "EN ATTENTE DE VALIDATION",
-      stampSealLabel: "MODÈLE TYPE",
-      liveBadge: "MISE À JOUR EN DIRECT",
-      signaturePlaceholder: "Signature…",
-      stampLegalized: "PROJET GÉNÉRÉ",
-      identityNote: "Aperçu de démonstration. Les valeurs affichées sont issues de vos réponses.",
-
-      docs: {
-        bail: {
-          title: "Contrat de Bail d'Habitation",
-          kicker: "Soumis à la Loi marocaine n° 67-12",
-          heading: "CONTRAT DE BAIL À USAGE D'HABITATION",
-          ref: "N° DM-2026-8849",
-          sigTokens: ["f0_0", "f1_0"],
-          sigLabels: ["Signature du Bailleur", "Signature du Preneur"],
-          groups: [
-            {
-              subLabel: "Identification des Parties (1/2)",
-              fields: [
-                { label: "Nom Complet du Bailleur (Propriétaire)", value: "Youssef BENNANI" },
-                { label: "CIN du Bailleur", value: "AB123456" },
-              ],
-            },
-            {
-              subLabel: "Identification des Parties & Bien (2/2)",
-              fields: [
-                { label: "Nom Complet du Locataire", value: "Karim ALAMI" },
-                { label: "CIN du Locataire", value: "CD789012" },
-                { label: "Adresse complète du Bien (Ville)", value: "25 Boulevard Massira, Casablanca" },
-                { label: "Montant du Loyer Mensuel (en Dirhams - DH)", value: "6500" },
-                { label: "Dépôt de Garantie (Nombre de mois - Max 2)", value: "2" },
-                { label: "Durée du Bail (Années)", value: "1" },
-              ],
-            },
-          ],
-          paper: [
-            "ENTRE LES SOUSSIGNÉS :",
-            "1. M./Mme {f0_0}, titulaire de la CIN n° {f0_1}, ci-après dénommé « Le Bailleur ».",
-            "2. M./Mme {f1_0}, titulaire de la CIN n° {f1_1}, ci-après dénommé « Le Locataire ».",
-            "ARTICLE 1 — OBJET ET DÉSIGNATION DU BIEN",
-            "Le Bailleur donne à bail à usage exclusif d'habitation au Locataire, qui l'accepte, le local situé à : {f1_2}.",
-            "ARTICLE 2 — DURÉE DU BAIL ET RENOUVELLEMENT",
-            "Le présent contrat est conclu pour une durée de {f1_5} an(s) à compter de la date de prise de possession. Il est renouvelable par tacite reconduction conformément aux dispositions de la loi 67-12.",
-            "ARTICLE 3 — LOYER ET RÉVISION",
-            "Le loyer mensuel est fixé à la somme de {loyer} DH payable d'avance le 1er de chaque mois. Toute révision de loyer sera soumise au taux légal en vigueur (8%).",
-            "ARTICLE 4 — DÉPÔT DE GARANTIE (CAUTION)",
-            "À la signature des présentes, le Locataire verse une somme de {caution_total} DH ({f1_4} mois de loyer) à titre de dépôt de garantie non productif d'intérêts.",
-            "ARTICLE 5 — OBLIGATIONS DES PARTIES",
-            "Le Bailleur garantit la jouissance paisible des lieux. Le Locataire s'engage à payer le loyer aux échéances, entretenir le bien et souscrire une assurance contre les risques locatifs.",
-            "ARTICLE 6 — RÉSILIATION ET PRÉAVIS",
-            "Toute résiliation anticipée doit faire l'objet d'un préavis écrit conformément aux articles 44 et suivants de la loi n° 67-12.",
-          ],
-        },
-
-        cdi: {
-          title: "Contrat de Travail (CDI / CDD)",
-          kicker: "Conforme au Code du Travail Marocain (Loi 65-99)",
-          heading: "CONTRAT DE TRAVAIL À DURÉE INDÉTERMINÉE (CDI)",
-          ref: "N° CT-2026-4417",
-          sigTokens: ["f0_1", "f0_0"],
-          sigLabels: ["Signature du Salarié", "Signature de l'Employeur"],
-          groups: [
-            {
-              subLabel: "Identification de l'Employeur & Salarié (1/2)",
-              fields: [
-                { label: "Nom de l'Entreprise Employeuse", value: "MAROC LOGISTICS SARL" },
-                { label: "Nom Complet du Salarié Embauché", value: "Amina EL FASSI" },
-                { label: "CIN du Salarié", value: "EE456789" },
-              ],
-            },
-            {
-              subLabel: "Poste & Conditions (2/2)",
-              fields: [
-                { label: "Intitulé du Poste de travail", value: "Responsable Marketing" },
-                { label: "Salaire Mensuel Brut (en DH)", value: "12000" },
-                { label: "Période d'Essai (Mois)", value: "3" },
-              ],
-            },
-          ],
-          paper: [
-            "ENTRE LES SOUSSIGNÉS :",
-            "1. La société {f0_0}, ci-après « L'Employeur ».",
-            "2. M./Mme {f0_1}, CIN n° {f0_2}, ci-après « Le Salarié ».",
-            "ARTICLE 1 — ENGAGEMENT ET FONCTION",
-            "Le Salarié est engagé à compter de la date de signature en qualité de {f1_0}.",
-            "ARTICLE 2 — PÉRIODE D'ESSAI",
-            "Le contrat est conclu sous réserve d'une période d'essai de {f1_2} mois conformément à l'article 13 de la Loi 65-99, renouvelable une fois.",
-            "ARTICLE 3 — RÉMUNÉRATION ET HORAIRES",
-            "En contrepartie, Le Salarié percevra un salaire mensuel brut de {salaire} DH pour la durée légale du travail (44h/semaine).",
-            "ARTICLE 4 — CONGÉS PAYÉS ET COUVERTURE SOCIALE",
-            "Le Salarié bénéficie des congés payés réglementaires ainsi que de la déclaration CNSS et AMO dès son entrée en fonction.",
-            "ARTICLE 5 — CONFIDENTIALITÉ ET RÉSILIATION",
-            "Le Salarié s'engage à la confidentialité absolue quant aux secrets professionnels. Les conditions de préavis sont régies par le Code du Travail.",
-          ],
-        },
-        prestation: {
-          title: "Prestation de Service / Freelance",
-          kicker: "Conforme au Dahir des Obligations et Contrats (DOC)",
-          heading: "CONTRAT DE PRESTATION DE SERVICE",
-          ref: "N° PS-2026-2205",
-          sigTokens: ["f0_1", "f0_0"],
-          sigLabels: ["Signature du Prestataire", "Signature du Client"],
-          groups: [
-            {
-              subLabel: "Client & Prestataire (1/2)",
-              fields: [
-                { label: "Nom du Client (Société/Particulier)", value: "Maroc Retail Group" },
-                { label: "Nom du Prestataire / Consultant", value: "Youssef Bennani Consulting" },
-              ],
-            },
-            {
-              subLabel: "Mission & Conditions Financières (2/2)",
-              fields: [
-                { label: "Nature de la Prestation / Mission", value: "Audits SI & Transformation Digitale" },
-                { label: "Montant Total HT (en DH)", value: "25000" },
-                { label: "Délai de Paiement (Jours)", value: "30" },
-              ],
-            },
-          ],
-          paper: [
-            "ENTRE LES SOUSSIGNÉS :",
-            "1. {f0_0}, ci-après dénommé « Le Client ».",
-            "2. {f0_1}, ci-après dénommé « Le Prestataire ».",
-            "ARTICLE 1 — OBJET DE LA MISSION",
-            "Le Prestataire s'engage à réaliser en toute indépendance : {f1_0}.",
-            "ARTICLE 2 — HONORAIRES ET RÈGLEMENT",
-            "Le montant global est fixé à {honoraires} DH HT, réfacturé et payable dans un délai de {f1_2} jours.",
-            "ARTICLE 3 — OBLIGATIONS ET LIVRABLES",
-            "Le Prestataire est tenu à une obligation de moyens. Le Client s'engage à fournir l'ensemble des informations nécessaires.",
-            "ARTICLE 4 — CONFIDENTIALITÉ ET PROPRIÉTÉ INTELLECTUELLE",
-            "Chaque partie préserve le secret des données échangées. La propriété des livrables est transférée après paiement intégral.",
-            "ARTICLE 5 — RÉSILIATION ET LITIÈGES",
-            "En cas de manquement grave, le contrat peut être résilié moyennant un préavis de 15 jours. Tout litige sera soumis au Tribunal de Commerce.",
-          ],
-        },
-      },
-    },
-
 
     // §9 — services & pricing: three cards, every fee announced upfront.
     pricing: {
@@ -412,6 +193,7 @@ export const publicFr = {
           sub: "Formule Libre-service",
           price: "290 DH",
           unit: "HT / acte",
+          applies: "Pour un nouveau document",
           features: [
             { text: "Création guidée du document", included: true },
             { text: "Format PDF téléchargeable", included: true },
@@ -419,7 +201,7 @@ export const publicFr = {
             { text: "Sans relecture par un avocat", included: false },
           ],
           cta: "Créer un document",
-          ctaHref: "create",
+          ctaHref: "/contracts",
           tone: "sand",
         },
         {
@@ -428,6 +210,7 @@ export const publicFr = {
           sub: "Contrôle automatisé de cohérence",
           price: "79 DH",
           unit: "HT / acte",
+          applies: "Pour un document que vous avez déjà",
           features: [
             { text: "Sur un document que vous avez déjà (PDF ou Word)", included: true },
             { text: "Détection des erreurs de saisie d'identité", included: true },
@@ -435,7 +218,7 @@ export const publicFr = {
             { text: "Rapport de cohérence immédiat", included: true },
           ],
           cta: "Vérifier un document",
-          ctaHref: "verify-assist",
+          ctaHref: "/verify?tier=assistee",
           tone: "accent",
         },
         {
@@ -444,6 +227,7 @@ export const publicFr = {
           sub: "Relecture par un professionnel",
           price: "990 DH",
           unit: "HT / acte",
+          applies: "Pour un nouveau document, ou un document que vous avez déjà",
           features: [
             { text: "Relecture par un Avocat au Barreau (document créé ici ou déjà en votre possession)", included: true },
             { text: "Attestation officielle de validation signée", included: true },
@@ -451,7 +235,7 @@ export const publicFr = {
             { text: "Paiement débité après validation", included: true },
           ],
           cta: "Choisir la validation avocat",
-          ctaHref: "create-avocat",
+          ctaHref: "/contracts?tier=avocat",
           tone: "dark",
         },
       ],
@@ -479,7 +263,7 @@ export const publicFr = {
     faq: [
       {
         q: "Les documents générés ont-ils une vraie valeur juridique au Maroc ?",
-        a: "Tous nos modèles sont rédigés en stricte conformité avec les textes de loi marocains (notamment le Dahir des Obligations et Contrats et le Code du Travail Loi 65-99). Si vous souhaitez une assurance supplémentaire pour un contrat complexe, vous pouvez opter pour l'option de validation par un avocat qui délivrera une attestation de relecture signée.",
+        a: "Nos modèles sont basés sur des textes de loi marocains identifiés (notamment le Dahir des Obligations et Contrats et le Code du Travail Loi 65-99), et la source de chaque règle est enregistrée. Un contrat reste à valider selon votre situation : si vous souhaitez une assurance supplémentaire, vous pouvez opter pour la validation par un avocat qui délivre une attestation de relecture signée.",
       },
       {
         q: "Quelle est la différence entre Libre-Service, Vérification Assistée et Validation Avocat ?",
@@ -515,9 +299,8 @@ export const publicFr = {
         "Loi 65-99 formant Code du Travail",
         "Conformité Données Personnelles CNDP",
       ],
-      address: "Siège social : Bd d'Anfa, Casablanca, Maroc",
+      address: "Siège social : exemple — à compléter par l'exploitant",
       hours: "Du Lundi au Samedi : 8h30 - 19h00",
-      phone: "+212 5 22 00 00 00",
       whatsapp: "WhatsApp",
       legal: "Mentions Légales",
       privacy: "Politique de Confidentialité",
@@ -578,8 +361,8 @@ export const publicFr = {
         title: "Cookies",
         body: "Deux cookies strictement nécessaires sont posés : la session et la préférence de langue. Aucun cookie publicitaire ni de mesure d'audience n'est utilisé.",
         bullets: [
-          "mlp.session : maintient votre session ouverte (cookie httpOnly, inaccessible au script).",
-          "mlp.locale : mémorise la langue choisie, français ou arabe.",
+          "wathiqa.session : maintient votre session ouverte (cookie httpOnly, inaccessible au script).",
+          "wathiqa.locale : mémorise la langue choisie, français ou arabe.",
           "Vous pouvez les supprimer depuis votre navigateur à tout moment.",
         ],
       },
@@ -604,6 +387,7 @@ export const publicFr = {
     estimatedTime: "Environ {minutes} min",
     lawyerBadge: "Validation par avocat disponible",
     signatureBadge: "Signature électronique disponible",
+    documentsAtHand: "À avoir : {items}",
     empty: "Aucun document n'est publié pour le moment.",
     unavailable: "Le document demandé n'est pas disponible actuellement.",
     needHelp: "Vous ne savez pas quel document choisir ?",
@@ -625,6 +409,13 @@ export const publicFr = {
     start: "Commencer mon contrat",
     time: "Temps estimé",
     price: "À partir de",
+    pages: "Environ {count} pages",
+    basedOn: "Modèle basé sur",
+    basedOnNote: "à valider selon votre situation",
+    lawyerMandatoryTitle: "Validation par un avocat obligatoire pour ce type de document.",
+    lawyerMandatoryBody:
+      "Les règles vérifiées applicables excluent ici le parcours sans avocat : le dossier passera par la validation d'un professionnel avant d'être finalisé.",
+    preselected: "Déjà sélectionné",
     whatYouNeedTitle: "Ce qu'il vous faut",
     whatYouNeedBody: "Vos informations, celles de l'autre partie, et un e-mail pour recevoir le document.",
     documentsTitle: "Pièces utiles",
@@ -667,6 +458,83 @@ export const publicFr = {
     backToCatalogue: "Retour au catalogue",
     disclaimer:
       "La plateforme ne délivre pas de conseil juridique : les exigences applicables proviennent des règles vérifiées, et un professionnel intervient lorsque le parcours l'exige.",
+  },
+
+  // §7b — the verification journey: no questionnaire, one file + one tier.
+  verify: {
+    metaTitle: "Faire vérifier un document existant",
+    metaDescription:
+      "Téléversez le contrat que vous avez déjà et choisissez votre niveau de contrôle : vérification automatisée ou relecture par un avocat.",
+    eyebrow: "Vous avez déjà le document",
+    title: "Faites-le contrôler avant de le signer",
+    subtitle: "Un seul écran : votre fichier, votre niveau de contrôle.",
+    uploadTitle: "Votre document",
+    uploadArea: "Glissez votre fichier ici, ou cliquez pour le choisir",
+    noFileChosen: "Aucun fichier choisi",
+    chooseFile: "Choisir un fichier",
+    emptyPlaceholder: "Votre document s'affichera ici",
+    removeFile: "Retirer",
+    producesTitle: "Ce que la vérification produit",
+    producesAssisted:
+      "Une vérification automatisée de complétude et de cohérence : une liste de points à contrôler (champs manquants, dates, identités d'écriture). Ce n'est pas un avis juridique.",
+    producesLawyer:
+      "Un avocat au barreau marocain relit votre document et délivre une attestation de relecture signée, séparée du document.",
+    tierTitle: "Niveau de contrôle",
+    tierAssistedTitle: "Vérification assistée",
+    tierAssistedBody: "Contrôle automatisé de complétude et de cohérence.",
+    tierAssistedPrice: "79 DH",
+    tierLawyerTitle: "Validation Avocat",
+    tierLawyerBody: "Relecture par un professionnel et attestation signée.",
+    tierLawyerPrice: "990 DH",
+    tierNote: "Prix hors taxes",
+    tierLawyerNote: "Le paiement de la validation avocat est encaissé uniquement après la validation du dossier.",
+    delayTitle: "Délai annoncé",
+    delayAssisted: "Rapport généralement sous 48 h ouvrées",
+    delayLawyer: "Attestation généralement sous 3 jours ouvrés",
+    priceLabel: "Prix du niveau choisi",
+    submit: "Envoyer pour vérification",
+    submitting: "Envoi en cours…",
+    errorsTitle: "Envoi impossible",
+    errorTooLarge: "Fichier trop lourd : la taille maximale est {size}.",
+    errorUnsupportedType: "Type de fichier non pris en charge.",
+    errorExecutable: "Les fichiers exécutables ne sont jamais acceptés.",
+    errorMacros: "Les documents contenant des macros sont refusés.",
+    errorTypeMismatch: "Le contenu du fichier ne correspond pas au type annoncé.",
+    errorTier: "Choisissez d'abord un niveau de contrôle.",
+    errorEmpty: "Le fichier est vide.",
+    errorSelectTier: "Choisissez un niveau de contrôle avant l'envoi.",
+    errorGeneric: "L'envoi a échoué. Vérifiez le fichier et essayez à nouveau.",
+    confirmationTitle: "Votre document a bien été reçu",
+    confirmationSubtitle: "Conservez cette référence : elle vous donne accès au suivi de la vérification.",
+    referenceLabel: "Référence",
+    fileLabel: "Fichier",
+    sizeLabel: "Taille",
+    tierLabel: "Niveau choisi",
+    delayLabel: "Délai annoncé",
+    priceLabelConfirm: "Montant à payer à l'étape suivante",
+    statusLabel: "Statut",
+    statusReceived: "Reçu — en attente de traitement",
+    statusChecking: "En cours de vérification",
+    caseLabel: "Dossier",
+    checkoutTitle: "Valider et payer la vérification",
+    checkoutEmailTitle: "Votre e-mail",
+    checkoutEmailHint: "Le rapport est envoyé à cette adresse : elle sera aussi votre référence de suivi.",
+    checkoutEmailPlaceholder: "prenom.nom@example.ma",
+    checkoutPay: "Payer et lancer la vérification",
+    checkoutPaying: "Préparation du paiement…",
+    checkoutSettle: "Régler maintenant",
+    checkoutSettling: "Règlement en cours…",
+    checkoutSimulatedNote: "Espace de démonstration : aucun paiement réel n'est encaissé.",
+    checkoutDoneTitle: "Vérification lancée",
+    checkoutDoneBody: "Votre dossier est passé sous vérification. Vous serez notifié(e) à l'adresse indiquée.",
+    checkoutErrorEmail: "Indiquez une adresse e-mail valide.",
+    checkoutErrorGeneric: "Impossible de démarrer le paiement. Réessayez dans un instant.",
+    retentionNote:
+      "Votre fichier est conservé de manière privée et supprimé au plus tard {days} jours après son envoi.",
+    verifyAnother: "Envoyer un autre document",
+    notFoundTitle: "Référence introuvable",
+    notFoundBody:
+      "Ce lien de suivi est invalide ou expiré. Retournez sur la page de vérification pour envoyer votre document à nouveau.",
   },
 
   assistant: {
@@ -717,6 +585,22 @@ export const publicFr = {
     reviewTitle: "Voici ce que nous avons compris",
     reviewSubtitle: "Relisez ces informations : elles servent à déterminer les règles applicables à votre dossier.",
     reviewEmpty: "Aucune réponse enregistrée pour l'instant.",
+    partiesStep: "Les parties",
+    reviewStep: "Vérification",
+    progressSaved: "Votre progression est enregistrée. Vous pouvez fermer cette page et reprendre plus tard avec ce lien.",
+    copyLink: "Copier le lien",
+    copied: "Copié",
+    timeLeft: "≈ {minutes} min restantes",
+    stepsAria: "Étapes du dossier",
+  },
+
+  // §10b — the wizard's live preview panel: reused checkout strings for the
+  // locked note and the page estimate, plus tab labels for the mobile shell.
+  wizardPreview: {
+    formTab: "Formulaire",
+    previewTab: "Aperçu du document",
+    previewAria: "Basculer entre le formulaire et l'aperçu",
+    empty: "L'aperçu du document s'affichera ici dès que le modèle approuvé est prêt.",
   },
 
   checkout: {
@@ -740,6 +624,7 @@ export const publicFr = {
     emailCta: "Continuer vers le paiement",
     summary: "Récapitulatif",
     total: "Total",
+    modifyChoice: "Modifier",
     payCta: "Payer et obtenir mon document",
     paying: "Paiement en cours…",
     simulated:

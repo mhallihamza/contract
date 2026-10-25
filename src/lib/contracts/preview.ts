@@ -41,6 +41,11 @@ export interface PreviewClause {
   previewFr: string;
   previewAr: string;
   truncated: boolean;
+  /**
+   * Placeholder keys the clause references ({rent}…): the wizard uses this
+   * to highlight the clause being filled by the question being answered.
+   */
+  variableKeys: string[];
 }
 
 export interface PreviewSection {
@@ -214,6 +219,9 @@ export async function buildContractPreview(contractId: string): Promise<Contract
   const clauses: PreviewClause[] = included.map((clause) => {
     const fr = truncate(renderTemplateText(clause.bodyFr, variables, "fr").text);
     const ar = truncate(renderTemplateText(clause.bodyAr, variables, "ar").text);
+    const variableKeys = [...`${clause.bodyFr} ${clause.bodyAr}`.matchAll(/\{(\w+)\}/g)].map(
+      (match) => match[1]!,
+    );
     return {
       code: clause.code,
       titleFr: clause.nameFr,
@@ -222,6 +230,7 @@ export async function buildContractPreview(contractId: string): Promise<Contract
       previewFr: fr.text,
       previewAr: ar.text,
       truncated: fr.truncated || ar.truncated,
+      variableKeys: [...new Set(variableKeys)],
     };
   });
 

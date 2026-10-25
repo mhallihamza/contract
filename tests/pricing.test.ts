@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { SERVICE_PRICING } from "@/lib/config";
-import { quoteService, signatureFee } from "@/lib/payments/pricing";
+import { SERVICE_PRICING, vatRate } from "@/lib/config";
+import { applyVat, payableTotal, quoteService, quoteVerification, signatureFee, withVat } from "@/lib/payments/pricing";
 
 /**
  * Pricing invariants (§27).
@@ -63,5 +63,59 @@ describe("quoteService", () => {
 
     expect(quote.amount).toBe(sum);
     expect(signatureFee()).toBe(SERVICE_PRICING.signature);
+  });
+});
+
+describe("quoteVerification", () => {
+  it("prices the assisted tier at the single published verification price", () => {
+    const quote = quoteVerification({ tier: "ASSISTED", currency });
+
+    expect(quote.payable).toBe(true);
+    expect(quote.type).toBe("VERIFICATION_ASSISTED");
+    expect(quote.amount).toBe(SERVICE_PRICING.verificationAssisted);
+    expect(quote.lines.map((line) => line.key)).toEqual(["VERIFICATION_ASSISTED"]);
+    expect(quote.currency).toBe(currency);
+  });
+
+  it("reuses the standard lawyer-review price for the lawyer tier", () => {
+    const quote = quoteVerification({ tier: "LAWYER", currency });
+
+    expect(quote.payable).toBe(true);
+    expect(quote.type).toBe("LAWYER_REVIEW");
+    expect(quote.amount).toBe(SERVICE_PRICING.lawyerReview);
+    expect(quote.lines.map((line) => line.key)).toEqual(["LAWYER_REVIEW"]);
+  });
+});
+
+describe("VAT at checkout", () => {
+  it("uses the configurable default rate (Morocco standard: 20 %)", () => {
+    expect(vatRate({})).toBe(0.2);
+    expect(vatRate({ VAT_RATE: "0.1" })).toBe(0.1);
+    // Out-of-range or malformed values fall back to the default, never to 0.
+    expect(vatRate({ VAT_RATE: "nonsense" })).toBe(0.2);
+    expect(vatRate({ VAT_RATE: "1.5" })).toBe(0.2);
+  });
+
+  it("computes the tax-inclusive total from the HT price", () => {
+    const vat = withVat(290, "MAD", {});
+
+    expect(vat.rate).toBe(0.2);
+    expect(vat.vatAmount).toBe(58);
+    expect(vat.total).toBe(348);
+  });
+
+  it("never rounds money away: the total keeps two decimals", () => {
+    const vat = withVat(79.35, "MAD", {});
+    expect(vat.vatAmount).toBe(15.87);
+    expect(vat.total).toBe(95.22);
+  });
+
+  it("applies VAT only to payable quotes", () => {
+    const payable = applyVat(quoteVerification({ tier: "ASSISTED", currency }), {});
+    expect(payable.vat?.total).toBe(SERVICE_PRICING.verificationAssisted * 1.2);
+    expect(payableTotal(payable)).toBe(SERVICE_PRICING.verificationAssisted * 1.2);
+
+    const unpaid = quoteService({ route: "UNSUPPORTED", lawyerServiceSelected: false, signatureRequired: false });
+    expect(applyVat(unpaid, {}).vat).toBeNull();
   });
 });

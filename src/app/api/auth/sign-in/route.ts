@@ -2,8 +2,12 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db/prisma";
 import { verifyPassword } from "@/lib/auth/password";
 import { createSession, recordSignIn } from "@/lib/auth/session";
+import { enforceRateLimit, RATE_RULES } from "@/lib/security/rate-limit";
 
 export async function POST(request: Request) {
+  const limited = enforceRateLimit(request, "sign-in", RATE_RULES.signIn);
+  if (limited) return limited;
+
   try {
     const { email, password } = (await request.json()) as { email?: string; password?: string };
 

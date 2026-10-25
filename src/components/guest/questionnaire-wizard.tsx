@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,8 @@ export interface WizardLabels {
   title: string;
   questionsSubtitle: string;
   partiesSubtitle: string;
+  partiesStep: string;
+  reviewStep: string;
   you: string;
   partyName: string;
   partyTypeCompany: string;
@@ -82,6 +84,13 @@ export interface WizardLabels {
   reviewTitle: string;
   reviewSubtitle: string;
   reviewEmpty: string;
+  /** "Votre progression est enregistrée…" resume banner. */
+  progressSaved: string;
+  copyLink: string;
+  copied: string;
+  /** "≈ {minutes} min restantes" — driven by the catalogue estimate. */
+  timeLeft: string;
+  stepsAria: string;
 }
 
 type StepKind = "questions" | "parties" | "review";
@@ -117,6 +126,8 @@ export function QuestionnaireWizard({
   savedAnswers,
   roles,
   existingParties,
+  estimatedMinutes,
+  onStepChange,
 }: {
   token: string;
   locale: "fr" | "ar";
@@ -125,6 +136,10 @@ export function QuestionnaireWizard({
   savedAnswers: Record<string, unknown>;
   roles: WizardPartyRole[];
   existingParties: WizardPartyDraft[];
+  /** Rough remaining-time source, from the catalogue estimate. */
+  estimatedMinutes?: number;
+  /** Tells a preview companion which field keys the current step answers. */
+  onStepChange?: (info: { stepIndex: number; fieldKeys: string[] }) => void;
 }) {
   const router = useRouter();
 
@@ -136,20 +151,34 @@ export function QuestionnaireWizard({
     }));
     return [
       ...questionSteps,
-      { kind: "parties", label: locale === "ar" ? "الأطراف" : "Les parties" },
-      { kind: "review", label: locale === "ar" ? "التحقق" : "Vérification" },
+      { kind: "parties", label: labels.partiesStep },
+      { kind: "review", label: labels.reviewStep },
     ];
-  }, [sections, locale]);
+  }, [sections, locale, labels.partiesStep, labels.reviewStep]);
 
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>(savedAnswers);
   const [partiesSnapshot, setPartiesSnapshot] = useState<WizardPartyDraft[]>(existingParties);
   const [pending, setPending] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [savedOnce, setSavedOnce] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const step = steps[Math.min(stepIndex, steps.length - 1)]!;
   const percent = Math.round(((stepIndex + 1) / steps.length) * 100);
+
+  // Named-step companion (live preview) — the keys answered by the step.
+  const activeFieldKeys = useMemo(() => [...(step.section?.fields ?? []).map((field) => field.key)], [step]);
+  useEffect(() => {
+    onStepChange?.({ stepIndex, fieldKeys: activeFieldKeys });
+  }, [stepIndex, activeFieldKeys, onStepChange]);
+
+  // Rough remaining time: the catalogue estimate spread over the steps left.
+  const remainingMinutes =
+    estimatedMinutes && steps.length > 1
+      ? Math.max(1, Math.round((estimatedMinutes * (steps.length - 1 - stepIndex)) / (steps.length - 1)))
+      : null;
 
   async function post(action: string, body: unknown): Promise<{ ok: boolean; data?: unknown; error?: string }> {
     try {
@@ -172,6 +201,7 @@ export function QuestionnaireWizard({
 
   function flashSaved() {
     setSavedFlash(true);
+    setSavedOnce(true);
     setTimeout(() => setSavedFlash(false), 1800);
   }
 
@@ -261,16 +291,61 @@ export function QuestionnaireWizard({
     router.push(`/dossier/${token}`);
   }
 
+  async function copyResumeLink() {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/start/${token}`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
+  }
+
   const stepLabel = labels.step
     .replace("{current}", String(stepIndex + 1))
     .replace("{total}", String(steps.length));
 
   return (
     <div className="space-y-5">
+      {/* Named-section ribbon: the visitor always knows where they are. */}
+      <nav
+        aria-label={labels.stepsAria}
+        className="flex gap-1.5 overflow-x-auto pb-1"
+      >
+        {steps.map((entry, index) => {
+          const done = index < stepIndex;
+          const active = index === stepIndex;
+          return (
+            <button
+              key={`${entry.kind}-${index}`}
+              type="button"
+              onClick={() => (done ? setStepIndex(index) : undefined)}
+              disabled={!done}
+              aria-current={active ? "step" : undefined}
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
+                active
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : done
+                    ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200"
+                    : "border-border bg-background text-muted-foreground"
+              }`}
+            >
+              {done ? <Check className="h-3 w-3" aria-hidden /> : <span>{index + 1}</span>}
+              <span dir="auto">{entry.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>{stepLabel}</span>
-          <span className="font-medium text-foreground">{step.label}</span>
+          <span className="flex items-center gap-3">
+            {remainingMinutes ? (
+              <span dir="auto">{labels.timeLeft.replace("{minutes}", String(remainingMinutes))}</span>
+            ) : null}
+            <span className="font-medium text-foreground">{step.label}</span>
+          </span>
         </div>
         <Progress value={percent} />
       </div>
@@ -392,6 +467,30 @@ export function QuestionnaireWizard({
           </span>
         ) : null}
       </div>
+
+      {/* Save & resume: after the first successful save the progress lives
+                   server-side — the visitor is free to close this page. */}
+      {savedOnce ? (
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-900 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-200"
+          role="status"
+        >
+          <span className="flex items-center gap-2" dir="auto">
+            <Check className="h-4 w-4 shrink-0" aria-hidden />
+            {labels.progressSaved}
+          </span>
+          <Button type="button" variant="outline" size="sm" onClick={copyResumeLink}>
+            {copied ? (
+              <>
+                <Check className="h-3.5 w-3.5" aria-hidden />
+                {labels.copied}
+              </>
+            ) : (
+              labels.copyLink
+            )}
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

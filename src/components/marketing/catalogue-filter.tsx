@@ -29,6 +29,7 @@ export function CatalogueFilter({
   labels,
   strings,
   initialCategory,
+  tier,
 }: {
   locale: "fr" | "ar";
   groups: FilterableGroup[];
@@ -47,6 +48,8 @@ export function CatalogueFilter({
    * category, so a deep link never lands on an empty page.
    */
   initialCategory?: string;
+  /** Tier memory from a pricing card, echoed into every start form. */
+  tier?: string;
 }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>(() =>
@@ -138,6 +141,16 @@ export function CatalogueFilter({
                       <div className="flex items-center gap-2">
                         <form action="/api/guest/start" method="post">
                           <input type="hidden" name="slug" value={item.slug} />
+                          {tier ? <input type="hidden" name="tier" value={tier} /> : null}
+                          {/* Honeypot: invisible to humans, filled only by bots (§48). */}
+                          <input
+                            type="text"
+                            name="company_website"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            aria-hidden="true"
+                            className="hidden"
+                          />
                           <Button type="submit" size="sm">
                             {strings.start}
                           </Button>

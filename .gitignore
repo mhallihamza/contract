@@ -16,3 +16,6 @@ next-env.d.ts
 
 # test/coverage output
 coverage/
+
+# stray server/terminal logs
+*.log

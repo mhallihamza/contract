@@ -5,6 +5,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { MobileNav } from "@/components/marketing/mobile-nav";
 import { Button } from "@/components/ui/button";
 import { WathiqaMark } from "@/components/marketing/wathiqa-mark";
+import { appConfig } from "@/lib/config";
 import type { AppLocale } from "@/lib/i18n/config";
 import { roleHome } from "@/lib/nav/role-home";
 
@@ -29,7 +30,7 @@ export function PublicHeader({
   locale: AppLocale;
   nav: {
     how: string;
-    simulator: string;
+    catalogue: string;
     pricing: string;
     why: string;
     faq: string;
@@ -50,15 +51,21 @@ export function PublicHeader({
 }) {
   const links: { href: string; label: string }[] = [
     { href: "/#how-it-works", label: nav.how },
-    { href: "/#simulator", label: nav.simulator },
+    { href: "/contracts", label: nav.catalogue },
     { href: "/#services", label: nav.pricing },
     { href: "/#comparison", label: nav.why },
     { href: "/#faq", label: nav.faq },
   ];
 
+  // The WhatsApp channel only exists when the operator configured a number:
+  // no placeholder number is ever shown (it would look like a real contact).
+  const whatsappHref = appConfig.whatsappNumber
+    ? `https://wa.me/${appConfig.whatsappNumber}`
+    : null;
+
   const mobileLinks: { href: string; label: string; external?: boolean }[] = [
     ...links,
-    { href: "https://wa.me/212600000000", label: nav.whatsappDirect, external: true },
+    ...(whatsappHref ? [{ href: whatsappHref, label: nav.whatsappDirect, external: true }] : []),
     user
       ? { href: roleHome(user.role), label: nav.mySpace }
       : { href: "/sign-in", label: nav.signIn },
@@ -79,19 +86,23 @@ export function PublicHeader({
             <span>{announcement.note}</span>
           </div>
           <div className="flex items-center gap-6 text-[11px] font-medium">
-            <a
-              href="https://wa.me/212600000000"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-1.5 transition-colors hover:text-accent-contrast"
-            >
-              <WhatsAppGlyph className="h-3.5 w-3.5 text-accent-contrast" />
-              <span>{announcement.whatsapp}</span>
-            </a>
-            <span aria-hidden className="hidden text-accent md:inline">
-              |
-            </span>
-            <span className="hidden items-center gap-1.5 text-accent-tint/90 md:flex">
+            {whatsappHref ? (
+              <>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 transition-colors hover:text-accent-contrast"
+                >
+                  <WhatsAppGlyph className="h-3.5 w-3.5 text-accent-contrast" />
+                  <span>{announcement.whatsapp}</span>
+                </a>
+                <span aria-hidden className="hidden text-accent md:inline">
+                  |
+                </span>
+              </>
+            ) : null}
+            <span className="flex items-center gap-1.5 text-accent-tint/90">
               <Clock className="h-3 w-3" aria-hidden />
               {announcement.hours}
             </span>
@@ -139,7 +150,7 @@ export function PublicHeader({
               asChild
               className="hidden items-center gap-2 rounded-lg bg-accent px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-navy-mid focus-visible:ring-accent sm:inline-flex"
             >
-              <Link href={user ? roleHome(user.role) : "/#simulator"}>
+              <Link href={user ? roleHome(user.role) : "/contracts"}>
                 <Zap className="h-3.5 w-3.5 text-accent-tint" aria-hidden />
                 {user ? nav.mySpace : nav.createActe}
               </Link>

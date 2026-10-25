@@ -1,9 +1,0 @@
-
-> morocco-legal-platform@0.1.0 start
-> next start -p 3214
-
-▲ Next.js 16.3.6
-- Local:         http://localhost:3214
-- Network:       http://192.168.11.103:3214
-✓ Ready in 668ms
-✓ Running next.config.ts took 239ms

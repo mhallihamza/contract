@@ -1,5 +1,5 @@
 import type { RoutingRoute } from "@prisma/client";
-import { quoteService, type PriceQuote } from "@/lib/payments/pricing";
+import { applyVat, quoteService, type PriceQuote } from "@/lib/payments/pricing";
 
 /**
  * Service offers derived from the routing decision (§15, §18).
@@ -7,7 +7,8 @@ import { quoteService, type PriceQuote } from "@/lib/payments/pricing";
  * The client never chooses the workflow: the routing engine decides whether a
  * lawyer is needed, and this module only exposes what that decision allows. A
  * `LAWYER_REQUIRED` case has no self-service offer at all — the UI cannot render
- * one, because it does not exist in the returned set.
+ * one, because it does not exist in the returned set. Quotes carry the applied
+ * VAT so the checkout can show the tax and the total actually charged.
  */
 
 export type ServiceOfferKey = "SELF_SERVICE" | "LAWYER_REVIEW" | "LAWYER_REQUIRED" | "SIGNATURE";
@@ -56,7 +57,7 @@ function offer(
     selectable: input.selectable,
     includesLawyer: input.includesLawyer,
     includesSignature: input.includesSignature,
-    quote: quoteService(quoteInput),
+    quote: applyVat(quoteService(quoteInput)),
   };
 }
 

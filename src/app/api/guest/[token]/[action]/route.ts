@@ -11,6 +11,7 @@ import {
   startGuestPayment,
 } from "@/lib/guest/service";
 import { guestErrorResponse, guestOk, readJsonBody } from "@/lib/guest/http";
+import { enforceRateLimit, RATE_RULES } from "@/lib/security/rate-limit";
 import {
   guestAnswersSchema,
   guestEmailSchema,
@@ -52,6 +53,9 @@ export async function POST(
   request: Request,
   context: { params: Promise<{ token: string; action: string }> },
 ): Promise<NextResponse> {
+  const limited = enforceRateLimit(request, "guest-action", RATE_RULES.guestAction);
+  if (limited) return limited;
+
   const { token, action } = await context.params;
   if (!isGuestAction(action)) return guestErrorResponse(new Error("UNKNOWN_ACTION"), { action });
 

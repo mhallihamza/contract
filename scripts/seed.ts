@@ -28,7 +28,9 @@ async function main() {
   // 3. Contract Types
   console.log("3. Seeding contract types catalogue (§14)...");
   const types = await seedContractTypes(db);
-  console.log("   ✓ 5 Contract types seeded (Lease, Freelance, NDA, Commercial, Real Estate).");
+  console.log(
+    "   ✓ 8 Contract types seeded (Residential lease, Freelance, NDA, Commercial lease, Vehicle sale, CDD, Real estate, Verification).",
+  );
 
   // 4. Legal Rules
   console.log("4. Seeding deterministic legal rules (§10, §11, §34, §55)...");
@@ -39,11 +41,19 @@ async function main() {
       typeFreelanceService: types.typeFreelanceService,
       typeCommercialLease: types.typeCommercialLease,
       typeRealEstateSale: types.typeRealEstateSale,
+      typeNda: types.typeNDA,
+      typeVehicleSale: types.typeVehicleSale,
+      typeEmploymentCdd: types.typeEmploymentCdd,
+      typeEmploymentCdi: types.typeEmploymentCdi,
+      typeFurnishedLease: types.typeFurnishedLease,
+      typeSeasonalLease: types.typeSeasonalLease,
+      typeLoanAgreement: types.typeLoanAgreement,
+      typePowerOfAttorney: types.typePowerOfAttorney,
     },
     sources,
     users.admin.id,
   );
-  console.log("   ✓ 6 Rules configured: Self-Service, Lawyer Optional, Lawyer Required, Signature Required, Specialist.");
+  console.log("   ✓ 14 Rules configured: assignments across all routable types.");
 
   // 5. Clauses & Templates
   console.log("5. Seeding clauses and templates (§15)...");

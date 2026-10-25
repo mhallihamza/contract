@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { PublicHeader } from "@/components/marketing/public-header";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { getCurrentUser } from "@/lib/auth/session";
+import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 
 /**
@@ -38,7 +39,9 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
       <SiteFooter
         labels={d.public.home.footer}
-        rights={d.landing.footerRights}
+        /** The demonstration notice is fail-safe: it only disappears when the
+            operator explicitly disabled demo mode in the configuration. */
+        rights={appConfig.demoMode ? d.landing.footerRights : ""}
       />
     </div>
   );

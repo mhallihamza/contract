@@ -15,7 +15,7 @@ import { logger } from "@/lib/logging";
  * the client never supplies its own role, id or ownership.
  */
 
-export const SESSION_COOKIE = "mlp.session";
+export const SESSION_COOKIE = "wathiqa.session";
 
 function sessionSecret(): string {
   return process.env.AUTH_SESSION_SECRET?.trim() || "development-session-secret";

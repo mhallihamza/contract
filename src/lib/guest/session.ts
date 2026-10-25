@@ -30,6 +30,7 @@ export interface GuestSessionSummary {
   contractId: string | null;
   email: string | null;
   locale: "fr" | "ar";
+  preselectedOffer: string | null;
   expiresAt: Date;
   state: GuestSessionState;
 }
@@ -51,6 +52,8 @@ export function hashGuestToken(token: string): string {
 export async function issueGuestSession(params: {
   contractTypeId: string | null;
   locale: "fr" | "ar";
+  /** Optional pre-picked offer key, validated by the caller. */
+  preselectedOffer?: string | null;
 }): Promise<{ sessionId: string; token: string; expiresAt: Date }> {
   const token = randomBytes(GUEST_TOKEN_BYTES).toString("base64url");
   const expiresAt = guestSessionExpiry(new Date());
@@ -61,6 +64,7 @@ export async function issueGuestSession(params: {
       tokenHash: hashGuestToken(token),
       contractTypeId: params.contractTypeId,
       locale: toLanguage(params.locale),
+      preselectedOffer: params.preselectedOffer ?? null,
       expiresAt,
       ipAddress: headerBag.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
       userAgent: headerBag.get("user-agent") ?? null,
@@ -109,6 +113,7 @@ export async function resolveGuestSession(token: string | null | undefined): Pro
       contractId: session.contract?.id ?? null,
       email: session.email,
       locale: session.locale === "AR" ? "ar" : "fr",
+      preselectedOffer: session.preselectedOffer,
       expiresAt: session.expiresAt,
       state: guestSessionState(session),
     };
@@ -212,6 +217,7 @@ export async function resolveGuestBySignedLink(value: string): Promise<GuestSess
     contractId: session.contract?.id ?? null,
     email: session.email,
     locale: session.locale === "AR" ? "ar" : "fr",
+    preselectedOffer: session.preselectedOffer,
     expiresAt: session.expiresAt,
     state: guestSessionState(session),
   };

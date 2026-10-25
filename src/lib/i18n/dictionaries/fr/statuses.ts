@@ -30,6 +30,8 @@ export const statusesFr = {
     SIGNATURE_PENDING: "Signature en attente",
     SIGNED: "Signé",
     FINAL: "Finalisé",
+    VERIFICATION_IN_PROGRESS: "Vérification en cours",
+    REPORT_DELIVERED: "Rapport de vérification livré",
     CANCELLED: "Annulé",
   },
   contractRoute: {
@@ -84,12 +86,14 @@ export const statusesFr = {
   paymentStatus: {
     PENDING: "En attente",
     PAID: "Payé",
+    AUTHORIZED: "Autorisé — encaissé après validation",
     FAILED: "Échoué",
     REFUNDED: "Remboursé",
     CANCELLED: "Annulé",
   },
   paymentType: {
     SELF_SERVICE_CONTRACT: "Contrat en autonomie",
+    VERIFICATION_ASSISTED: "Vérification assistée d'un document",
     LAWYER_REVIEW: "Revue par un avocat",
     LAWYER_REQUIRED_SERVICE: "Prestation juridique obligatoire",
     OTHER: "Autre",

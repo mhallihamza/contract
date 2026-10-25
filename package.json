@@ -1,8 +1,8 @@
 {
-  "name": "morocco-legal-platform",
+  "name": "wathiqa",
   "version": "0.1.0",
   "private": true,
-  "description": "Morocco-first legal contract platform: client intent -> structured case -> legal routing -> draft -> self-service or lawyer validation/signature -> final contract.",
+  "description": "Wathiqa (ex morocco-legal-platform) — Moroccan legal documents platform: client intent -> structured case -> legal routing -> draft -> self-service or lawyer validation/signature -> final contract.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -7,7 +7,7 @@
  * service that persists them.
  */
 
-export const GUEST_COOKIE = "mlp.guest";
+export const GUEST_COOKIE = "wathiqa.guest";
 
 /** 32 random bytes → 43 base64url characters. */
 export const GUEST_TOKEN_BYTES = 32;

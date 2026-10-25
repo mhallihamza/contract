@@ -1,0 +1,106 @@
+You are working in the Next.js 16 / React 19 / TypeScript / Prisma / Tailwind 4 repo "morocco-legal-platform" (brand: **Wathiqa**, formerly DocuMorocco). Work in the phases below, in order. Finish and verify each phase before starting the next. Keep every change minimal and targeted: do not refactor unrelated code, do not rename existing database fields, do not change the routing engine or the state machine unless a phase says so. French is the reference language, Arabic must mirror it with correct right-to-left layout. Run the type check, the linter and the existing tests after every phase and fix what you break.
+
+## Product rules that must hold everywhere (copy, UI, emails, PDFs)
+
+1. Three service levels only: **Libre-service (290 DH HT)**, **Vérification assistée (+79 DH HT)**, **Validation Avocat (990 DH HT)**. Lawyer-required cases keep the existing routed price. Domiciliation does not exist anywhere. Company formation (SARL) is out of scope.
+2. The platform is never described as AI, "IA", "intelligence artificielle", "généré par l'IA" or similar. The assisted check is called "vérification automatisée" and documents are "préparés à partir de modèles approuvés". Search the whole repo, both languages, including emails, PDFs, admin screens and lawyer screens.
+3. The platform never gives legal advice and never claims blanket legal validity or "conformité" of a document. Use wording like "modèle basé sur la loi X" and "à valider selon votre situation".
+4. The lawyer signs a separate attestation, never the contract itself. Payment for the lawyer tier is captured only after the lawyer validates.
+5. The client never chooses the workflow route. The routing engine decides. Do not weaken this.
+6. Nothing on the site may look like an official State document. No "Royaume du Maroc" header, no coat of arms, no official-looking seals.
+
+---
+
+## Phase 1 — Fix the homepage hero document
+
+**Problem:** the sample contract in the hero shows only 3 short articles, so visitors think Moroccan contracts are one-pagers. It also carries a "Royaume du Maroc" header, two "CONFORME LOI 67-12" compliance stamps, and an old reference number starting with "DM" from the previous brand. Text is 9–11 px and unreadable.
+
+**Desired outcome:**
+- The sheet shows the **first page of a multi-page contract**. Footer reads "Page 1 / 8" (use the same wording in Arabic).
+- Behind the sheet, at least two more sheets peek out from the bottom and the side, slightly rotated and offset, so it reads as a stack of pages.
+- Under the first two visible articles, add a thin "Sommaire" strip listing the article titles of the full contract in small type (10 to 14 articles: objet, durée, loyer et charges, dépôt de garantie, état des lieux, obligations du bailleur, obligations du preneur, sous-location, résiliation, restitution, litiges et juridiction, etc.), then fade the rest of the sheet to transparent with a white-to-transparent gradient at the bottom.
+- Replace the "Royaume du Maroc" header with the Wathiqa mark and the word "Wathiqa". Replace the round compliance stamps with one small neutral badge reading "Modèle type" and nothing about conformity.
+- Replace the reference number with one starting with "WQ" and a year. Replace the legal reference line with "Modèle basé sur la loi 67-12" and remove every "conforme" wording. Check the dahir reference against the official publication; if you cannot verify it, remove it.
+- Body text on the sheet must be at least 12 px, meta lines at least 11 px. The sheet may grow taller; keep the two-column hero layout on desktop and stack on mobile with the sheet below the text, centered, max width 430 px.
+- All strings come from the French and Arabic dictionaries. Arabic version mirrors the layout and reads right to left.
+
+## Phase 2 — Remove the simulator from the landing page and move the flow to dedicated pages
+
+**Problem:** the landing page contains a 1,000-line simulator that mixes marketing, a real wizard and the document-check upload. A real contract needs 20 to 40 questions, so a small widget cannot show it honestly. In "check an existing document" mode, it also still shows the sample rental contract when no file has been uploaded, and it can ask the service level twice.
+
+**Desired outcome — landing page:**
+- Remove the simulator section and its anchor from the landing page. Every call-to-action that pointed to it (hero primary button, pricing cards, footer link, header link) now points to the new pages below.
+- Keep: hero, a row of category cards, "how it works" (two tracks: "Je crée un document" and "Je fais contrôler mon document"), pricing (three cards), comparison, FAQ, footer.
+- Category cards (Immobilier, Travail, Prestation et business, Confidentialité, Vente, Autres) link to the category catalogue page. Show only categories that have at least one active document.
+- Add a second prominent card or button next to the categories: "J'ai déjà un document — le faire vérifier", linking to the verification page.
+- Pricing card buttons: "Créer un document" goes to the catalogue; "Vérification assistée" and "Validation Avocat" go to the document catalogue with the tier remembered (see below) or to the verification page, depending on whether the card is about a new or an existing document. Each of the three pricing cards must clearly say whether it applies to a new document, an existing one, or both.
+
+**Desired outcome — catalogue page (use the existing category deep-link support):**
+- A page listing documents grouped by category, driven by the existing catalogue data (name, description, number of questions, estimated minutes, starting price, required documents, whether a lawyer is available).
+- Each document card shows: name, one-line description, "environ N questions · N minutes", "à partir de X DH HT", and the list of documents the user should have at hand (CIN, titre de propriété, etc.). Button "Commencer".
+- Arabic mirror with correct right-to-left layout.
+
+**Desired outcome — document detail page:**
+- One page per document type with: what it is, for whom, which law it relies on (phrased without claiming conformity), approximate length of the final document ("environ 9 pages"), what you need before starting, the three service levels with prices, and when a lawyer is mandatory for this type (read this from the routing data, do not hardcode).
+- A single start button. If the user arrived from a pricing card with a preselected level, remember that choice and show it as already selected.
+
+**Desired outcome — guided wizard (reuse the existing questionnaire wizard, do not rewrite it):**
+- A named-section progress bar at the top (for a bail: Parties, Bien, Loyer et durée, Clauses, Récapitulatif) with "étape X sur N" and an estimated remaining time.
+- Save and resume: the guest token flow already exists, so show a clear "Votre progression est enregistrée" message and a resume link by email or WhatsApp-friendly URL.
+- A live preview of the full multi-page contract next to the form on desktop, as a tab on mobile. It scrolls, shows page numbers, and highlights the clause linked to the question currently being answered.
+- **The service level is asked exactly once.** If it was already chosen (pricing card, document page), skip that step and show the choice in the recap with a "Modifier" link. If not chosen, ask it once, right after the questions and before payment. Never ask it again later.
+
+**Desired outcome — verification page ("faire vérifier un document existant"):**
+- No form to fill in. One screen: upload area (PDF, DOC, DOCX, images; maximum size stated; drag and drop and click), then choice between "Vérification assistée" and "Validation Avocat", then a confirmation screen with file name, size, chosen level, expected delay, and the price.
+- The right-hand side shows an **empty, clearly labelled placeholder** ("Votre document s'affichera ici") until a file is chosen. It must never display any sample contract. After upload, show an image preview for images, a real first-page preview for PDF, and a clean file card for Word files.
+- Show what the verification produces, in plain words: a completeness and coherence check with a list of points to look at, not legal advice. For the lawyer tier: a lawyer reviews and issues a separate signed attestation.
+- File handling must be safe: validate type and size on the server, scan or at least reject executables and macros, store files privately with no public link (same rule as the rest of the platform), delete files according to the retention policy shown to the user.
+
+## Phase 3 — Align the product with the pricing and the legal rules
+
+- Add the 79 DH assisted verification price to the single pricing configuration and to the pricing engine and its tests, so the landing page, quotes, checkout and invoices all read one source. Prices are shown HT with the VAT line clearly displayed at checkout (Morocco standard VAT rate; make the rate configurable).
+- Make the "verify an existing document" path a first-class contract origin in the data model and the state machine: an uploaded document enters the same lifecycle (created, paid, in verification, report delivered or sent to a lawyer, attestation issued, closed), with audit logging. Use the existing state machine and add only the transitions needed.
+- For high-risk contract types in the catalogue (real estate sale, commercial lease, and any other type marked HIGH or CRITICAL risk), verify in the routing seed that they can never be completed in self-service. Real estate sale in particular must route to mandatory lawyer or notary involvement and must show that wording on the document detail page before the user starts. Add routing tests for these cases and for each seeded rule.
+- Expand the catalogue beyond five types before launch. Priority: CDI and CDD employment contracts, vehicle sale between individuals, residential lease variants (furnished, seasonal), loan between individuals, power of attorney (only if it can be routed safely), mutual NDA. Each new type needs its question set, its template in French and Arabic, its legal source reference, its risk level and its routing rules. Do not add a type without a verified rule.
+
+## Phase 4 — Brand, copy and hygiene
+
+- Replace every remaining DocuMorocco or "DM" reference with Wathiqa, in code, dictionaries, emails, PDFs, environment examples, package name and page metadata.
+- Remove the committed log file and add log files to the ignore list. Do not leave secrets, tokens or real emails in the repo history going forward.
+- Replace the placeholder WhatsApp number everywhere with a configurable value read from the environment, and hide the WhatsApp button if it is not set.
+- Remove "Démonstration — données fictives" from the footer once real data is in place; until then, show it only when a demo flag is on.
+- Write a README: what the product is, the three service levels, architecture overview (routing engine, state machine, pricing, providers), how to run locally, environment variables, how to add a contract type, how to run the tests.
+- Add page titles, descriptions, Open Graph images, a sitemap, robots rules and canonical and alternate language links for French and Arabic.
+
+## Phase 5 — Market-readiness checklist (implement what can be done in code; list the rest as a report at the end)
+
+**Code:**
+- Replace each mock provider with a real one behind the existing interface, keeping the mocks for tests and local development: card payment through a Morocco-capable gateway (for example CMI or Payzone), with payment capture after lawyer validation for the lawyer tier; electronic signature through a provider that offers a legally recognized level; transactional email; file storage with private buckets and signed, expiring links.
+- Invoices: generate a numbered invoice PDF per payment with the company identity, VAT line and Wathiqa branding.
+- Security: rate limiting on every public endpoint, bot protection on guest creation and upload, server-side validation of every input, CSRF and session hardening, secure headers, no personal data in logs, role checks tested for client, lawyer and admin.
+- Admin and lawyer back office: queue of documents awaiting verification or lawyer validation with deadlines, assignment, status changes, internal notes, templates for the attestation, and an audit view. Add lawyer onboarding (bar number, city, specialties, availability) and manual approval before a lawyer can receive files.
+- Observability: error tracking, structured logs without personal data, uptime check, database backups with a tested restore, and a staging environment separate from production.
+- Analytics: privacy-respecting page and funnel analytics (landing, catalogue, document page, wizard start, wizard completion, payment, delivery) so conversion can be measured from day one.
+- Tests: add routing-engine rule tests, wizard progress and resume tests, upload validation tests, payment and capture-after-validation tests, Arabic right-to-left snapshot checks, and an end-to-end happy path for each of the three service levels.
+- Accessibility and performance: keyboard navigation, focus states, contrast, mobile first at 360 px width, image optimization, and a Lighthouse score target of 90 or more on the landing page.
+
+**Report to produce at the end (things code alone cannot do; list each with an owner and a status, do not invent answers):**
+- Legal pages written and reviewed by a Moroccan lawyer: terms of service, legal notice, privacy policy, refund and cancellation policy, and a clear statement of what the platform is and is not.
+- Personal data compliance for Morocco (CNDP declaration or authorization under law 09-08), data retention periods, and where data is hosted.
+- Each contract template reviewed and signed off by a practising lawyer, with the date and the legal sources recorded in the database.
+- The company entity, tax identity, bank account, payment gateway merchant account, and the e-signature provider contract.
+- Lawyer partnership agreements: fees, response delays, liability, professional insurance, and how the attestation is issued.
+- Professional liability insurance for the platform.
+- Customer support process and hours, response-time promise, and complaint handling.
+- A pilot with real users and lawyers before public launch, with a list of what to measure.
+
+---
+
+## Definition of done
+
+- A visitor on the French or Arabic landing page sees a multi-page contract, three clear prices, and two clear paths (create, check an existing document) with no simulator on the page.
+- Choosing a category leads to a catalogue, then a document detail page, then a guided wizard with named progress, save and resume, and a live full-document preview.
+- The service level is asked at most once in any path. The verification path never asks for form data and never shows a sample contract.
+- No occurrence of AI wording, state symbols, compliance claims, the old brand, or the Domiciliation offer anywhere in the repo.
+- Pricing comes from one source and matches the landing page. Risky contract types cannot be completed in self-service. All tests and type checks pass.
+- The final report lists everything from the market-readiness checklist that still requires a human decision or a third party.

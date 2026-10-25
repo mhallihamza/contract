@@ -93,5 +93,28 @@ export async function seedLegalSources(db: PrismaClient, adminId: string) {
     },
   });
 
-  return { sourceLoi6712, sourceDOC, sourceLoi4916, sourceLoi3908 };
+  const sourceLoi6599 = await db.legalSource.upsert({
+    where: { code: "MA-LAW-65-99" },
+    update: { verificationStatus: "VERIFIED" },
+    create: {
+      code: "MA-LAW-65-99",
+      title: "Loi n° 65-99 formant Code du Travail",
+      titleAr: "القانون رقم 65.99 بمثابة مدونة الشغل",
+      sourceType: "LAW",
+      lawNumber: "65-99",
+      article: "Articles 1 à 17",
+      officialUrl: "http://adala.justice.gov.ma/production/html/Fr/164394.htm",
+      publisher: "Bulletin Officiel du Royaume du Maroc",
+      publicationDate: new Date("2004-02-26"),
+      effectiveDate: new Date("2004-02-26"),
+      jurisdiction: "MA",
+      language: "FR",
+      verificationStatus: "VERIFIED",
+      verifiedById: adminId,
+      verifiedAt: new Date(),
+      notes: "Cadre le contrat de travail, le CDI comme forme normale, les motifs de licenciement et les préavis.",
+    },
+  });
+
+  return { sourceLoi6712, sourceLoi6599, sourceDOC, sourceLoi4916, sourceLoi3908 };
 }

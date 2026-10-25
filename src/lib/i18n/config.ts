@@ -13,7 +13,7 @@ export type { AppLocale };
 export const locales = SUPPORTED_LOCALES;
 export const defaultLocale = DEFAULT_LOCALE;
 
-export const LOCALE_COOKIE = "mlp.locale";
+export const LOCALE_COOKIE = "wathiqa.locale";
 
 export function isLocale(value: string | undefined | null): value is AppLocale {
   return !!value && (SUPPORTED_LOCALES as readonly string[]).includes(value);

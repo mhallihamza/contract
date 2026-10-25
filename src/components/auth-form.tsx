@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { DEMO_ACCOUNTS, DEMO_PASSWORD } from "@/lib/auth/demo-accounts";
+import { appConfig } from "@/lib/config";
 
 /** Quick demo access bar (§51) — emails mirror the seeded accounts. */
 const QUICK_ACCESS = [
@@ -111,17 +112,19 @@ export function SignInForm({
         </CardContent>
       </Card>
 
-      {/* Quick Demo Access Bar (§51) */}
-      <Card className="bg-muted/40 border-dashed">
-        <CardHeader className="py-3 px-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium">{dict.demoAccounts}</span>
-            <Badge variant="outline" className="text-[10px]">
-              DEMO
-            </Badge>
-          </div>
-          <p className="text-[11px] text-muted-foreground">{dict.demoNotice}</p>
-        </CardHeader>
+      {/* Quick Demo Access Bar (§51) — demo mode only: the seeded accounts and
+          their one-click disclosure must never reach a live deployment. */}
+      {appConfig.demoMode ? (
+        <Card className="bg-muted/40 border-dashed">
+          <CardHeader className="py-3 px-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium">{dict.demoAccounts}</span>
+              <Badge variant="outline" className="text-[10px]">
+                DEMO
+              </Badge>
+            </div>
+            <p className="text-[11px] text-muted-foreground">{dict.demoNotice}</p>
+          </CardHeader>
         <CardContent className="px-4 pb-3 pt-0 space-y-2">
           <div className="grid grid-cols-2 gap-2 text-xs">
             {QUICK_ACCESS.map((account) => (
@@ -137,7 +140,8 @@ export function SignInForm({
             ))}
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      ) : null}
     </div>
   );
 }

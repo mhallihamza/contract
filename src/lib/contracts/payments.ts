@@ -88,6 +88,14 @@ export async function startContractPayment(params: {
     actorRole: actorRole(params.actor),
     userEmail: contract.customerEmail ?? params.actor.email ?? "",
     quoteInput,
+    // Product rule 4 — the lawyer's work is never cashed before it is done
+    // and validated: those cases capture after the lawyer's validation.
+    captureMode:
+      quoteInput.route === "LAWYER_REQUIRED" ||
+      quoteInput.route === "LAWYER_SIGNATURE_REQUIRED" ||
+      Boolean(contract.lawyerRequest)
+        ? "ON_VALIDATION"
+        : "IMMEDIATE",
   });
 
   await db.contract.update({ where: { id: contract.id }, data: { priceAmount: quote.amount } });
@@ -145,11 +153,17 @@ export async function settleContractPaymentInSandbox(params: {
   const payment = contract.payments.find((candidate) => candidate.status === "PENDING");
   if (!payment) throw new Error("NO_PENDING_PAYMENT");
 
+  // Product rule 4 — a case that will involve a lawyer is authorized (hold)
+  // here, and captured only after the lawyer validates. Self-service captures
+  // immediately.
+  const metadata = (payment.metadata ?? null) as { captureMode?: string } | null;
+  const targetStatus = metadata?.captureMode === "ON_VALIDATION" ? "AUTHORIZED" : "PAID";
+
   const rawBody = JSON.stringify({
     providerPaymentId: payment.providerPaymentId,
     amount: Number(payment.amount),
     currency: payment.currency,
-    status: "PAID",
+    status: targetStatus,
     eventId: `mock_evt_${payment.id}`,
   });
 

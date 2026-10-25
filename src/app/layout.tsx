@@ -41,12 +41,34 @@ const playfairDisplay = Playfair_Display({
 const BRAND = appConfig.brand.name;
 
 export const metadata: Metadata = {
+  metadataBase: new URL(appConfig.appUrl),
   title: {
-    default: `${BRAND} — Votre juriste & fiduciaire en ligne au Maroc`,
+    default: `${BRAND} — Vos documents juridiques au Maroc, en ligne`,
     template: `%s | ${BRAND}`,
   },
   description:
-    "Rédaction, vérification et formalisation de vos actes juridiques et administratifs au Maroc, en ligne.",
+    "Préparez, faites vérifier et formalisez vos documents juridiques et administratifs au Maroc, en ligne et en français ou en arabe. Supervision par un avocat lorsque la loi l'exige.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: BRAND,
+    locale: "fr_MA",
+    alternateLocale: "ar_MA",
+    title: `${BRAND} — Vos documents juridiques au Maroc, en ligne`,
+    description:
+      "Préparation, vérification automatisée et formalisation de documents juridiques marocains, avec un avocat lorsque la loi l'exige.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary",
+    site: BRAND,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default async function RootLayout({

@@ -18,6 +18,7 @@ import { assertLawyerRequestTransition, assertTransition } from "@/lib/contracts
 import { PRIMARY_JURISDICTION, decideRoute } from "@/lib/legal-routing/router";
 import type { RoutingDecisionResult, RoutingRuleDefinition } from "@/lib/legal-routing/types";
 import { quoteService } from "@/lib/payments/pricing";
+import { releaseAuthorizedPaymentInSandbox } from "@/lib/payments/service";
 import { buildServiceOffers, resolveOfferChoice, type ServiceOfferKey } from "@/lib/contracts/service-offers";
 import { LOG_EVENTS, logger } from "@/lib/logging";
 import type { AppLocale } from "@/lib/i18n/config";
@@ -44,10 +45,12 @@ export interface ContractTypeSummary {
   requiredFields: string[];
 }
 
-/** Sequential, human-readable reference (MLP-YYYY-NNN) generated server-side. */
+/** Sequential, human-readable reference (WQC-YYYY-NNN) generated server-side.
+ *  Verification cases keep their own WQV-YYYY-NNN series (§8b): the prefix
+ *  tells apart a drafted contract from a checked existing document. */
 export async function nextContractReference(now = new Date()): Promise<string> {
   const year = now.getFullYear();
-  const prefix = `MLP-${year}-`;
+  const prefix = `WQC-${year}-`;
   const last = await db.contract.findFirst({
     where: { reference: { startsWith: prefix } },
     orderBy: { reference: "desc" },
@@ -719,6 +722,20 @@ export async function cancelContract(params: {
 
   assertTransition(contract.status, "CANCELLED");
 
+  // An authorized hold is voided through the provider-signed path first —
+  // locally cancelling the row would leave real (or mocked) funds in limbo.
+  try {
+    const released = await releaseAuthorizedPaymentInSandbox({ contractId: contract.id });
+    if (released.released) {
+      logger.info("payment.hold_released_on_cancel", { contractId: contract.id });
+    }
+  } catch (error) {
+    logger.warn("payment.hold_release_unavailable", {
+      contractId: contract.id,
+      error: error instanceof Error ? error.message : String(error),
+    });
+  }
+
   await db.$transaction(async (tx) => {
     await tx.contract.update({
       where: { id: contract.id },
@@ -727,10 +744,26 @@ export async function cancelContract(params: {
     if (contract.lawyerRequest) {
       await tx.lawyerRequest.update({ where: { id: contract.lawyerRequest.id }, data: { status: "CANCELLED" } });
     }
-    await tx.payment.updateMany({
-      where: { contractId: contract.id, status: "PENDING" },
-      data: { status: "CANCELLED" },
+    // Anything still open locally (pending checkout, or a hold the provider
+    // could not release) is closed as CANCELLED for the books. Rows the
+    // provider already cancelled are deliberately untouched — audit keeps the
+    // difference explicit.
+    const openPayments = await tx.payment.findMany({
+      where: { contractId: contract.id, status: { in: ["PENDING", "AUTHORIZED"] } },
+      select: { id: true, status: true },
     });
+    for (const row of openPayments) {
+      await tx.payment.update({
+        where: { id: row.id },
+        data: {
+          status: "CANCELLED",
+          failureReason:
+            row.status === "AUTHORIZED"
+              ? `HOLD_CANCELLED_NOT_RELEASED: ${params.reason ?? "case-cancelled"}`
+              : params.reason ?? "CASE_CANCELLED",
+        },
+      });
+    }
   });
 
   await recordAudit({

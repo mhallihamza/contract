@@ -10,6 +10,7 @@ import {
   FileText,
   Handshake,
   KeyRound,
+  ListChecks,
   Lock,
   UserRound,
   Users,
@@ -58,15 +59,23 @@ export interface DocumentCardItem {
   categoryLabelFr: string;
   categoryLabelAr: string;
   completionMinutes: number;
+  /** Optional: number of questions the wizard will actually ask. */
+  questionCount?: number;
   startingPrice: number;
   currency: string;
   lawyerReviewAvailable: boolean;
+  /** Optional: documents the user should have at hand before starting. */
+  requiredDocuments?: string[];
 }
 
 export interface DocumentCardLabels {
   from: string;
   estimatedTime: string;
+  /** "{count} questions" — shown beside the estimated time when known. */
+  questions?: string;
   lawyerBadge: string;
+  /** "À avoir : {items}" — composed with the first few required documents. */
+  documentsAtHand?: string;
 }
 
 /** Labels of the homepage card (§4). */
@@ -107,6 +116,12 @@ export function DocumentCard({
   const name = locale === "ar" ? item.nameAr : item.nameFr;
   const description = locale === "ar" ? item.descriptionAr : item.descriptionFr;
   const categoryLabel = locale === "ar" ? item.categoryLabelAr : item.categoryLabelFr;
+  const atHand =
+    item.requiredDocuments && item.requiredDocuments.length > 0
+      ? [item.requiredDocuments.slice(0, 3).join(" · "), item.requiredDocuments.length > 3 ? "…" : ""]
+          .join(" ")
+          .trim()
+      : "";
 
   if (marketing) {
     const Icon = CATEGORY_ICON[item.category ?? "OTHER"] ?? FileText;
@@ -208,9 +223,19 @@ export function DocumentCard({
             <Clock className="h-3.5 w-3.5" aria-hidden />
             {interpolate(labels.estimatedTime, { minutes: item.completionMinutes })}
           </span>
+          {labels.questions && item.questionCount ? (
+            <span className="flex items-center gap-1.5">
+              <ListChecks className="h-3.5 w-3.5" aria-hidden />
+              {interpolate(labels.questions, { count: item.questionCount })}
+            </span>
+          ) : null}
           <span className="flex items-center gap-1.5">
             <FileText className="h-3.5 w-3.5" aria-hidden />
             {labels.from} {item.startingPrice} {item.currency}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <FileCheck className="h-3.5 w-3.5" aria-hidden />
+            {interpolate(labels.documentsAtHand ?? "", { items: atHand })}
           </span>
         </div>
 

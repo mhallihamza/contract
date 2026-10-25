@@ -6,6 +6,7 @@ export const metadata = {
   title: "Trouver mon document — assistant",
   description:
     "Décrivez votre situation et découvrez le document juridique correspondant. L'assistant ne décide jamais du droit applicable.",
+  alternates: { canonical: "/assistant" },
 };
 
 /**

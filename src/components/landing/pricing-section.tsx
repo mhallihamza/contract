@@ -1,16 +1,5 @@
-import { Check, Minus } from "lucide-react";
-import { SimulatorJump } from "@/components/landing/simulator-jump";
-
-/** The four destinations a pricing CTA can announce to the simulator. */
-const INTENT: Record<
-  string,
-  { mode: "create" | "verify"; docType?: "bail" | "cdi" | "prestation"; tier?: "sans" | "avocat" | "assistee" }
-> = {
-  create: { mode: "create" },
-  verify: { mode: "verify" },
-  "create-avocat": { mode: "create", tier: "avocat" },
-  "verify-assist": { mode: "verify", tier: "assistee" },
-};
+import Link from "next/link";
+import { ArrowRight, Check, Minus } from "lucide-react";
 
 /** Copy shape of `d.public.home.pricing` — FR reference, AR mirror. */
 export interface PricingTier {
@@ -19,9 +8,11 @@ export interface PricingTier {
   sub: string;
   price: string;
   unit: string;
+  /** Which document the tier applies to — announced on the card itself. */
+  applies: string;
   features: readonly { text: string; included: boolean }[];
   cta: string;
-  /** One of `INTENT`'s keys; `string` because dictionaries are `DeepWiden`-ed. */
+  /** Real destination: `/contracts`, `/contracts?tier=avocat` or `/verify`. */
   ctaHref: string;
   /** Card treatment — "dark" (recommended), "accent" or "sand". */
   tone: string;
@@ -33,8 +24,9 @@ export interface PricingTier {
  * One card per offer, each anchored on the action it sells: self-service
  * drafting, assisted verification of an existing file, or a lawyer's signed
  * review. Every price is announced with its tax note and the fee basis — the
- * page never hides a number behind "contact us". The CTAs announce their
- * intent to the simulator so the wizard opens preselected.
+ * page never hides a number behind "contact us". Each card says what it
+ * applies to (a new document, one you already hold, or both) and its CTA
+ * carries a preselected tier into the destination page.
  */
 export function PricingSection({
   eyebrow,
@@ -99,6 +91,10 @@ export function PricingSection({
                 </h3>
                 <p className={`text-sm ${dark ? "text-accent-tint/75" : "text-ink-muted"}`}>{tier.sub}</p>
 
+                <p className={`mt-1 text-xs font-medium ${dark ? "text-accent-contrast" : "text-accent-strong"}`} dir="auto">
+                  {tier.applies}
+                </p>
+
                 <p className="mt-5 flex items-baseline gap-2">
                   <span className={`font-serif text-4xl font-bold tracking-tight ${dark ? "text-white" : "text-navy"}`}>
                     {tier.price}
@@ -121,18 +117,19 @@ export function PricingSection({
                   ))}
                 </ul>
 
-                <SimulatorJump
-                  intent={INTENT[tier.ctaHref]}
+                <Link
+                  href={tier.ctaHref}
                   className={
                     dark
-                      ? "mt-7 inline-flex w-full items-center justify-center rounded-lg bg-accent-bright px-5 py-2.5 text-sm font-semibold text-navy-deep transition-colors hover:bg-white"
+                      ? "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent-bright px-5 py-2.5 text-sm font-semibold text-navy-deep transition-colors hover:bg-white"
                       : accent
-                        ? "mt-7 inline-flex w-full items-center justify-center rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-deep"
-                        : "mt-7 inline-flex w-full items-center justify-center rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent-soft"
+                        ? "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-deep"
+                        : "mt-7 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent-soft"
                   }
                 >
                   {tier.cta}
-                </SimulatorJump>
+                  <ArrowRight className="h-4 w-4 rtl:rotate-180" aria-hidden />
+                </Link>
               </article>
             );
           })}

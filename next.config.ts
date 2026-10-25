@@ -19,6 +19,24 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "12mb",
     },
   },
+  async headers() {
+    return [
+      {
+        // Baseline hardening for every response. A Content-Security-Policy is
+        // deliberately absent: a strict CSP for Next.js needs a nonce-based
+        // middleware and a full rendering pass — it is tracked in the
+        // market-readiness report instead of being shipped half-verified.
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

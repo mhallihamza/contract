@@ -22,6 +22,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "src/generated/**",
     "prisma/migrations/**",
+    // Working data folder (scratch files, never shipped).
+    ".data/**",
   ]),
 ]);
 

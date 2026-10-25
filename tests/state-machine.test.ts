@@ -74,6 +74,40 @@ describe("contract status machine", () => {
       expect(needsClientAction(status)).toBe(true);
     }
   });
+
+  describe("verification journey (§8b, origin VERIFICATION)", () => {
+    it("opens the automated check after payment instead of document generation", () => {
+      expect(canTransition("PAYMENT_CONFIRMED", "VERIFICATION_IN_PROGRESS")).toBe(true);
+      expect(() => assertTransition("PAYMENT_CONFIRMED", "VERIFICATION_IN_PROGRESS")).not.toThrow();
+      expect(canTransition("PAYMENT_CONFIRMED", "REPORT_DELIVERED")).toBe(false);
+    });
+
+    it("closes the assisted tier or hands over to the lawyer branch", () => {
+      expect(canTransition("VERIFICATION_IN_PROGRESS", "REPORT_DELIVERED")).toBe(true);
+      expect(canTransition("VERIFICATION_IN_PROGRESS", "LAWYER_PENDING")).toBe(true);
+      expect(() => assertTransition("VERIFICATION_IN_PROGRESS", "REPORT_DELIVERED")).not.toThrow();
+      expect(canTransition("VERIFICATION_IN_PROGRESS", "FINAL")).toBe(false);
+    });
+
+    it("lets a delivered report be finalised, or escalated to a lawyer", () => {
+      expect(canTransition("REPORT_DELIVERED", "FINAL")).toBe(true);
+      expect(canTransition("REPORT_DELIVERED", "LAWYER_PENDING")).toBe(true);
+      expect(canTransition("REPORT_DELIVERED", "DOCUMENT_GENERATING")).toBe(false);
+    });
+
+    it("keeps the verification states open until they terminate", () => {
+      expect(isTerminalStatus("VERIFICATION_IN_PROGRESS")).toBe(false);
+      expect(isTerminalStatus("REPORT_DELIVERED")).toBe(false);
+      expect(OPEN_STATUSES).toContain("VERIFICATION_IN_PROGRESS");
+      expect(OPEN_STATUSES).toContain("REPORT_DELIVERED");
+      expect(needsClientAction("VERIFICATION_IN_PROGRESS")).toBe(false);
+    });
+
+    it("stays cancellable along the verification branch", () => {
+      expect(canTransition("VERIFICATION_IN_PROGRESS", "CANCELLED")).toBe(true);
+      expect(canTransition("REPORT_DELIVERED", "CANCELLED")).toBe(true);
+    });
+  });
 });
 
 describe("lawyer request status machine", () => {

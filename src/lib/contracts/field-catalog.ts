@@ -6,6 +6,11 @@ import { NDA_FIELDS } from "./field-specs/nda";
 import { COMMERCIAL_LEASE_FIELDS } from "./field-specs/commercial-lease";
 import { VEHICLE_SALE_FIELDS } from "./field-specs/vehicle-sale";
 import { EMPLOYMENT_CDD_FIELDS, REAL_ESTATE_SALE_FIELDS } from "./field-specs/employment-and-property";
+import { EMPLOYMENT_CDI_FIELDS } from "./field-specs/employment-cdi";
+import { FURNISHED_LEASE_FIELDS } from "./field-specs/furnished-lease";
+import { SEASONAL_LEASE_FIELDS } from "./field-specs/seasonal-lease";
+import { LOAN_AGREEMENT_FIELDS } from "./field-specs/loan-agreement";
+import { POWER_OF_ATTORNEY_FIELDS } from "./field-specs/power-of-attorney";
 
 export { FIELD_GROUP_LABEL } from "./field-types";
 export type { FieldGroup, FieldOption, FieldSpec } from "./field-types";
@@ -18,7 +23,12 @@ export const CONTRACT_TYPE_CODES = {
   commercialLease: "COMMERCIAL_LEASE",
   vehicleSale: "VEHICLE_SALE",
   employmentCdd: "EMPLOYMENT_CDD",
+  employmentCdi: "EMPLOYMENT_CDI",
   realEstateSale: "REAL_ESTATE_SALE",
+  furnishedLease: "FURNISHED_LEASE",
+  seasonalLease: "SEASONAL_LEASE",
+  loanAgreement: "LOAN_AGREEMENT",
+  powerOfAttorney: "POWER_OF_ATTORNEY",
 } as const;
 
 /**
@@ -35,7 +45,12 @@ export const CONTRACT_TYPE_PARTY_ROLES: Record<string, PartyRole[]> = {
   NDA: ["DISCLOSING_PARTY", "RECEIVING_PARTY"],
   VEHICLE_SALE: ["SELLER", "BUYER"],
   EMPLOYMENT_CDD: ["EMPLOYER", "EMPLOYEE"],
+  EMPLOYMENT_CDI: ["EMPLOYER", "EMPLOYEE"],
   REAL_ESTATE_SALE: ["SELLER", "BUYER"],
+  FURNISHED_LEASE: ["LANDLORD", "TENANT"],
+  SEASONAL_LEASE: ["LANDLORD", "TENANT"],
+  LOAN_AGREEMENT: ["LENDER", "BORROWER"],
+  POWER_OF_ATTORNEY: ["OTHER", "OTHER"],
 };
 
 export function partyRolesFor(contractTypeCode: string): PartyRole[] {
@@ -72,7 +87,12 @@ export const FIELD_CATALOG: Record<string, FieldSpec[]> = {
   [CONTRACT_TYPE_CODES.commercialLease]: COMMERCIAL_LEASE_FIELDS,
   [CONTRACT_TYPE_CODES.vehicleSale]: VEHICLE_SALE_FIELDS,
   [CONTRACT_TYPE_CODES.employmentCdd]: EMPLOYMENT_CDD_FIELDS,
+  [CONTRACT_TYPE_CODES.employmentCdi]: EMPLOYMENT_CDI_FIELDS,
   [CONTRACT_TYPE_CODES.realEstateSale]: REAL_ESTATE_SALE_FIELDS,
+  [CONTRACT_TYPE_CODES.furnishedLease]: FURNISHED_LEASE_FIELDS,
+  [CONTRACT_TYPE_CODES.seasonalLease]: SEASONAL_LEASE_FIELDS,
+  [CONTRACT_TYPE_CODES.loanAgreement]: LOAN_AGREEMENT_FIELDS,
+  [CONTRACT_TYPE_CODES.powerOfAttorney]: POWER_OF_ATTORNEY_FIELDS,
 };
 
 export function getFieldSpecs(contractTypeCode: string): FieldSpec[] {

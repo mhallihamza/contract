@@ -5,7 +5,7 @@ export async function seedDemoCaseC(
   typeFreelanceServiceId: string,
   client2Id: string,
 ) {
-  const refC = "MLP-2026-003";
+  const refC = "WQC-2026-003";
   const contractC = await db.contract.upsert({
     where: { reference: refC },
     update: {},

@@ -31,11 +31,12 @@ export const appConfig = {
   name: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MOROCCO_LEGAL_PLATFORM",
   shortName: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MLP",
   /**
-   * Public marketing brand shown by the landing pages (navy identity).
-   * Internal surfaces keep using `name`; this one is what visitors read.
+   * Public marketing brand shown by the landing pages (Wathiqa identity:
+   * emerald / sand / gold). Internal surfaces keep using `name`; this one is
+   * what visitors read.
    */
   brand: {
-    name: process.env.NEXT_PUBLIC_BRAND_NAME?.trim() || "DocuMorocco",
+    name: process.env.NEXT_PUBLIC_BRAND_NAME?.trim() || "Wathiqa",
   },
   supportEmail: process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@example.ma",
   supportPhone: process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim() || "",
@@ -46,8 +47,8 @@ export const appConfig = {
   primaryJurisdiction: "MA",
   currency: process.env.PAYMENT_CURRENCY?.trim() || "MAD",
   logo: {
-    /** Text mark keeps the MVP logo-free until a brand asset exists. */
-    text: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MOROCCO LEGAL PLATFORM",
+    /** Text mark; the SVG document-and-seal mark lives in the marketing header. */
+    text: process.env.NEXT_PUBLIC_APP_NAME?.trim() || "Wathiqa",
     favicon: "/favicon.ico",
   },
 } as const;
@@ -55,9 +56,9 @@ export const appConfig = {
 /** Prices published in the MVP (MAD). Kept in one place for admin editing later. */
 export const SERVICE_PRICING = {
   /** Generating and downloading a contract without lawyer involvement. */
-  selfService: 149,
+  selfService: 290,
   /** Optional lawyer review requested by the client. */
-  lawyerReview: 890,
+  lawyerReview: 990,
   /** Lawyer review + validation where the routing engine requires it. */
   lawyerRequired: 1190,
   /** Electronic signature ceremony through the configured provider. */

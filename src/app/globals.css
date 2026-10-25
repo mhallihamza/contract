@@ -88,11 +88,11 @@
 
   --font-sans: var(--font-inter), var(--font-cairo), "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
-  /* Two loaded voices plus a fallback chain: Inter carries the interface,
-     Cairo takes over Arabic glyphs so RTL pages never drop to a system face,
-     JetBrains Mono carries reference numbers, prices and timestamps — the
-     "machine" layer of the product. No second display family: the acceptance
-     suite requires a single typographic voice in the rendered output. */
+  /* The document voice: Playfair Display for act titles and signatures, with
+     Cairo as the Arabic fallback so an RTL page never loses the line; and the
+     machine layer (JetBrains Mono) for reference numbers, prices, timestamps.
+     Three loaded voices — interface, document, machine. */
+  --font-serif: var(--font-playfair), var(--font-cairo), Georgia, serif;
 
   /* Marketing palette (public pages) — Wathiqa identity: sand canvas, ink
      text, ONE deep emerald for every action and dark surface, one whisper of
@@ -121,6 +121,24 @@
   --color-accent-soft: #ecfdf5; /* emerald-50 — hover surfaces */
   --color-accent-foreground: #ffffff; /* ink ON the dark accent surface: hover of outline/ghost buttons, focused menu items */
   --color-brass: #d97706; /* gold-600 — micro-labels and rules ONLY */
+
+  /* The Wathiqa scale, named semantically so no component ever spells a raw
+     emerald/amber class name: bright = the emerald-500 action on the dark
+     hero, contrast = emerald-400 for text on deep grounds, tint = emerald-100
+     for badges and highlighted values, strong = emerald-700 for hover and
+     stamps; brass-bright = gold-500 rules, brass-tint/text = gold-100/700
+     badges. ink-soft/faint and line-strong are the sand-500/400/300 steps. */
+  --color-accent-bright: #10b981;
+  --color-accent-contrast: #34d399;
+  --color-accent-tint: #d1fae5;
+  --color-accent-strong: #047857;
+  --color-brass-bright: #f59e0b;
+  --color-brass-tint: #fef3c7;
+  --color-brass-text: #b45309;
+  --color-ink-soft: #78716c;
+  --color-ink-faint: #a8a29e;
+  --color-line-strong: #d6d3d1;
+  --color-ink-deep: #292524;
 }
 
 /* Anchored sections of the marketing pages: keep the sticky header clear. */
@@ -195,4 +213,59 @@
 @utility document-body {
   white-space: pre-wrap;
   line-height: 1.9;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   The paper voice of the Wathiqa landing: the white sheet, its watermark of
+   the document mark, the rotated approval stamps and the italic signature
+   hand. Pure CSS, no assets — the same classes the simulator sheet uses.
+   ─────────────────────────────────────────────────────────────────────────── */
+.paper-sheet {
+  position: relative;
+  background-color: #ffffff;
+  box-shadow:
+    0 10px 30px -5px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.watermark-seal {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  width: 120px;
+  height: 120px;
+  opacity: 0.06;
+  pointer-events: none;
+  user-select: none;
+}
+
+.legal-stamp {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border: 2px solid #047857;
+  border-radius: 2px;
+  background-color: rgba(236, 253, 245, 0.8);
+  color: #047857;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.legal-stamp-seal {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border: 3px double #047857;
+  border-radius: 2px;
+  background-color: rgba(236, 253, 245, 0.95);
+  color: #047857;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+}
+
+.signature-font {
+  font-family: var(--font-serif);
+  font-style: italic;
 }

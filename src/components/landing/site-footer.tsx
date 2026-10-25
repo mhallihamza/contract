@@ -1,124 +1,152 @@
 import Link from "next/link";
+import { Clock, MapPin, Phone } from "lucide-react";
+import { WathiqaMark } from "@/components/marketing/wathiqa-mark";
 import { appConfig } from "@/lib/config";
 
-/**
- * Public footer (§17).
- *
- * Four compact columns — SERVICES / PLATEFORME / ENTREPRISE / LÉGAL — on the
- * deep blue band that closes the page. Every link points at a real
- * destination: catalogue deep links, section anchors, the support address from
- * the app configuration, or the legal page. No invented social accounts,
- * addresses or phone numbers; the demonstration disclosure stays visible in
- * every locale.
- */
-export function SiteFooter({
-  labels,
-  rights,
-}: {
-  labels: {
-    tagline: string;
-    services: string;
-    platform: string;
-    company: string;
-    legal: string;
-    links: {
-      servicePrestation: string;
-      serviceCommercial: string;
-      serviceTravail: string;
-      serviceRelecture: string;
-      howItWorks: string;
-      businesses: string;
-      resources: string;
-      about: string;
-      contact: string;
-      faq: string;
-      notice: string;
-      privacy: string;
-      terms: string;
-    };
-  };
-  rights: string;
-}) {
-  const columns: { title: string; links: { href: string; label: string }[] }[] = [
-    {
-      title: labels.services,
-      links: [
-        { href: "/contracts?category=SERVICES", label: labels.links.servicePrestation },
-        { href: "/contracts?category=PARTNERSHIP", label: labels.links.serviceCommercial },
-        { href: "/contracts?category=EMPLOYMENT", label: labels.links.serviceTravail },
-        { href: "/#review", label: labels.links.serviceRelecture },
-      ],
-    },
-    {
-      title: labels.platform,
-      links: [
-        { href: "/#process", label: labels.links.howItWorks },
-        { href: "/#business", label: labels.links.businesses },
-        { href: "/#faq", label: labels.links.resources },
-      ],
-    },
-    {
-      title: labels.company,
-      links: [
-        { href: "/legal#mentions", label: labels.links.about },
-        { href: `mailto:${appConfig.supportEmail}`, label: labels.links.contact },
-        { href: "/#faq", label: labels.links.faq },
-      ],
-    },
-    {
-      title: labels.legal,
-      links: [
-        { href: "/legal#mentions", label: labels.links.notice },
-        { href: "/legal#privacy", label: labels.links.privacy },
-        { href: "/legal#terms", label: labels.links.terms },
-      ],
-    },
-  ];
+/** The footer's copy shape — `d.public.home.footer`, FR reference, AR mirror. */
+export interface FooterLabels {
+  tagline: string;
+  popular: string;
+  compliance: string;
+  contact: string;
+  popularLinks: readonly { label: string; target: string }[];
+  laws: readonly string[];
+  address: string;
+  hours: string;
+  phone: string;
+  whatsapp: string;
+  legal: string;
+  privacy: string;
+  copyright: string;
+}
 
+/**
+ * Service links point at their real destination: the catalogue page carries
+ * every act type, and the verifier is the simulator's second mode. Nothing in
+ * the footer is decorative — each anchor leads somewhere a visitor can act.
+ */
+const SERVICE_HREF: Record<string, string> = {
+  bail: "/contracts?template=contrat-location-habitation",
+  cdi: "/contracts?template=contrat-travail-cdd",
+  prestation: "/contracts?template=contrat-prestation-services",
+  verify: "/#simulator",
+};
+
+/**
+ * Footer of the public experience — the Wathiqa colophon.
+ *
+ * A deep-emerald band that closes every public page. The document mark and the
+ * wordmark sit with the one-line promise; then the three columns a legal
+ * services page owes its visitor — the popular services, the compliance frame
+ * (the actual Moroccan texts the platform drafts against), and the contact
+ * block with the seat, the hours and the phone. The bottom line carries the
+ * legal / privacy links, the copyright and the honest demonstration notice.
+ */
+export function SiteFooter({ labels, rights }: { labels: FooterLabels; rights: string }) {
   return (
-    <footer className="mt-auto bg-navy-deep text-white" data-landing-section="footer">
-      <div className="container-page py-14 lg:py-16">
-        <div className="grid gap-10 lg:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
-          <div className="space-y-4">
-            <p className="text-xl font-semibold tracking-[-0.01em] text-white">
-              {appConfig.brand.name}
-            </p>
-            <p className="max-w-xs text-sm leading-relaxed text-white/60" dir="auto">
+    <footer className="border-t border-navy-mid bg-navy-deep text-accent-tint">
+      <div className="container-page py-14">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          {/* Brand column — mark, wordmark, the promise. */}
+          <div>
+            <div className="mb-3 flex items-center gap-2.5">
+              <WathiqaMark className="h-8 w-8 text-brass" aria-hidden />
+              <span className="font-serif text-2xl font-bold tracking-tight text-white">
+                {appConfig.brand.name}
+              </span>
+            </div>
+            <p className="max-w-xs text-sm leading-relaxed text-accent-tint/80" dir="auto">
               {labels.tagline}
             </p>
           </div>
 
-          {columns.map((column) => (
-            <nav key={column.title} aria-label={column.title} className="space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
-                {column.title}
-              </p>
-              <ul className="space-y-2 text-sm">
-                {column.links.map((link) => (
-                  <li key={link.href + link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:text-white"
-                      dir="auto"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-      </div>
+          {/* Popular services — the acts a visitor came here for. */}
+          <nav aria-label={labels.popular}>
+            <h3 className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-brass-bright">
+              {labels.popular}
+            </h3>
+            <ul className="space-y-2 text-sm">
+              {labels.popularLinks.map((link) => (
+                <li key={link.target}>
+                  <Link
+                    href={SERVICE_HREF[link.target] ?? "/contracts"}
+                    className="text-accent-tint/85 underline-offset-4 transition-colors hover:text-white hover:underline"
+                    dir="auto"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-      <div className="border-t border-white/10 py-4">
-        <div className="container-page flex flex-col items-center justify-between gap-2 text-xs text-white/55 sm:flex-row">
-          <p dir="auto">
-            © {new Date().getFullYear()} {appConfig.brand.name}
-          </p>
-          <p dir="auto">{rights}</p>
+          {/* Compliance — the legal frame the documents are drafted against. */}
+          <div>
+            <h3 className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-brass-bright">
+              {labels.compliance}
+            </h3>
+            <ul className="space-y-2 text-sm text-accent-tint/85">
+              {labels.laws.map((law) => (
+                <li key={law} dir="auto">
+                  {law}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact — seat, hours, phone, WhatsApp. */}
+          <div>
+            <h3 className="mb-3 font-mono text-xs font-bold uppercase tracking-widest text-brass-bright">
+              {labels.contact}
+            </h3>
+            <ul className="space-y-2.5 text-sm text-accent-tint/85">
+              <li className="flex items-start gap-2">
+                <MapPin aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
+                <span dir="auto">{labels.address}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Clock aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
+                <span dir="auto">{labels.hours}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Phone aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-accent-contrast" />
+                <a
+                  href={`tel:${labels.phone.replace(/\s/g, "")}`}
+                  className="underline-offset-4 transition-colors hover:text-white hover:underline"
+                  dir="auto"
+                >
+                  {labels.phone}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom line — legal, privacy, copyright, and the honest notice. */}
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-navy-mid/70 pt-6 text-xs text-accent-tint/70 sm:flex-row">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link
+              href="/legal"
+              className="underline-offset-4 transition-colors hover:text-white hover:underline"
+              dir="auto"
+            >
+              {labels.legal}
+            </Link>
+            <Link
+              href="/legal#privacy"
+              className="underline-offset-4 transition-colors hover:text-white hover:underline"
+              dir="auto"
+            >
+              {labels.privacy}
+            </Link>
+            <span className="text-accent-tint/50" dir="auto">
+              {rights}
+            </span>
+          </div>
+          <p dir="auto">{labels.copyright}</p>
         </div>
       </div>
     </footer>
   );
 }
+

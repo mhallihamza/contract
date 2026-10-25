@@ -4,6 +4,10 @@ export const publicFr = {
     home: "Accueil",
     contracts: "Contrats",
     how: "Comment ça marche",
+    simulator: "Simulateur d'Acte",
+    pricing: "Services & Tarifs",
+    why: "Pourquoi nous",
+    faq: "FAQ",
     help: "Aide",
     assistant: "Assistant",
     signIn: "Se connecter",
@@ -12,6 +16,10 @@ export const publicFr = {
     businesses: "Entreprises",
     resources: "Ressources",
     start: "Commencer",
+    createActe: "Créer mon acte",
+    whatsappDirect: "Assistance WhatsApp Directe",
+    brand: "Wathiqa",
+    tagline: "Mon Juriste & Fiduciaire en ligne",
     skipToContent: "Aller au contenu",
   },
 
@@ -19,244 +27,504 @@ export const publicFr = {
     // §33 — SEO metadata (no technology wording).
     metaTitle: "Contrats et documents juridiques au Maroc",
     metaDescription:
-      "Préparez, faites vérifier et gérez vos contrats et documents juridiques au Maroc : du besoin au document final, avec validation professionnelle lorsque votre situation l'exige.",
-
-    // §6 — hero: the promise on the left, one contract document on the right.
-    eyebrow: "CONTRATS & DOCUMENTS JURIDIQUES",
-    heroTitle: "Vos contrats, en toute sérénité.",
-    heroSubtitle:
-      "Préparez, faites relire et gérez vos contrats et documents juridiques simplement.",
-    heroCta: "Commencer une demande",
-    heroCtaSecondary: "Découvrir nos services",
-    heroReassurance: "Pour particuliers, entrepreneurs et entreprises au Maroc.",
-    // §7 — the hero visual: a realistic contract sheet, built from HTML/CSS only.
-    // No photograph, no dashboard, no fake interface screens.
-    heroDocument: {
-      title: "CONTRAT DE PRESTATION DE SERVICES",
-      preamble: "Entre les soussignés",
-      sections: [
-        { n: "01", title: "Objet du contrat" },
-        { n: "02", title: "Prestations" },
-        { n: "03", title: "Conditions financières" },
-        { n: "04", title: "Durée" },
-        { n: "05", title: "Résiliation" },
+      "Rédigez, faites vérifier et formalisez vos actes juridiques et administratifs au Maroc : un juriste basé au Maroc, un cadre conforme au droit marocain, en ligne.",
+    // §6 — announcement strip above the sticky bar.
+    announcement: {
+      badge: "Cadre Légal Marocain",
+      note: "Option de relecture par un avocat disponible sur chaque document",
+      whatsapp: "Une question ? Contactez-nous sur WhatsApp",
+      hours: "Lu - Sa : 8h30 - 19h00",
+    },
+    // §6 — hero: the promise on the left, a typeset bail on the right.
+    hero: {
+      badge: "En Ligne • Juristes et Fiduciaires Basés au Maroc",
+      titleLine1: "Votre juriste & fiduciaire",
+      titleAccent: "100% en ligne au Maroc.",
+      subtitle:
+        "Accompagnement professionnel basé au Maroc pour rédiger, vérifier et formaliser vos actes juridiques et administratifs.",
+      chips: ["Dahir Obligations & Contrats", "Loi 65-99 Code du Travail", "Conformité Données CNDP"],
+      primaryCta: "Générer un acte immédiatement",
+      secondaryCta: "Parler à notre équipe sur WhatsApp",
+      metrics: [
+        { value: "2 400+", label: "Actes Traités" },
+        { value: "100%", label: "Plateforme Numérique" },
+        { value: "4.9/5", label: "Satisfaction Clients" },
       ],
-      // The three details that make a sheet read as a real act rather than a
-      // diagram: an approval stamp, the signature block, a timestamp.
-      stamp: "MODÈLE VÉRIFIÉ",
-      stampNote: "Préparé à partir de modèles approuvés",
-      signatures: ["Signature du client", "Signature du prestataire"],
-      timestamp: "Document préparé et horodaté",
-      status: "Document préparé",
-      ready: "Prêt pour vérification",
-    },
-
-    // §9 — the two situations a visitor actually starts from.
-    needsEyebrow: "COMMENCER",
-    needsTitle: "De quoi avez-vous besoin ?",
-    needsSubtitle: "Choisissez simplement le service qui correspond à votre situation.",
-    needs: [
-      {
-        title: "Préparer un contrat",
-        body: "Créez un contrat adapté à votre situation.",
-        cta: "Commencer",
-      },
-      {
-        title: "Faire relire un contrat",
-        body: "Vous avez déjà un document ? Faites-le examiner avant de le signer.",
-        cta: "Faire relire",
-      },
-    ],
-    // §10 — services catalogue: six entries, white background, thin borders.
-    servicesEyebrow: "NOS SERVICES",
-    servicesTitle: "Des contrats pour les situations qui comptent.",
-    services: [
-      {
-        n: "01",
-        title: "Contrats de prestation",
-        body: "Encadrez vos missions, vos délais et vos conditions de paiement.",
-      },
-      {
-        n: "02",
-        title: "Contrats commerciaux",
-        body: "Structurez vos relations avec vos clients et vos partenaires.",
-      },
-      {
-        n: "03",
-        title: "Contrats de travail",
-        body: "Encadrez vos recrutements et vos collaborations.",
-      },
-      {
-        n: "04",
-        title: "Contrats immobiliers",
-        body: "Bail d'habitation ou bail commercial : loyer, durée et obligations.",
-      },
-      {
-        n: "05",
-        title: "Documents d'entreprise",
-        body: "Accords de confidentialité et documents de société.",
-      },
-      {
-        n: "06",
-        title: "Relecture de contrats",
-        body: "Identifiez les points qui méritent votre attention avant de signer.",
-      },
-    ],
-
-    // §11 — contract review: one document, four points to look at.
-    reviewTitle: "Vous avez déjà un contrat ?",
-    reviewText:
-      "Avant de signer, faites relire votre document et identifiez les points qui méritent votre attention.",
-    review: {
-      fileName: "Contrat_de_prestation.pdf",
-      pages: "12 pages",
-      pointsLabel: "POINTS EXAMINÉS",
-      points: ["Durée", "Conditions de paiement", "Résiliation", "Responsabilités"],
-      note: "Aperçu de démonstration — aucune analyse juridique n'est affichée.",
-    },
-
-    // §11bis — the question a visitor asks before committing: what does this
-    // change compared to the usual way of getting a contract written?
-    // Deliberately qualitative — no timing, no percentage, no competitor named.
-    comparisonEyebrow: "COMPARATIF",
-    comparisonTitle: "Pourquoi préparer son contrat en ligne ?",
-    comparisonText:
-      "Le même document qu'au cabinet, mais un parcours qui ne vous demande ni déplacement ni attente.",
-    comparison: {
-      criteriaLabel: "CRITÈRE",
-      columns: ["La façon habituelle", "Avec la plateforme"],
-      rows: [
-        { criterion: "Rendez-vous", before: "À organiser en personne", after: "Depuis chez vous, à votre rythme" },
-        {
-          criterion: "Avancée du dossier",
-          before: "Entre deux échanges",
-          after: "Votre document avance dès vos réponses",
-        },
-        {
-          criterion: "Tarifs",
-          before: "Précisés au cas par cas",
-          after: "Le service et son prix sont annoncés avant le paiement",
-        },
-        {
-          criterion: "Suivi",
-          before: "Échanges dispersés par e-mail",
-          after: "Un dossier unique, horodaté, accessible à tout moment",
-        },
-      ],
-    },
-
-    // §12 — professional validation: the single dark band of the page.
-    validationTitle: "Besoin d'une validation professionnelle ?",
-    validationText:
-      "Selon votre situation et le type de contrat, votre dossier peut bénéficier d'une validation professionnelle.",
-    validationCard: {
-      label: "DOSSIER",
-      type: "Contrat commercial",
-      service: "Validation professionnelle",
-      status: "En cours",
-    },
-
-    // §13 — for businesses and professionals: one compact preview, no dashboard.
-    businessTitle: "Pour les entreprises et professionnels",
-    businessText:
-      "Gérez vos contrats et documents dans un espace conçu pour accompagner votre activité.",
-    business: {
-      title: "Mes contrats",
-      rows: [
-        { name: "Contrat de prestation", status: "Actif" },
-        { name: "Contrat fournisseur", status: "À valider" },
-        { name: "Contrat de travail", status: "Brouillon" },
-      ],
-      note: "Aperçu de démonstration — données fictives.",
-    },
-
-    // §14 — how it works: the two tracks, one per starting point.
-    stepsTitle: "Simple du début à la fin.",
-    stepsSubtitle:
-      "Vous choisissez d'abord votre point de départ : préparer un document, ou faire examiner celui que vous avez déjà. Chaque parcours ne montre que ses propres étapes.",
-    tracks: [
-      {
-        eyebrow: "PARCOURS CRÉATION",
-        title: "Je prépare un document",
-        body: "Vous partez d'un besoin, à partir d'un modèle approuvé.",
-        cta: "Commencer une demande",
-        steps: [
+      // The dense paper mockup: a residential bail, typeset verbatim.
+      document: {
+        kingdom: "Royaume du Maroc",
+        ref: "N° DM-2026-8849",
+        title: "CONTRAT DE BAIL À USAGE D'HABITATION",
+        law: "Dahir n° 1-13-111 • Conforme Loi 67-12",
+        stamp: "MODÈLE TYPE",
+        stampNote: "CONFORME LOI 67-12",
+        partiesLabel: "ENTRE LES SOUSSIGNÉS :",
+        party1: "1. Le Bailleur : M. Omar Benjelloun (CIN N° AB123456)",
+        party2: "2. Le Preneur : Mme Sarah Tazi (CIN N° CD789012)",
+        articles: [
           {
-            n: "01",
-            title: "Choisissez votre type de document",
-            body: "Bail d'habitation, contrat de travail ou prestation de service.",
+            title: "Article 1 — Objet du Contrat",
+            body: "Le bailleur donne à bail d'habitation au preneur le bien situé à Casablanca, Quartier Gauthier.",
           },
           {
-            n: "02",
-            title: "Répondez aux questions utiles",
-            body: "Vos réponses remplissent le document, sans vocabulaire juridique.",
+            title: "Article 2 — Loyer & Charges",
+            body: "Le loyer mensuel est fixé à la somme de 6 500 DH, payable d'avance le 1er du mois.",
           },
           {
-            n: "03",
-            title: "Choisissez votre accompagnement",
-            body: "Vous finalisez par vous-même, ou demandez une validation professionnelle si votre dossier le prévoit.",
-          },
-          {
-            n: "04",
-            title: "Recevez votre document",
-            body: "Vous téléchargez un document prêt à être signé avec votre cocontractant.",
+            title: "Article 3 — Durée du Bail",
+            body: "Le présent contrat est conclu pour une durée d'une (1) année renouvelable par tacite reconduction.",
           },
         ],
+        sig1Label: "Signature Bailleur:",
+        sig1: "O. Benjelloun",
+        sig2Label: "Signature Preneur:",
+        sig2: "S. Tazi",
+        timestamp: "Document généré et horodaté",
+        refNote: "Réf. juridique conforme à la Loi 67-12",
       },
-      {
-        eyebrow: "PARCOURS RELECTURE",
+    },
+    // §14 — how it works: the two parcours, one per starting point.
+    howItWorks: {
+      eyebrow: "Simplicité Absolue",
+      title: "Deux parcours, selon ce que vous avez déjà",
+      subtitle:
+        "Vous choisissez d'abord votre besoin : créer un document, ou faire contrôler celui que vous possédez. Chaque parcours ne vous montre que ses propres étapes.",
+      createTrack: {
+        title: "Je crée un document",
+        price: "À partir de 290 DH HT / acte",
+        steps: [
+          {
+            title: "Choisissez votre type d'acte",
+            body: "Bail d'habitation, CDI/CDD ou prestation de service.",
+          },
+          {
+            title: "Répondez aux questions guidées",
+            body: "Vos réponses remplissent le document en temps réel, sous vos yeux.",
+          },
+          {
+            title: "Choisissez : avec ou sans avocat",
+            body: "",
+          },
+          {
+            title: "Signez et recevez votre document",
+            body: "PDF prêt à signer avec votre cocontractant. Avec avocat, l'attestation arrive par email et le paiement n'est capturé qu'après validation.",
+          },
+        ],
+        tierBox: {
+          left: {
+            title: "Sans avocat",
+            price: "290 DH",
+            body: "Téléchargement immédiat, sans relecture.",
+          },
+          right: {
+            title: "Avec avocat",
+            price: "990 DH",
+            body: "Relecture et attestation signée par un avocat.",
+          },
+        },
+        cta: "Créer un document",
+        ctaHref: "create",
+      },
+      verifyTrack: {
         title: "J'ai déjà un document",
-        body: "Vous partez du contrat que vous détenez déjà.",
-        cta: "Faire relire un contrat",
+        price: "À partir de 79 DH HT",
         steps: [
           {
-            n: "01",
-            title: "Déposez votre contrat",
-            body: "PDF ou Word. Rien n'est rédigé à votre place : nous examinons le vôtre.",
+            title: "Téléversez votre document",
+            body: "PDF ou Word. Rien n'est rédigé : nous contrôlons le vôtre.",
           },
           {
-            n: "02",
-            title: "Indiquez ce qui vous préoccupe",
-            body: "Durée, conditions de paiement, résiliation, responsabilités : ciblez les points qui comptent.",
+            title: "Choisissez le niveau de contrôle",
+            body: "",
           },
           {
-            n: "03",
-            title: "Recevez la relecture",
-            body: "Vous identifiez les points qui méritent votre attention avant de signer.",
+            title: "Recevez le résultat par email",
+            body: "En quelques minutes (assistée) ou sous 24h ouvrées (avocat). Paiement avocat capturé uniquement après validation effective.",
           },
         ],
+        tierBox: {
+          left: {
+            title: "Vérification assistée",
+            price: "79 DH",
+            body: "Contrôle automatisé de complétude (ne constitue pas un avis juridique).",
+          },
+          right: {
+            title: "Validation Avocat",
+            price: "990 DH",
+            body: "Relecture par un avocat au barreau marocain et attestation signée.",
+          },
+        },
+        cta: "Vérifier un document",
+        ctaHref: "verify",
+      },
+    },
+
+    // §8 — the interactive simulator: create a document end-to-end, or verify
+    // one already held. The paper templates carry {f0_0}-style tokens that the
+    // live sheet fills from the wizard answers.
+    simulator: {
+      eyebrow: "Testez par vous-même",
+      title: "Simulateur & Générateur d'Acte en Direct",
+      subtitle:
+        "Créez un nouveau document de A à Z, ou téléversez un document que vous avez déjà pour le faire vérifier.",
+      choiceLabel: "Que souhaitez-vous faire ?",
+      choiceCreate: {
+        title: "Créer un nouveau document",
+        body: "Choisissez un modèle, répondez aux questions, puis décidez de le faire relire par un avocat ou non.",
+      },
+      choiceVerify: {
+        title: "Vérifier un document existant",
+        body: "Vous avez déjà un contrat ? Faites-le examiner avant de le signer.",
+      },
+      back: "Retour",
+      stepsCreate: ["Type d'acte", "Informations", "Accompagnement", "Finalisation"],
+      stepsVerify: ["Téléversez", "Contrôle", "Confirmation"],
+      labels: {
+        createType: "Type d'acte",
+        createInfo: "Vos informations",
+        createTier: "Accompagnement",
+        createFinal: "Finalisation",
+        verifyUpload: "Téléversez le document",
+        verifyTier: "Niveau de contrôle",
+        verifyFinal: "Confirmation",
+      },
+      continueBtn: "Continuer",
+      toTierBtn: "Choisir l'accompagnement",
+      prev: "Précédent",
+      sendBtn: "Envoyer le document",
+      typeIntro: "Choisissez le type d'acte que vous souhaitez rédiger :",
+      docTypes: {
+        bail: {
+          title: "Contrat de Bail d'Habitation",
+          sub: "Conforme à la Loi 67-12",
+        },
+        cdi: {
+          title: "Contrat de Travail (CDI / CDD)",
+          sub: "Conforme au Code du Travail 65-99",
+        },
+        prestation: {
+          title: "Prestation de Service / Freelance",
+          sub: "Conforme au Dahir des Obligations et Contrats",
+        },
+      },
+      tierIntro: "Souhaitez-vous faire relire votre document par un avocat ?",
+      tierWarning: "Choisissez un niveau de contrôle pour continuer.",
+      createTiers: {
+        sans: {
+          label: "Sans avocat",
+          price: "290 DH",
+          desc: "Vous téléchargez votre document prêt à signer, immédiatement. Aucune relecture par un avocat.",
+          cta: "Télécharger le PDF",
+        },
+        avocat: {
+          label: "Avec avocat",
+          price: "990 DH",
+          desc: "Un avocat au barreau marocain examine votre projet. S'il est en ordre, il délivre une attestation de relecture signée.",
+          note: "Paiement capturé uniquement après validation effective par l'avocat (24h ouvrées).",
+          cta: "Confirmer la demande d'avocat",
+        },
+      },
+      verifyTiers: {
+        assistee: {
+          label: "Vérification assistée",
+          price: "79 DH",
+          desc: "Contrôle automatisé de complétude : identités, dates, montants et clauses. Ne constitue pas un avis juridique.",
+        },
+        avocat: {
+          label: "Validation par Avocat",
+          price: "990 DH",
+          desc: "Un avocat au barreau marocain relit intégralement votre document et délivre une attestation de relecture signée.",
+          note: "Paiement capturé uniquement après validation effective par l'avocat.",
+        },
+      },
+      uploadIntro: "Téléversez le document que vous avez déjà (PDF ou Word) :",
+      uploadCta: "Cliquez pour téléverser un fichier",
+      uploadFormats: "PDF, DOC, DOCX, PNG, JPG",
+      uploadWarning: "Veuillez sélectionner un fichier avant de continuer.",
+      confirmTitle: "Document transmis",
+      confirmBody: "Votre document a bien été transmis pour contrôle. Vous recevrez le résultat par email.",
+      launchCta: "Créer un nouveau document",
+      previewLabel: "Aperçu du document",
+      previewNote: "Les valeurs saisies se mettent à jour en direct.",
+      previewWaiting: "Téléversez un fichier pour l'apercevoir ici.",
+      fileRemoveLabel: "Retirer le fichier",
+      finalRecapLabel: "Récapitulatif",
+      finalLawyerTitle: "Validation par un avocat",
+      finalLawyerBody:
+        "Un avocat au barreau marocain examine votre document et délivre une attestation de relecture signée. Le paiement n'est capturé qu'après validation effective (24h ouvrées).",
+      finalReadyTitle: "Téléchargement immédiat",
+      finalReadyBody:
+        "Votre document est prêt à signer. Vous pouvez le télécharger et le transmettre à votre cocontractant.",
+      finalNoReviewNote: "Sans relecture par un avocat.",
+      handoffNote: "En continuant, vous ouvrez le questionnaire du document choisi sur la plateforme.",
+      liveHint: "Le document ci-contre se met à jour à mesure que vous répondez.",
+      kingdomLabel: "Royaume du Maroc",
+      stampDraft: "PROJET GÉNÉRÉ",
+      stampWaiting: "EN ATTENTE DE VALIDATION",
+      stampSealLabel: "MODÈLE TYPE",
+      liveBadge: "MISE À JOUR EN DIRECT",
+      signaturePlaceholder: "Signature…",
+      stampLegalized: "PROJET GÉNÉRÉ",
+      identityNote: "Aperçu de démonstration. Les valeurs affichées sont issues de vos réponses.",
+
+      docs: {
+        bail: {
+          title: "Contrat de Bail d'Habitation",
+          kicker: "Soumis à la Loi marocaine n° 67-12",
+          heading: "CONTRAT DE BAIL À USAGE D'HABITATION",
+          ref: "N° DM-2026-8849",
+          sigTokens: ["f0_0", "f1_0"],
+          sigLabels: ["Signature du Bailleur", "Signature du Preneur"],
+          groups: [
+            {
+              subLabel: "Identification des Parties (1/2)",
+              fields: [
+                { label: "Nom Complet du Bailleur (Propriétaire)", value: "Youssef BENNANI" },
+                { label: "CIN du Bailleur", value: "AB123456" },
+              ],
+            },
+            {
+              subLabel: "Identification des Parties & Bien (2/2)",
+              fields: [
+                { label: "Nom Complet du Locataire", value: "Karim ALAMI" },
+                { label: "CIN du Locataire", value: "CD789012" },
+                { label: "Adresse complète du Bien (Ville)", value: "25 Boulevard Massira, Casablanca" },
+                { label: "Montant du Loyer Mensuel (en Dirhams - DH)", value: "6500" },
+                { label: "Dépôt de Garantie (Nombre de mois - Max 2)", value: "2" },
+                { label: "Durée du Bail (Années)", value: "1" },
+              ],
+            },
+          ],
+          paper: [
+            "ENTRE LES SOUSSIGNÉS :",
+            "1. M./Mme {f0_0}, titulaire de la CIN n° {f0_1}, ci-après dénommé « Le Bailleur ».",
+            "2. M./Mme {f1_0}, titulaire de la CIN n° {f1_1}, ci-après dénommé « Le Locataire ».",
+            "ARTICLE 1 — OBJET ET DÉSIGNATION DU BIEN",
+            "Le Bailleur donne à bail à usage exclusif d'habitation au Locataire, qui l'accepte, le local situé à : {f1_2}.",
+            "ARTICLE 2 — DURÉE DU BAIL ET RENOUVELLEMENT",
+            "Le présent contrat est conclu pour une durée de {f1_5} an(s) à compter de la date de prise de possession. Il est renouvelable par tacite reconduction conformément aux dispositions de la loi 67-12.",
+            "ARTICLE 3 — LOYER ET RÉVISION",
+            "Le loyer mensuel est fixé à la somme de {loyer} DH payable d'avance le 1er de chaque mois. Toute révision de loyer sera soumise au taux légal en vigueur (8%).",
+            "ARTICLE 4 — DÉPÔT DE GARANTIE (CAUTION)",
+            "À la signature des présentes, le Locataire verse une somme de {caution_total} DH ({f1_4} mois de loyer) à titre de dépôt de garantie non productif d'intérêts.",
+            "ARTICLE 5 — OBLIGATIONS DES PARTIES",
+            "Le Bailleur garantit la jouissance paisible des lieux. Le Locataire s'engage à payer le loyer aux échéances, entretenir le bien et souscrire une assurance contre les risques locatifs.",
+            "ARTICLE 6 — RÉSILIATION ET PRÉAVIS",
+            "Toute résiliation anticipée doit faire l'objet d'un préavis écrit conformément aux articles 44 et suivants de la loi n° 67-12.",
+          ],
+        },
+
+        cdi: {
+          title: "Contrat de Travail (CDI / CDD)",
+          kicker: "Conforme au Code du Travail Marocain (Loi 65-99)",
+          heading: "CONTRAT DE TRAVAIL À DURÉE INDÉTERMINÉE (CDI)",
+          ref: "N° CT-2026-4417",
+          sigTokens: ["f0_1", "f0_0"],
+          sigLabels: ["Signature du Salarié", "Signature de l'Employeur"],
+          groups: [
+            {
+              subLabel: "Identification de l'Employeur & Salarié (1/2)",
+              fields: [
+                { label: "Nom de l'Entreprise Employeuse", value: "MAROC LOGISTICS SARL" },
+                { label: "Nom Complet du Salarié Embauché", value: "Amina EL FASSI" },
+                { label: "CIN du Salarié", value: "EE456789" },
+              ],
+            },
+            {
+              subLabel: "Poste & Conditions (2/2)",
+              fields: [
+                { label: "Intitulé du Poste de travail", value: "Responsable Marketing" },
+                { label: "Salaire Mensuel Brut (en DH)", value: "12000" },
+                { label: "Période d'Essai (Mois)", value: "3" },
+              ],
+            },
+          ],
+          paper: [
+            "ENTRE LES SOUSSIGNÉS :",
+            "1. La société {f0_0}, ci-après « L'Employeur ».",
+            "2. M./Mme {f0_1}, CIN n° {f0_2}, ci-après « Le Salarié ».",
+            "ARTICLE 1 — ENGAGEMENT ET FONCTION",
+            "Le Salarié est engagé à compter de la date de signature en qualité de {f1_0}.",
+            "ARTICLE 2 — PÉRIODE D'ESSAI",
+            "Le contrat est conclu sous réserve d'une période d'essai de {f1_2} mois conformément à l'article 13 de la Loi 65-99, renouvelable une fois.",
+            "ARTICLE 3 — RÉMUNÉRATION ET HORAIRES",
+            "En contrepartie, Le Salarié percevra un salaire mensuel brut de {salaire} DH pour la durée légale du travail (44h/semaine).",
+            "ARTICLE 4 — CONGÉS PAYÉS ET COUVERTURE SOCIALE",
+            "Le Salarié bénéficie des congés payés réglementaires ainsi que de la déclaration CNSS et AMO dès son entrée en fonction.",
+            "ARTICLE 5 — CONFIDENTIALITÉ ET RÉSILIATION",
+            "Le Salarié s'engage à la confidentialité absolue quant aux secrets professionnels. Les conditions de préavis sont régies par le Code du Travail.",
+          ],
+        },
+        prestation: {
+          title: "Prestation de Service / Freelance",
+          kicker: "Conforme au Dahir des Obligations et Contrats (DOC)",
+          heading: "CONTRAT DE PRESTATION DE SERVICE",
+          ref: "N° PS-2026-2205",
+          sigTokens: ["f0_1", "f0_0"],
+          sigLabels: ["Signature du Prestataire", "Signature du Client"],
+          groups: [
+            {
+              subLabel: "Client & Prestataire (1/2)",
+              fields: [
+                { label: "Nom du Client (Société/Particulier)", value: "Maroc Retail Group" },
+                { label: "Nom du Prestataire / Consultant", value: "Youssef Bennani Consulting" },
+              ],
+            },
+            {
+              subLabel: "Mission & Conditions Financières (2/2)",
+              fields: [
+                { label: "Nature de la Prestation / Mission", value: "Audits SI & Transformation Digitale" },
+                { label: "Montant Total HT (en DH)", value: "25000" },
+                { label: "Délai de Paiement (Jours)", value: "30" },
+              ],
+            },
+          ],
+          paper: [
+            "ENTRE LES SOUSSIGNÉS :",
+            "1. {f0_0}, ci-après dénommé « Le Client ».",
+            "2. {f0_1}, ci-après dénommé « Le Prestataire ».",
+            "ARTICLE 1 — OBJET DE LA MISSION",
+            "Le Prestataire s'engage à réaliser en toute indépendance : {f1_0}.",
+            "ARTICLE 2 — HONORAIRES ET RÈGLEMENT",
+            "Le montant global est fixé à {honoraires} DH HT, réfacturé et payable dans un délai de {f1_2} jours.",
+            "ARTICLE 3 — OBLIGATIONS ET LIVRABLES",
+            "Le Prestataire est tenu à une obligation de moyens. Le Client s'engage à fournir l'ensemble des informations nécessaires.",
+            "ARTICLE 4 — CONFIDENTIALITÉ ET PROPRIÉTÉ INTELLECTUELLE",
+            "Chaque partie préserve le secret des données échangées. La propriété des livrables est transférée après paiement intégral.",
+            "ARTICLE 5 — RÉSILIATION ET LITIÈGES",
+            "En cas de manquement grave, le contrat peut être résilié moyennant un préavis de 15 jours. Tout litige sera soumis au Tribunal de Commerce.",
+          ],
+        },
+      },
+    },
+
+
+    // §9 — services & pricing: three cards, every fee announced upfront.
+    pricing: {
+      eyebrow: "Transparence Totale",
+      title: "Des tarifs clairs, sans aucuns frais cachés.",
+      subtitle: "Créez un document, ou faites contrôler celui que vous avez déjà.",
+      recommended: "Recommandé",
+      tiers: [
+        {
+          badge: "Niveau 1",
+          title: "Génération Simple",
+          sub: "Formule Libre-service",
+          price: "290 DH",
+          unit: "HT / acte",
+          features: [
+            { text: "Création guidée du document", included: true },
+            { text: "Format PDF téléchargeable", included: true },
+            { text: "Modèle standardisé", included: true },
+            { text: "Sans relecture par un avocat", included: false },
+          ],
+          cta: "Créer un document",
+          ctaHref: "create",
+          tone: "sand",
+        },
+        {
+          badge: "Option Complétude",
+          title: "Vérification Assistée",
+          sub: "Contrôle automatisé de cohérence",
+          price: "79 DH",
+          unit: "HT / acte",
+          features: [
+            { text: "Sur un document que vous avez déjà (PDF ou Word)", included: true },
+            { text: "Détection des erreurs de saisie d'identité", included: true },
+            { text: "Vérification d'absence de champs omis", included: true },
+            { text: "Rapport de cohérence immédiat", included: true },
+          ],
+          cta: "Vérifier un document",
+          ctaHref: "verify-assist",
+          tone: "accent",
+        },
+        {
+          badge: "Validation Légale",
+          title: "Validation Avocat",
+          sub: "Relecture par un professionnel",
+          price: "990 DH",
+          unit: "HT / acte",
+          features: [
+            { text: "Relecture par un Avocat au Barreau (document créé ici ou déjà en votre possession)", included: true },
+            { text: "Attestation officielle de validation signée", included: true },
+            { text: "Ajustements personnalisés inclus", included: true },
+            { text: "Paiement débité après validation", included: true },
+          ],
+          cta: "Choisir la validation avocat",
+          ctaHref: "create-avocat",
+          tone: "dark",
+        },
+      ],
+    },
+
+    // §10 — the comparison a visitor makes before committing.
+    comparison: {
+      eyebrow: "Comparatif Majeur",
+      title: "Pourquoi choisir Wathiqa plutôt qu'un cabinet classique ?",
+      columns: {
+        criteria: "Critères d'évaluation",
+        them: "Cabinet Traditionnel / Écrivain Public",
+        us: "Wathiqa (En Ligne)",
+      },
+      rows: [
+        { criterion: "Déplacement physique", bad: "Multiple (3 à 5 rendez-vous)", good: "0 Déplacement (100% en ligne)", kind: "check" },
+        { criterion: "Délai moyen d'obtention de l'acte", bad: "1 à 2 semaines de délai", good: "Instantané à 24h ouvrées", kind: "bolt" },
+        { criterion: "Transparence des tarifs", bad: "Honoraires flous & imprévus", good: "Tarifs fixes annoncés à l'avance", kind: "check" },
+        { criterion: "Choix du niveau de validation", bad: "Non disponible (tarif unique)", good: "3 niveaux au choix (Self, Vérification, Avocat)", kind: "check" },
+      ],
+    },
+
+    // §11 — frequently asked questions.
+    faqTitle: "Questions fréquentes",
+    faq: [
+      {
+        q: "Les documents générés ont-ils une vraie valeur juridique au Maroc ?",
+        a: "Tous nos modèles sont rédigés en stricte conformité avec les textes de loi marocains (notamment le Dahir des Obligations et Contrats et le Code du Travail Loi 65-99). Si vous souhaitez une assurance supplémentaire pour un contrat complexe, vous pouvez opter pour l'option de validation par un avocat qui délivrera une attestation de relecture signée.",
+      },
+      {
+        q: "Quelle est la différence entre Libre-Service, Vérification Assistée et Validation Avocat ?",
+        a: "Libre-service (290 DH) : vous créez un document en répondant aux questions et vous le téléchargez prêt à signer, sans avocat. Vérification assistée (79 DH) : un contrôle automatisé vérifie la cohérence des dates, des identités et l'absence de champs omis avant signature. Validation Avocat (990 DH) : un avocat inscrit au barreau marocain examine votre document et, s'il est conforme, émet une attestation de relecture officielle signée.",
+      },
+      {
+        q: "Dois-je me déplacer physiquement pour obtenir mon document ?",
+        a: "Non, la procédure est 100% en ligne. Vous répondez au questionnaire, signez votre document de manière électronique et recevez la version finale ainsi que l'attestation de l'avocat (si sélectionnée) directement dans votre boîte email.",
+      },
+      {
+        q: "L'avocat signe-t-il directement mon contrat ?",
+        a: "Non. Seules les parties contractantes (par exemple le bailleur et le locataire) constituent les signataires du contrat. Lorsque vous choisissez la validation par avocat, ce dernier établit et signe un document séparé : une attestation officielle de relecture juridique qui atteste de la validité de l'acte.",
       },
     ],
 
-    // §16 — final call to action.
-    finalCtaTitle: "Un contrat à préparer ?",
-    finalCtaSubtitle: "Commencez simplement par nous expliquer votre besoin.",
-    finalCtaPrimary: "Commencer une demande",
 
-    // §17 — footer.
+    // §17 — footer: brand, popular services, the legal framework, contact.
     footer: {
       tagline:
-        "Plateforme de services juridiques : du besoin au document final, avec une validation professionnelle lorsque votre situation l'exige.",
-      services: "SERVICES",
-      platform: "PLATEFORME",
-      company: "ENTREPRISE",
-      legal: "LÉGAL",
-      links: {
-        servicePrestation: "Contrats de prestation",
-        serviceCommercial: "Contrats commerciaux",
-        serviceTravail: "Contrats de travail",
-        serviceRelecture: "Relecture de contrats",
-        howItWorks: "Comment ça marche",
-        businesses: "Entreprises",
-        resources: "Ressources",
-        about: "À propos",
-        contact: "Contact",
-        faq: "FAQ",
-        notice: "Mentions légales",
-        privacy: "Confidentialité",
-        terms: "Conditions d'utilisation",
-      },
+        "Votre juriste & fiduciaire en ligne au Maroc. Rédaction, vérification et formalisation d'actes juridiques en quelques clics.",
+      popular: "SERVICES POPULAIRES",
+      compliance: "CONFORMITÉ & LOIS",
+      contact: "CONTACT & ASSISTANCE",
+      popularLinks: [
+        { label: "Contrat de Bail d'Habitation", target: "bail" },
+        { label: "Contrat de Travail CDI/CDD", target: "cdi" },
+        { label: "Prestation de Service / Freelance", target: "prestation" },
+        { label: "Vérifier un document existant", target: "verify" },
+      ],
+      laws: [
+        "Dahir des Obligations et Contrats (DOC)",
+        "Loi 67-12 relative aux Baux d'habitation",
+        "Loi 65-99 formant Code du Travail",
+        "Conformité Données Personnelles CNDP",
+      ],
+      address: "Siège social : Bd d'Anfa, Casablanca, Maroc",
+      hours: "Du Lundi au Samedi : 8h30 - 19h00",
+      phone: "+212 5 22 00 00 00",
+      whatsapp: "WhatsApp",
+      legal: "Mentions Légales",
+      privacy: "Politique de Confidentialité",
+      copyright:
+        "© 2026 Wathiqa. Tous droits réservés. Plateforme juridique marocaine indépendante.",
     },
+
   },
 
   legalDoc: {

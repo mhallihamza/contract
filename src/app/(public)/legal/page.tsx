@@ -62,7 +62,7 @@ export default async function LegalPage() {
       </div>
 
       <p className="mt-12 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-hairline pt-6 text-xs text-ink-muted">
-        <span dir="auto">{d.public.home.footer.links.contact} :</span>
+        <span dir="auto">{d.public.home.footer.contact} :</span>
         <a
           href={`mailto:${appConfig.supportEmail}`}
           className="font-medium text-navy underline-offset-2 hover:underline"

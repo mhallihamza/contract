@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { BusinessSection } from "@/components/landing/business-section";
 import { ComparisonSection } from "@/components/landing/comparison-section";
-import { ContractReviewSection } from "@/components/landing/contract-review-section";
 import { Faq } from "@/components/landing/faq";
-import { FinalCta } from "@/components/landing/final-cta";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
-import { NeedsSection } from "@/components/landing/needs-section";
-import { ProfessionalValidation } from "@/components/landing/professional-validation";
-import { ServicesSection } from "@/components/landing/services-section";
+import { PricingSection } from "@/components/landing/pricing-section";
+import { Simulator } from "@/components/landing/simulator";
 import { appConfig } from "@/lib/config";
 import { getServerI18n } from "@/lib/i18n/server";
 
@@ -48,16 +44,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Homepage (§5–§17).
+ * Homepage — the Wathiqa front door.
  *
- * Ten blocks, in the order a first-time visitor needs them: the promise with
- * its single contract document (hero), the two situations a visitor starts
- * from, the services index, the contract review, the comparison with the usual
- * way of getting a contract written, the professional validation (the one dark
- * band of the page), the compact business preview, the two-track explanation,
- * the FAQ and the closing call to action. That is the whole page — no trust
- * strip, no lifecycle diagram, no document dashboard, no second product
- * mockup, and no pricing table: prices belong to the catalogue, not here.
+ * Six blocks in the order a first-time visitor needs them: the emerald stage
+ * with its typed bail (hero), the two starting points (how it works), the live
+ * simulator where the document actually gets drafted or verified, the three
+ * pricing tiers, the comparison with the traditional office, and the FAQ. The
+ * footer lives in the route group layout, so it also closes the catalogue and
+ * assistant pages.
  *
  * Every block is a server component fed from the dictionary: no marketing
  * claim is hard-coded in JSX, so the Arabic page states exactly the same thing
@@ -70,58 +64,43 @@ export default async function HomePage() {
   return (
     <>
       <Hero
-        eyebrow={home.eyebrow}
-        title={home.heroTitle}
-        subtitle={home.heroSubtitle}
-        primaryCta={home.heroCta}
-        secondaryCta={home.heroCtaSecondary}
-        reassurance={home.heroReassurance}
-        document={home.heroDocument}
+        badge={home.hero.badge}
+        titleLine1={home.hero.titleLine1}
+        titleAccent={home.hero.titleAccent}
+        subtitle={home.hero.subtitle}
+        chips={home.hero.chips}
+        primaryCta={home.hero.primaryCta}
+        secondaryCta={home.hero.secondaryCta}
+        metrics={home.hero.metrics}
+        document={home.hero.document}
       />
 
-      <NeedsSection
-        eyebrow={home.needsEyebrow}
-        title={home.needsTitle}
-        subtitle={home.needsSubtitle}
-        needs={home.needs}
+      <HowItWorks
+        eyebrow={home.howItWorks.eyebrow}
+        title={home.howItWorks.title}
+        subtitle={home.howItWorks.subtitle}
+        createTrack={home.howItWorks.createTrack}
+        verifyTrack={home.howItWorks.verifyTrack}
       />
 
-      <ServicesSection
-        eyebrow={home.servicesEyebrow}
-        title={home.servicesTitle}
-        services={home.services}
-      />
+      <Simulator copy={home.simulator} />
 
-      <ContractReviewSection title={home.reviewTitle} text={home.reviewText} review={home.review} />
+      <PricingSection
+        eyebrow={home.pricing.eyebrow}
+        title={home.pricing.title}
+        subtitle={home.pricing.subtitle}
+        recommended={home.pricing.recommended}
+        tiers={home.pricing.tiers}
+      />
 
       <ComparisonSection
-        eyebrow={home.comparisonEyebrow}
-        title={home.comparisonTitle}
-        text={home.comparisonText}
-        comparison={home.comparison}
+        eyebrow={home.comparison.eyebrow}
+        title={home.comparison.title}
+        columns={home.comparison.columns}
+        rows={home.comparison.rows}
       />
 
-      <ProfessionalValidation
-        title={home.validationTitle}
-        text={home.validationText}
-        card={home.validationCard}
-      />
-
-      <BusinessSection
-        title={home.businessTitle}
-        text={home.businessText}
-        business={home.business}
-      />
-
-      <HowItWorks title={home.stepsTitle} subtitle={home.stepsSubtitle} tracks={home.tracks} />
-
-      <Faq title={d.landing.faqTitle} items={d.landing.faq} />
-
-      <FinalCta
-        title={home.finalCtaTitle}
-        subtitle={home.finalCtaSubtitle}
-        primaryCta={home.finalCtaPrimary}
-      />
+      <Faq title={home.faqTitle} items={home.faq} />
     </>
   );
 }

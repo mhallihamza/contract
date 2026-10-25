@@ -25,7 +25,12 @@ export default async function PublicLayout({ children }: { children: ReactNode }
         {d.public.nav.skipToContent}
       </a>
 
-      <PublicHeader locale={locale} nav={d.public.nav} user={user} />
+      <PublicHeader
+        locale={locale}
+        nav={d.public.nav}
+        announcement={d.public.home.announcement}
+        user={user}
+      />
 
       <main id="contenu" className="flex-1">
         {children}
